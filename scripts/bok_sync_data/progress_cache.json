@@ -986,333 +986,18 @@
       "kept": true,
       "reason": "already_in_db"
     },
-    "https://mybunchofkeys.com/property/westhills-3-bed/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/paramin/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Land"
-    },
-    "https://mybunchofkeys.com/property/fedelis-heights-penthouse-st-augustine/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/fully-furnished-studio-apartment-for-rent-cascade-4300/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/one-woodbrook-place-3-bed-tower/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/mayaro-leisureville-road/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Land"
-    },
-    "https://mybunchofkeys.com/property/704509/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Land"
-    },
-    "https://mybunchofkeys.com/property/owp-2-bed-2/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/aquaria-carenage-2/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/mayaro/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Land"
-    },
-    "https://mybunchofkeys.com/property/mayaro-ocean-heaven/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Land"
-    },
-    "https://mybunchofkeys.com/property/pomme-rose-gardens-penthouse/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/cascade-penthouse/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/tobago-land-crown-point/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Land"
-    },
-    "https://mybunchofkeys.com/property/commercial-prince-st-pos/": {
-      "ok": true,
-      "kept": false,
-      "reason": "not_house"
-    },
-    "https://mybunchofkeys.com/property/813583/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/tobago-land-fort-st/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Land"
-    },
-    "https://mybunchofkeys.com/property/781349/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Land"
-    },
-    "https://mybunchofkeys.com/property/villas-of-pine-grove-fairways-maraval/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/lambeau-tobago-land/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Land"
-    },
-    "https://mybunchofkeys.com/property/woodland-villas-diego-martin/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/champs-fleurs-commercial-building-2/": {
-      "ok": true,
-      "kept": false,
-      "reason": "not_house"
-    },
-    "https://mybunchofkeys.com/property/san-fernando-coffee-street-commercial-building-for-sale/": {
-      "ok": true,
-      "kept": false,
-      "reason": "not_house"
-    },
-    "https://mybunchofkeys.com/property/corner-fredrick-and-queen-street/": {
-      "ok": true,
-      "kept": false,
-      "reason": "not_house"
-    },
-    "https://mybunchofkeys.com/property/maraval-house-for-rent-2/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/westhills-2-bedrooms/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/north-hills-commercial/": {
-      "ok": true,
-      "kept": false,
-      "reason": "not_house"
-    },
-    "https://mybunchofkeys.com/property/the-st-georges-champ-fleur-new-and-modern-spacious-units-2/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/dere-street-office-space/": {
-      "ok": true,
-      "kept": false,
-      "reason": "not_house"
-    },
-    "https://mybunchofkeys.com/property/one-woodbrook-place-tower-2-14/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/victoria-keys-2/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
     "https://mybunchofkeys.com/property/tragarete-rd/": {
       "ok": true,
       "kept": true
-    },
-    "https://mybunchofkeys.com/property/prime-commercial-space-for-lease-green-street-arima-9000/": {
-      "ok": true,
-      "kept": false,
-      "reason": "not_house"
-    },
-    "https://mybunchofkeys.com/property/la-rive-grande-penthouse/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/la-rive/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/tobago-ambassador-court-townhouses/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/508018/": {
-      "ok": true,
-      "kept": false,
-      "reason": "not_house"
-    },
-    "https://mybunchofkeys.com/property/owp-commercial-road-level/": {
-      "ok": true,
-      "kept": false,
-      "reason": "not_house"
-    },
-    "https://mybunchofkeys.com/property/roystonia-mews-modern-3-bed-2/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/woodbrook-commercial/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/manning-st-land/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Land"
-    },
-    "https://mybunchofkeys.com/property/james-court-st-anns-2/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/one-woodbrook-tower-1-penthouse/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
     },
     "https://mybunchofkeys.com/property/bayshore-house-3/": {
       "ok": true,
       "kept": true
     },
-    "https://mybunchofkeys.com/property/plantations-garden-views-2-bed-2/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/18-moka-maraval-luxury-house-for-sale-2/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/riverwoods-dabadie-house-gated-communit-for-rent/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/rainbow-villas-goodwood-park-9/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/perseverance-land-maraval/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Land"
-    },
-    "https://mybunchofkeys.com/property/18-moka-maraval-luxury-house-for-sale/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/one-woodbrook-place-27/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/la-riviera-prow-unit-2/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/la-fontain-end-unit/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/one-woodbrook-place-tower-2/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/one-woodbrook-place-tower-3/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/brendans-place-penthouse/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/la-fontain-westmoorings-ocean-views/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/one-woodbrook-place-commercial/": {
-      "ok": true,
-      "kept": false,
-      "reason": "not_house"
-    },
-    "https://mybunchofkeys.com/property/rainbow-villas-goodwood-park-6/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
     "https://mybunchofkeys.com/property/federation-park-house-for-sale-rent/": {
       "ok": true,
       "kept": false,
       "reason": "too_old"
-    },
-    "https://mybunchofkeys.com/property/fairways-fairmont-maraval/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/718571/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/one-woodbrook-place-tower-3-2/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/owp-modern-unit/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/one-woodbrook-tower-1-penthouse-2/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/la-rive-grande-6/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
     },
     "https://mybunchofkeys.com/property/executive-columbus-circle-house-for-rent/": {
       "ok": true,
@@ -1322,142 +1007,27 @@
       "ok": true,
       "kept": true
     },
-    "https://mybunchofkeys.com/property/the-buoys-land-for-sale/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Land"
-    },
-    "https://mybunchofkeys.com/property/one-woodbrook-place-tower-2-10/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/one-woodbrook-place-podium-4/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/chateau-de-chantilly-3/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/one-woodbrook-place-penthouse-3/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/owp-2-story-unit/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/one-woodbrook-place-tower-2-24/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/the-summit-moka-maraval-private-pool/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/owp/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/newly-renovated-1-bedroom-apartment-for-rent-alyce-glen-6000/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/bldg-1-4th-floor-enclave-st-augustine/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/fully-furnished-2-bedroom-apartment-in-el-socorro-5000-ttd/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
     "https://mybunchofkeys.com/property/property-for-sale-woodford-street-newtown-pos-ttd2-4m/": {
       "ok": true,
       "kept": true
     },
-    "https://mybunchofkeys.com/property/north-hills-santa-cruz-apartment-for-rent-2/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/for-sale-aranguez-apt-building-6-2m/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
     "https://mybunchofkeys.com/property/592309/": {
       "ok": true,
       "kept": true
-    },
-    "https://mybunchofkeys.com/property/warehouse-for-sale-knightsbridge-cascade/": {
-      "ok": true,
-      "kept": false,
-      "reason": "not_house"
-    },
-    "https://mybunchofkeys.com/property/the-residences-at-south-park-san-fernando-new-and-modern-luxury-apartments-2/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
     },
     "https://mybunchofkeys.com/property/large-mediterranean-moka-home-for-sale-2/": {
       "ok": true,
       "kept": false,
       "reason": "too_old"
     },
-    "https://mybunchofkeys.com/property/office-space-for-rent-in-maraval/": {
-      "ok": true,
-      "kept": false,
-      "reason": "not_house"
-    },
     "https://mybunchofkeys.com/property/house-for-sale-gulf-view-la-romaine-3-7mtt/": {
       "ok": true,
       "kept": true
-    },
-    "https://mybunchofkeys.com/property/gordon-street-port-of-spain-2/": {
-      "ok": true,
-      "kept": false,
-      "reason": "not_house"
-    },
-    "https://mybunchofkeys.com/property/apartment-for-sale-in-woodbrook-17/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/one-woodbrook-tower-2/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/woodland-terrace-maraval-2-bed-1-bath-apartment/": {
-      "ok": true,
-      "kept": false,
-      "reason": "not_house"
     },
     "https://mybunchofkeys.com/property/exclusive-home-with-beautiful-landscaped-gardens/": {
       "ok": true,
       "kept": false,
       "reason": "too_old"
-    },
-    "https://mybunchofkeys.com/property/third-urban-for-sale-stylish-split-level-white-box-duplex-with-scenic-views-maraval/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/for-rent-west-hill-cascade/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
     },
     "https://mybunchofkeys.com/property/beaumont-ridge-maraval-for-sale-or-rent/": {
       "ok": true,
@@ -1468,71 +1038,6 @@
       "kept": false,
       "reason": "too_old"
     },
-    "https://mybunchofkeys.com/property/one-woodbrook-place-podium-2/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/renaissance-shorelands-3-bed-luxury-residence-ocean-views/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/san-juan-barataria-eastern-main-rd/": {
-      "ok": true,
-      "kept": false,
-      "reason": "not_house"
-    },
-    "https://mybunchofkeys.com/property/808775/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/999653/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/grand-savannah/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/one-woodbrook-tower-3/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/falcon-heights-goodwood-park-2/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/the-enclave-st-augustine-sale-or-rent/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/la-burnam-residences-petit-valley/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/north-hills-2-bed-modern-secure-2/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/owp-tower-3-third-floor/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/aquaria-3/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
     "https://mybunchofkeys.com/property/for-rent-commercial-property-upper-gordon-street-pos/": {
       "ok": true,
       "kept": false,
@@ -1542,434 +1047,659 @@
       "ok": true,
       "kept": true
     },
-    "https://mybunchofkeys.com/property/garden-court-city-petit-valley-townhouse-for-sale/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/two-2-bedroom-apartment-for-rent-fyzabad-main-road/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/apartment-for-rent-irish-avenue-glencoe-two-bedroom-unit/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/retail-office-space-for-rent-charlotte-street-pos-ttd35k-mth/": {
-      "ok": true,
-      "kept": false,
-      "reason": "not_house"
-    },
     "https://mybunchofkeys.com/property/aranguez-house-3/": {
       "ok": true,
       "kept": true
-    },
-    "https://mybunchofkeys.com/property/savannah-villas-aranguez-apartment-for-rent-4/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
     },
     "https://mybunchofkeys.com/property/pearl-gardens-diego-martin-3/": {
       "ok": true,
       "kept": true
     },
-    "https://mybunchofkeys.com/property/building-for-rent-310000-00/": {
-      "ok": true,
-      "kept": false,
-      "reason": "not_house"
-    },
     "https://mybunchofkeys.com/property/house-for-sale-in-blue-range-4/": {
       "ok": true,
       "kept": true
-    },
-    "https://mybunchofkeys.com/property/townhouse-for-rent-fidelis-heights-st-augustine/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/storage-spaces-for-rent/": {
-      "ok": true,
-      "kept": false,
-      "reason": "not_house"
-    },
-    "https://mybunchofkeys.com/property/apartment-for-sale-6/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/gym-space-for-rent/": {
-      "ok": true,
-      "kept": false,
-      "reason": "not_house"
-    },
-    "https://mybunchofkeys.com/property/apartment-for-sale-7/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/commercial-space-for-rent-5/": {
-      "ok": true,
-      "kept": false,
-      "reason": "not_house"
-    },
-    "https://mybunchofkeys.com/property/808878/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/caribi-towers-3/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/moka-maraval-3/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/chateau-de-chantilly-4/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/lily-heights-st-anns-apartment-for-sale/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/cosmo-commercial-complex-office-space/": {
-      "ok": true,
-      "kept": false,
-      "reason": "not_house"
-    },
-    "https://mybunchofkeys.com/property/king-place-st-joseph/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/9-panview-fairways-maraval-for-sale/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/cozy-two-bedroom-apartment-in-upper-el-dorado-trinidad/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/khans-apartments-la-solita-kelly-village/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/el-dorado-4/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/rapsey-studios-curepe/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/beautifully-renovated-apartments-at-warrenville/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/wendy-fitzwilliams-blvd-cottage/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/el-dorado-apartment-2/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/ohana-piarco-ff/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/hillcrest-manor-townhouse/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/matroo-trace-ground-floor-untis/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/couva-apartments/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/sarame-gardens-executive-furnished/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/mountain-view-court-bamboo-settlement-2/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/furnished-townhome-in-bamboo-settlement-2/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/chaguanas-endeavour-townhouse/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/ohana-piarco/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/darwil-park-arima/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/el-socorro-boundary-rd-apartment/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/king-place-corner-unit/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/trincity-home/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/apartment-for-sale-westhills-petit-valley/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/st-james-townhouse-la-fortress/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/cassia-ridge-annex/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/westhills-apartment-petit-valley/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
     },
     "https://mybunchofkeys.com/property/sara-gardens-3-bedroom-home-for-sale-longdenville-chaguanas-asking-price-1-65m/": {
       "ok": true,
       "kept": false,
       "reason": "too_old"
     },
-    "https://mybunchofkeys.com/property/toco-land/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Land"
-    },
-    "https://mybunchofkeys.com/property/land-for-sale-lopinot-road-arouca-1-5mtt/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Land"
-    },
-    "https://mybunchofkeys.com/property/tacarigua-emr-apartment-building-for-sale-comprising-10-apartments-3-3m/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/diego-martin-2-bedroom-ground-floor-upper-floor-apts/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/tacarigua-fully-furnished-2-bed-apt/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/townhouses-for-sale-chaguanas/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/townhouse-for-sale-windy-ridge-san-fernando/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/30-acres-of-land-for-sale-tabaquite/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Land"
-    },
-    "https://mybunchofkeys.com/property/land-for-sale-st-helena-5/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Land"
-    },
-    "https://mybunchofkeys.com/property/land-for-sale-railway-road-arima/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Land"
-    },
-    "https://mybunchofkeys.com/property/commercial-building-for-sale-charlotte-st-p-o-s/": {
-      "ok": true,
-      "kept": false,
-      "reason": "not_house"
-    },
-    "https://mybunchofkeys.com/property/warehouse-space-for-rent-pokhor-road-longdenville/": {
-      "ok": true,
-      "kept": false,
-      "reason": "not_house"
-    },
-    "https://mybunchofkeys.com/property/commercial-space-for-rent-cor-dibe-road-long-circular-road-st-james/": {
-      "ok": true,
-      "kept": false,
-      "reason": "not_house"
-    },
-    "https://mybunchofkeys.com/property/maravillas-for-sale-2-5m-saddle-road-maraval/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/marea-luxury-coastal-residence-barbados/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/maravillas-for-sale-2-5m-saddle-road-maraval-2/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/refreshed-savannah-villas-apartment-aranguez/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/land-for-sale-ronald-avenue-cascade/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Land"
-    },
-    "https://mybunchofkeys.com/property/acreage-for-sale-at-brazil-trinidad/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Land"
-    },
-    "https://mybunchofkeys.com/property/exquisite-home-for-sale-eighteen-moka-golf-course-road-moka/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/land-for-sale-barbados-st-silas-heights/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Land"
-    },
-    "https://mybunchofkeys.com/property/executive-townhouse-for-rent-chateau-de-chantilly-maraval/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/3-bed-one-woodbrook-place-apartment-for-sale-or-rent/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/penthouse-for-rent-the-presidential-penthouse-owp-woodbrook/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/townhouses-for-sale-ambassador-court-lowlands-tobago/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/apartment-for-sale-skyview-villas-fort-george-port-of-spain/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/apartments-for-sale-maravillas-saddle-road-maraval/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/st-augustine-carmody-residences-gf-apt-unfurnished-2br-2bath-near-uwi-6500/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/barataria-emr-ground-floor-retail-space-in-busy-location-6500/": {
-      "ok": true,
-      "kept": false,
-      "reason": "not_house"
-    },
-    "https://mybunchofkeys.com/property/aranguez-cosy-1-bed-no-parking/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/great-investment-6-bedroom-house-bacolet-crescent-tobago/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/upper-st-lucian-road-furnished-apartment-for-rent/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/ref-rre170-barataria-2-bed-apt-with-covered-parking-for-2/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/barataria-2-bedroom-1-5-bath-townhouse/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/spanish-court-westmoorings-3-bed-3-bath-townhouse/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/the-towers-ciboney-westmoorings-for-rent/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Apartment/Townhouse"
-    },
-    "https://mybunchofkeys.com/property/land-for-sale-george-trace-studley-park-tobago/": {
-      "ok": true,
-      "kept": false,
-      "reason": "style=Land"
-    },
     "https://mybunchofkeys.com/property/for-rent-brookhaven-chaguanas-2-bedrooms-unfurnished-house/": {
       "ok": true,
       "kept": true
+    },
+    "https://mybunchofkeys.com/property/house-for-rent-susan-crescent-ocean-park-carenage-%f0%9f%8c%b4%e2%9c%a8/": {
+      "ok": true,
+      "kept": true
+    },
+    "https://mybunchofkeys.com/property/for-sale-cunupia-asking-price-tt2-6ml/": {
+      "ok": true,
+      "kept": false,
+      "reason": "too_old"
+    },
+    "https://mybunchofkeys.com/property/moka-heights-maraval-family-house/": {
+      "ok": true,
+      "kept": false,
+      "reason": "too_old"
+    },
+    "https://mybunchofkeys.com/property/central-park-couva-land-for-sale/": {
+      "ok": true,
+      "kept": false,
+      "reason": "too_old"
+    },
+    "https://mybunchofkeys.com/property/%e2%9c%a8-trincity-4-bedroom-home-for-rent%e2%9c%a8-%f0%9f%93%8d-country-road-trincity-%f0%9f%92%b0-asking-price-12000-negotiable/": {
+      "ok": true,
+      "kept": false,
+      "reason": "too_old"
+    },
+    "https://mybunchofkeys.com/property/seaside-la-romaine-beautiful-house-for-sale/": {
+      "ok": true,
+      "kept": false,
+      "reason": "too_old"
+    },
+    "https://mybunchofkeys.com/property/san-fernando-investment-property-for-sale-2/": {
+      "ok": true,
+      "kept": false,
+      "reason": "too_old"
+    },
+    "https://mybunchofkeys.com/property/for-rent-fully-furnished-3-bedroom-townhouse-hillview-gardens-gulf-view-san-fernando/": {
+      "ok": true,
+      "kept": true,
+      "style": "Apartment/Townhouse"
+    },
+    "https://mybunchofkeys.com/property/premier-commercial-property-for-sale-in-the-heart-of-port-of-spain/": {
+      "ok": true,
+      "kept": true,
+      "style": "Commercial"
+    },
+    "https://mybunchofkeys.com/property/842203/": {
+      "ok": true,
+      "kept": true,
+      "style": "Apartment/Townhouse"
+    },
+    "https://mybunchofkeys.com/property/prime-7-acre-parcel-for-sale-piparo/": {
+      "ok": true,
+      "kept": true,
+      "style": "Land"
+    },
+    "https://mybunchofkeys.com/property/ttlement-road-calcutta-2-freeport-fully-occupied-apartment-building/": {
+      "ok": true,
+      "kept": true,
+      "style": "Apartment/Townhouse"
+    },
+    "https://mybunchofkeys.com/property/ruby-gardens-factory-road-piarco/": {
+      "ok": true,
+      "kept": true,
+      "style": "Apartment/Townhouse"
+    },
+    "https://mybunchofkeys.com/property/windsor-heights-arima-residential-land-for-sale/": {
+      "ok": true,
+      "kept": true,
+      "style": "Land"
+    },
+    "https://mybunchofkeys.com/property/graceland-heights-santa-cruz-residential-land-for-sale/": {
+      "ok": true,
+      "kept": true,
+      "style": "Land"
+    },
+    "https://mybunchofkeys.com/property/windsor-heights-arima-residential-land-for-sale-2/": {
+      "ok": true,
+      "kept": true,
+      "style": "Land"
+    },
+    "https://mybunchofkeys.com/property/residential-land-heritage-road-chin-chin/": {
+      "ok": true,
+      "kept": true,
+      "style": "Land"
+    },
+    "https://mybunchofkeys.com/property/apt-2-hillside-terrace-south-el-dorado/": {
+      "ok": true,
+      "kept": true,
+      "style": "Apartment/Townhouse"
+    },
+    "https://mybunchofkeys.com/property/land-for-sale-heritage-ext-road-cunupia/": {
+      "ok": true,
+      "kept": true,
+      "style": "Land"
+    },
+    "https://mybunchofkeys.com/property/tunapuna-for-sale-prime-commercial-warehouse/": {
+      "ok": true,
+      "kept": true,
+      "style": "Commercial"
+    },
+    "https://mybunchofkeys.com/property/south-park-san-fernando-three-bedroom-townhouses/": {
+      "ok": true,
+      "kept": true,
+      "style": "Apartment/Townhouse"
     }
   },
   "listings": [
+    {
+      "url": "https://mybunchofkeys.com/property/executive-columbus-circle-house-for-rent/",
+      "title": "Executive Columbus Circle House for Rent - My Bunch of Keys",
+      "price": "$4,500 / Mth (USD)",
+      "bok_id": "BOK-1068538",
+      "location": "Columbus Circle,",
+      "bedrooms": "4",
+      "bathrooms": "4",
+      "sqft": "",
+      "parking": "",
+      "agent": "Deneco Limited",
+      "agent_agency": "",
+      "agent_phone": "(868) 788-8949",
+      "agent_image": "https://mybunchofkeys.com/wp-content/uploads/2024/04/Deneco-Logo-320x320.jpg",
+      "image": "https://mybunchofkeys.com/wp-content/uploads/2026/08/eb8f1240-996d-4e21-b192-71c9a1cdd653.jpeg",
+      "images": [
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/eb8f1240-996d-4e21-b192-71c9a1cdd653.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/771b87b8-769b-4967-9f82-22cb3e55a136.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/efe70f34-12f3-4636-b7f9-19d2a67328a9.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/09dc8292-b3a0-4833-8d1b-a795323684e1.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/16ea8409-bad8-4668-9856-fe5dddf81980.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/940b3729-9946-4a90-9db8-2e221cbfa11e.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/cf6a04db-b3b0-4780-ac13-0023431600c5.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/a4f929a9-2a58-42d1-819b-d45052ce3739.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/7a96d8f1-09fe-477a-b0f0-5b928b91dac0.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/eb8f1240-996d-4e21-b192-71c9a1cdd653-1.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/04656936-7994-49c7-92f3-ae48390bca8b.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/a3b446e6-2ba7-4c4f-af35-a29ce810cffe.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/b281c9dd-1eea-47bf-9be1-34adde86af30.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/c3179018-7888-488d-a61d-8a9f0cf7f89a.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/b0cc3b7e-1e43-4d9d-9f92-ae5e41bb02c1.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/6833cae6-846e-4014-857c-5f38f099a160.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/9e06ff3b-f87f-4cd4-bb35-6acc01d2a0f3.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/cf36e49d-7101-4b1f-b283-407aa4f605ac.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/c9f86018-c721-47a2-8897-496a956b832d.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/15d35820-6d21-457e-ba62-3707cd5707e4.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/af15329d-e7f2-47b6-abd4-10bc82dbbaab.jpeg"
+      ],
+      "date_published": "2026-08-06T20:30:35+00:00",
+      "lastmod": "2026-08-06T20:30:35+00:00",
+      "property_style": "House",
+      "property_type": "",
+      "description": "Ground floor: Open plan living dining and kitchen with all major appliances Multi purpose see room Full bathroom Utility room en suite Separate Laundry room Patio and swimming pool Internal wooden stair case with landing on the first floor sealed off with a sturdy steel door making the upper floor into a safe space First Floor Master bedroom en suite with walk in closet Two large bedrooms with closets One spacious shared bathroom Horizontal blinds in all rooms Two 400 gallon water tanks Modern with lots of natural light Burglar proofed and security system Listed at USD $4500.00 Call Deneco Limited 788 8949 to arrange a showing Have a Concern? Property Sold or Rented? Click on the button below to let us know about that or any other issues. Report Now",
+      "features": [
+        "Semi Furnished",
+        "Move in Ready",
+        "Private Pool",
+        "Electricity",
+        "Air Conditioning",
+        "Kitchen Appliances",
+        "Patio",
+        "Covered Garage",
+        "Remote Gate",
+        "Pet Friendly",
+        "Kid Friendly",
+        "Laundry Area/Facility",
+        "Maid Quarters",
+        "Built-in Closets",
+        "Walk-in Closets",
+        "Water Tank",
+        "Water Pump",
+        "Water Heater"
+      ],
+      "scraped_at": "2026-08-06T22:26:39.318620+00:00"
+    },
+    {
+      "url": "https://mybunchofkeys.com/property/executive-furnished-home-for-rent-signature-park-mausica-11000/",
+      "title": "*Executive Furnished Home for Rent | Signature Park, Mausica-11000 - My Bunch of Keys",
+      "price": "$11,000 / Mth",
+      "bok_id": "BOK-1068540",
+      "location": "Mausica",
+      "bedrooms": "3",
+      "bathrooms": "2.5",
+      "sqft": "",
+      "parking": "4",
+      "agent": "Parker Real Estate",
+      "agent_agency": "",
+      "agent_phone": "(868) 703-7156",
+      "agent_image": "https://mybunchofkeys.com/wp-content/uploads/2025/07/Parker-Real-Estate-Logo-320x320.jpg",
+      "image": "https://mybunchofkeys.com/wp-content/uploads/2026/08/kitchen-1-2.jpeg",
+      "images": [
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/kitchen-1-2.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/bedroom-810x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/bedroom2-1-810x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/front-yard-810x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/house-1440x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/kitchen-1-2-810x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/living-room-1-810x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/tv-room-810x1080.jpeg"
+      ],
+      "date_published": "2026-08-06T20:30:06+00:00",
+      "lastmod": "2026-08-06T20:30:06+00:00",
+      "property_style": "House",
+      "property_type": "For Rent",
+      "description": "**Executive Furnished Home for Rent | Signature Park, Mausica** Experience refined living in this beautifully appointed executive residence, nestled within the prestigious, gated community of **Signature Park, Mausica**. Thoughtfully designed with modern finishes, generous living spaces, and premium furnishings, this exceptional home offers the perfect balance of luxury, comfort, and security for discerning tenants. **Property Features:** **3 Spacious Bedrooms**, including an elegant **Master Suite** complete with a private en-suite bathroom and built-in closets, creating the perfect private retreat. **2.5 Contemporary Bathrooms** with stylish finishes and quality fixtures. **Tastefully Furnished Living Area** fully air-conditioned for year-round comfort, ideal for relaxing or entertaining. **Designer Kitchen** featuring sleek countertops, premium stainless steel appliances, a spacious breakfast island, and elegant pendant lighting. **Dedicated Home Office**—perfect for remote professionals or studying. **Private Gym Room** to enjoy the convenience of working out from home. **Fully Air-Conditioned Throughout** for exceptional comfort in every room. **Fully Furnished** and move-in r",
+      "features": [
+        "Semi Furnished",
+        "Move in Ready",
+        "Gated Community",
+        "Air Conditioning",
+        "Kitchen Island",
+        "Home Gym",
+        "Powder Room",
+        "Patio",
+        "Security Patrols",
+        "Parking on Compound",
+        "Partially Fenced",
+        "Office Space",
+        "Laundry Area/Facility",
+        "Built-in Closets",
+        "Water Tank",
+        "Water Pump",
+        "Water Heater"
+      ],
+      "scraped_at": "2026-08-06T22:26:43.740347+00:00"
+    },
+    {
+      "url": "https://mybunchofkeys.com/property/house-for-sale-gulf-view-la-romaine-3-7mtt/",
+      "title": "House For Sale - Gulf View, La Romaine - $3.995MTT - My Bunch of Keys",
+      "price": "$3,995,000",
+      "bok_id": "BOK-1003048",
+      "location": "Bel Air Gulf View La Romain",
+      "bedrooms": "3",
+      "bathrooms": "3",
+      "sqft": "5965sq.ft.",
+      "parking": "2",
+      "agent": "Veridian Realty",
+      "agent_agency": "",
+      "agent_phone": "(868) 476-4235",
+      "agent_image": "https://mybunchofkeys.com/wp-content/uploads/2021/09/veridian-logo-320x320.png",
+      "image": "https://mybunchofkeys.com/wp-content/uploads/2026/03/IMG_6584.jpg",
+      "images": [
+        "https://mybunchofkeys.com/wp-content/uploads/2026/03/WhatsApp-Image-2026-03-04-at-12.53.30.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/03/IMG_6570.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/03/IMG_6572.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/03/IMG_6583.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/03/IMG_6584.jpg"
+      ],
+      "date_published": "2026-08-06T19:35:54+00:00",
+      "lastmod": "2026-08-06T19:35:54+00:00",
+      "property_style": "House",
+      "property_type": "For Sale",
+      "description": "House For Sale – Gulf View, La Romaine – $3.995MTT Impressive two-storey corner property offering 5,965sf of leasehold land with 3,337sf of building space in a prime location close to all amenities. This spacious home features 3 bedrooms and 3 bathrooms, a well-appointed kitchen with living and dining areas, family room, TV room, and a private study. Additional highlights include a laundry area, three enclosed porches, gym space, and a covered two-car garage. The property is secured with a remote-control gate, providing both comfort and convenience. Please contact us for more information: Karen – 678-1518 Sharon – 310-0110 Nalini – 789-3293 Fitz – 353-3248 John – 678-8047 Bridget – 483-2242 Melanie – 788-5761 Giselle – 763-8513 476-4235 | hello@GoVeridian.com | www.GoVeridian.com About the Region Gulf View Gulf View is located in La Romain in the South West region of Trinidad. This is known as a residential and commercial area. Residents have so much to enjoy here as there is the Gulf City Mall, KFC, Mc Donalds, Pennywise, Carnival City Casino, Massy Stores etc. This location is especially busy around the peak seasons where many come to shop, lime, or complete business transactions",
+      "features": [
+        "Unfurnished",
+        "Move in Ready",
+        "Air Conditioning",
+        "Kitchen Island",
+        "Home Gym",
+        "Patio",
+        "Parking on Compound",
+        "Remote Gate",
+        "Fully Fenced",
+        "Pet Friendly",
+        "Kid Friendly",
+        "Office Space",
+        "Laundry Area/Facility",
+        "Built-in Closets",
+        "Water Tank",
+        "Water Pump",
+        "Water Heater"
+      ],
+      "scraped_at": "2026-08-06T22:28:39.014309+00:00"
+    },
+    {
+      "url": "https://mybunchofkeys.com/property/beaumont-ridge-maraval-for-sale-or-rent/",
+      "title": "Beaumont Ridge, Maraval for Rent or Sale - My Bunch of Keys",
+      "price": "$6,000(USD)",
+      "bok_id": "BOK-301646",
+      "location": "Maraval",
+      "bedrooms": "5",
+      "bathrooms": "6",
+      "sqft": "31611sq.ft.",
+      "parking": "6",
+      "agent": "Jennifer Alcazar-Dolsingh",
+      "agent_agency": "Alcazar Realtors",
+      "agent_phone": "(868) 783-3242",
+      "agent_image": "https://mybunchofkeys.com/wp-content/uploads/2021/01/Jennifer-Alcazar-Dolsingh-MBOK-Profile-20-320x320.jpg",
+      "image": "https://mybunchofkeys.com/wp-content/uploads/2021/03/IMG_6528.jpg",
+      "images": [
+        "https://mybunchofkeys.com/wp-content/uploads/2021/03/IMG_6528.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2021/03/IMG_6504.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2021/03/IMG_6507.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2021/03/IMG_6509.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2021/03/IMG_6510.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2021/03/IMG_6511.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2021/03/IMG_6513.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2021/03/IMG_6516.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2021/03/IMG_6517.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2021/03/IMG_6518.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2021/03/IMG_6520.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2021/03/IMG_6521.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2021/03/IMG_6522.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2021/03/IMG_6523.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2021/03/IMG_6524.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2021/03/IMG_6526.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2021/04/unnamed-1-2.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2021/04/unnamed-2-1.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2021/04/unnamed-3-2.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2021/04/unnamed-4-1.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2021/04/unnamed-5.jpg"
+      ],
+      "date_published": "2026-08-06T18:32:21+00:00",
+      "lastmod": "2026-08-06T18:32:43+00:00",
+      "property_style": "House",
+      "property_type": "For Rent",
+      "description": "Beaumont Ridge, Maraval Located in the exclusive gated neighbourhood of Beaumont Ridge, in early Maraval, this 3 storey house is perfectly set to take advantage of the Port of Spain views. The 6,442 sq ft house sits on 31,611 sq ft of split level freehold land with: Beautifully landscaped gardens Pool with jacuzzi, poolside terrace, patio, and bar High ceilings throughout with open plan Kitchen, Living and Dining Rooms Home office Kitchen has Stainless Steel appliances, teak cabinetry and granite countertops Breakfast nook 5 bedrooms (3 with walk-in closets) Housekeeper’s quarters with separate entrance 6 bathrooms Home gym Games Room/Den Parking for 6 (2 covered) Electronic Gate Fully Air Conditioned Balconies off of the Master Bedroom and Living areas Porcelain Tiles and Hardwood floors throughout About the Region Maraval Maraval is one of the northern suburbs of Trinidad's capital, Port of Spain, a valley in northern Trinidad in Trinidad and Tobago. It is situated at the bottom of the hills of Paramin and located east of the Diego Martin valley to which it is connected directly by Morne Coco Road, and west of Santa Cruz valley, to which it is connected by Saddle Road. Maraval is",
+      "features": [
+        "Semi Furnished",
+        "Gated Community",
+        "Private Pool",
+        "Air Conditioning",
+        "Kitchen Appliances",
+        "Home Gym",
+        "Powder Room",
+        "Patio",
+        "Security Cameras",
+        "Covered Garage",
+        "Parking on Compound",
+        "Freehold Land",
+        "Fully Fenced",
+        "Pet Friendly",
+        "Kid Friendly",
+        "Office Space",
+        "Laundry Area/Facility",
+        "Built-in Closets",
+        "Walk-in Closets"
+      ],
+      "scraped_at": "2026-08-06T22:29:26.207198+00:00"
+    },
+    {
+      "url": "https://mybunchofkeys.com/property/592309/",
+      "title": "House for Sale - MARACAS GARDENS, MARACAS, ST JOSEPH - My Bunch of Keys",
+      "price": "$5,200,000",
+      "bok_id": "BOK-592309",
+      "location": "Maracas Valley San Juan St. Augustine Tunapuna",
+      "bedrooms": "4",
+      "bathrooms": "5",
+      "sqft": "22875sq.ft.",
+      "parking": "6",
+      "agent": "Michelle Sharma",
+      "agent_agency": "de Silva Realty",
+      "agent_phone": "(868) 354-1226",
+      "agent_image": "https://mybunchofkeys.com/wp-content/uploads/2023/06/Michelle-Sharma-Profile-Pic-320x320.jpg",
+      "image": "https://mybunchofkeys.com/wp-content/uploads/2023/05/IMG_2753.jpg",
+      "images": [
+        "https://mybunchofkeys.com/wp-content/uploads/2023/05/IMG_2686.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2023/05/IMG_2689.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2023/05/IMG_2691.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2023/05/IMG_2696.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2023/05/IMG_2698.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2023/05/IMG_2732.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2023/05/IMG_2734.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2023/05/IMG_2753.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2023/05/IMG_2692.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2023/05/IMG_2700.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2023/05/IMG_2701.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2023/05/IMG_2704.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2023/05/IMG_2706.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2023/05/IMG_2707.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2023/05/IMG_2708.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2023/05/IMG_2709.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2023/05/IMG_2711.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2023/05/IMG_2716.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2023/05/IMG_2724.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2023/05/IMG_2725.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2023/05/IMG_2729.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2023/05/IMG_2740.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2023/05/IMG_2741.jpg"
+      ],
+      "date_published": "2026-08-06T16:26:31+00:00",
+      "lastmod": "2026-08-06T19:49:21+00:00",
+      "property_style": "House",
+      "property_type": "For Sale",
+      "description": "NICOLE TERRACE, MARACAS GARDENS, MARACAS, ST JOSEPH Gorgeous House, Gorgeous Views! Tri level house on 22,875 sq ft of land with incredible views. Details as follows: 4 bedrooms (2 ensuite) 4 1/2 bathrooms Balconies on all levels 3 car covered garage Electronic gate and Garage Doors Fitness Room with jacuzzi and shower Media Room with large screen projector and music Built in Bar Study with 11 ft wide built in desk 3 Storage rooms (2 internal, 1 external) Laminate floors and teak finishes throughout All bedrooms are Air Conditioned with Ceiling Fans 1,600 gallons of water Mature fruit trees Gated and guarded community HOUSE: 6,000 sq ft LAND: 22,875 sq ft FOR SALE: NOW $5.2M About the Region Maracas Valley Maracas Valley is a valley located in North-East Trinidad. It is separated by two mountains between Maracas–Saint Joseph and Maracas Beach. The valley is home to the nation's tallest waterfall, Maracas Falls, which towers over the valley with a height of 91.5 meters (300 ft) and is the source of the Maracas River. This river provides water for the surrounding communities. Maracas Valley is also the location of the main campus for the University of the Southern Caribbean. Trinidad",
+      "features": [
+        "Semi Furnished",
+        "Fully Furnished",
+        "Move in Ready",
+        "Recently Renovated",
+        "Gated Compound",
+        "Gated Community",
+        "Jacuzzi",
+        "Air Conditioning",
+        "Kitchen Appliances",
+        "Home Gym",
+        "Powder Room",
+        "Patio",
+        "Covered Garage",
+        "Parking on Compound",
+        "Remote Gate",
+        "Leasehold Land",
+        "Fully Fenced",
+        "Pet Friendly",
+        "Kid Friendly",
+        "Office Space",
+        "Laundry Area/Facility",
+        "Built-in Closets",
+        "Walk-in Closets",
+        "Water Tank",
+        "Water Pump"
+      ],
+      "scraped_at": "2026-08-06T22:28:09.445447+00:00"
+    },
+    {
+      "url": "https://mybunchofkeys.com/property/aurora-drive-sunrise-park-trinicity-house-for-rent/",
+      "title": "Aurora Avenue, Sunrise Park, Trinicity - House for Rent - My Bunch of Keys",
+      "price": "$8,000 / Mth",
+      "bok_id": "BOK-1068320",
+      "location": "Trincity",
+      "bedrooms": "3",
+      "bathrooms": "2",
+      "sqft": "",
+      "parking": "",
+      "agent": "Laura Homes",
+      "agent_agency": "",
+      "agent_phone": "868-772-5520",
+      "agent_image": "https://mybunchofkeys.com/wp-content/uploads/2018/04/laura-home-logo.png",
+      "image": "https://mybunchofkeys.com/wp-content/uploads/2026/08/WhatsApp-Image-2026-08-06-at-10.37.26-AM.jpg",
+      "images": [
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/WhatsApp-Image-2026-08-06-at-10.37.26-AM.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/WhatsApp-Image-2026-08-06-at-10.37.27-AM-2.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/WhatsApp-Image-2026-08-06-at-10.37.27-AM-3.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/WhatsApp-Image-2026-08-06-at-10.37.26-AM-2.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/WhatsApp-Image-2026-08-06-at-10.37.26-AM-1-505x1080.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/WhatsApp-Image-2026-08-06-at-10.37.26-AM-4.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/WhatsApp-Image-2026-08-06-at-10.37.27-AM.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/WhatsApp-Image-2026-08-06-at-10.37.26-AM-5.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/WhatsApp-Image-2026-08-06-at-10.37.27-AM-6.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/WhatsApp-Image-2026-08-06-at-10.37.27-AM-4.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/WhatsApp-Image-2026-08-06-at-10.37.27-AM-5.jpg"
+      ],
+      "date_published": "2026-08-06T16:06:44+00:00",
+      "lastmod": "2026-08-06T16:19:51+00:00",
+      "property_style": "House",
+      "property_type": "For Rent",
+      "description": "Aurora Avenue, Sunrise Park, Trinicity – House for Rent • Unfurnished rental in a gated community • 1,624 square feet of living space • 3 bedrooms, 2 bathrooms • Modern kitchen with farmhouse sink • Utility room • 2 500 gallons water storage tanks • Spacious backyard • Outdoor storage Rental Price: TTD$8,000 or USD$1,150 For more info contact us at: 622-3831 | 228-9927 772-5520 laurahomestt@gmail.com About the Region Trincity Trincity is a planned community in northern Trinidad. It is located along the East–West Corridor south of Tunapuna and north of Piarco. Trincity was developed by Home Construction Limited. In recent years Trincity has been one of the major growth areas in Trinidad and Tobago. Trincity Mall has been substantially enlarged, to a total of 2 million square feet making it the largest contiguous mall in the Caribbean. Trincity Mall’s anchor tenants include Caribbean Cinemas (eight-screen cineplex), Radio Shack, Francis Fashions, Tru Valu Grand Market, Pennywise Superstore just to name a few. Construction of an office park, three gated communities and a PGA golf course have been completed. Banks are located in both Trincity Mall, HB Legacy Centre and surroundings for",
+      "features": [
+        "Unfurnished",
+        "Gated Community",
+        "Water Tank"
+      ],
+      "scraped_at": "2026-08-06T22:30:51.934072+00:00"
+    },
+    {
+      "url": "https://mybunchofkeys.com/property/aranguez-house-3/",
+      "title": "Aranguez House - My Bunch of Keys",
+      "price": "$2,500,000",
+      "bok_id": "BOK-1068288",
+      "location": "Aranguez",
+      "bedrooms": "4",
+      "bathrooms": "3",
+      "sqft": "6649sq.ft.",
+      "parking": "3",
+      "agent": "Carmino Realty International TT",
+      "agent_agency": "",
+      "agent_phone": "(868) 326-5600",
+      "agent_image": "https://mybunchofkeys.com/wp-content/uploads/2025/12/Carmino-Logo-2025-320x320.jpg",
+      "image": "https://mybunchofkeys.com/wp-content/uploads/2026/08/Aranguez-External.png",
+      "images": [
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/Aranguez-External.png",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/Aranguez-External-1440x1080.png",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/Outside-Yard-Edited.png",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/Kitchen-edited.png",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/Dining-Area-edited-1440x1080.png",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/TV-Room-Edited-1440x1080.png",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/Bedroom-Edited.png",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/Bedroom-2-Edited.png"
+      ],
+      "date_published": "2026-08-06T15:13:15+00:00",
+      "lastmod": "2026-08-06T15:13:15+00:00",
+      "property_style": "House",
+      "property_type": "For Sale",
+      "description": "🏡✨ House for Sale – Aranguez ✨🏡 📍 Location: Aranguez 💰 Price: TT$2,500,000 📄 Freehold Property 📐 Land Size: 6,649 sq. ft. Discover this spacious freehold home in the highly desirable community of Aranguez , offering generous living spaces and an excellent layout for large families, multi-generational living, or investment opportunities. 🌟 Property Features: 🛏️ 4 Spacious Bedrooms 🛁 3 Bathrooms 🍽️ 2 Kitchens 🛋️ 2 Living Rooms 🚗 Parking for 3 Vehicles 💧 1 Water Tank 🚪 Electric Gate 📹 Security Camera System 📋 Recent Property Valuation Available 📍 Location Highlights: 🛒 Close to Supermarkets, Shopping Centres & Restaurants 🏫 Near Schools & Essential Amenities 🚌 Easy Access to Public Transportation 🛣️ Minutes from the Churchill Roosevelt Highway and Port of Spain ✨ Offering space, versatility, and convenience, this Aranguez property is an excellent opportunity for families seeking room to grow or investors looking for a home with multi-family potential. 📞 Contact Carmino Realty International 📲 1-868-326-5600 📧 tt@carminorealty.com 🌐 www.carminorealty.com 🏡 Guiding You Home. About the Region Aranguez Well known for having one of the largest savannahs in Trinidad, famous for hosting Polit",
+      "features": [
+        "Unfurnished",
+        "Air Conditioning",
+        "Security Cameras",
+        "Remote Gate",
+        "Water Tank",
+        "Water Heater"
+      ],
+      "scraped_at": "2026-08-06T22:31:18.141329+00:00"
+    },
+    {
+      "url": "https://mybunchofkeys.com/property/pearl-gardens-diego-martin-3/",
+      "title": "Pearl Gardens, Diego Martin - My Bunch of Keys",
+      "price": "$2,800,000",
+      "bok_id": "BOK-1068264",
+      "location": "Diego Martin",
+      "bedrooms": "4",
+      "bathrooms": "3",
+      "sqft": "7800sq.ft.",
+      "parking": "4",
+      "agent": "Arline Robertson",
+      "agent_agency": "PropertyMatch Real Estate",
+      "agent_phone": "(868) 367 2511",
+      "agent_image": "https://mybunchofkeys.com/wp-content/uploads/2021/01/WhatsApp-Image-2021-01-25-at-10.20.48-AM-320x320.jpeg",
+      "image": "https://mybunchofkeys.com/wp-content/uploads/2026/08/20230426_094217.jpg",
+      "images": [
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/20230426_094217.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/20230426_094217-810x1080.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/20230426_094856-810x1080.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/20230426_094838-810x1080.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/20230426_102226-810x1080.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/20230426_094521-2-810x1080.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/20230426_095217-810x1080.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/20230426_095731-810x1080.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/20230426_100027-810x1080.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/20230426_100257-2-810x1080.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/20230426_100612-810x1080.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/20230426_101323-810x1080.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/20230426_101840-2-810x1080.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/20230426_102150-2-810x1080.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/20230426_102444-2-810x1080.jpg"
+      ],
+      "date_published": "2026-08-06T14:57:46+00:00",
+      "lastmod": "2026-08-06T14:57:46+00:00",
+      "property_style": "House",
+      "property_type": "For Sale",
+      "description": "Charming 4 bedroom, 3 bathroom family home located in Pearl Gardens, Diego Martin with amazing views of the Diego Martin valley and Port of Spain. Situated on approximately 7800 sq ft of mostly flat land, this house offers a good sized and usable garden, parking for 4+ cars, and electric gate. Perfect home for those who like to entertain and with a view like this you would be maximizing usage of the large front patio and plunge pool. Open plan layout of the living and dining rooms with built in bar area plus bonus TV room. The ensuite master bedroom has a walk in closet and there are 3 additional spacious bedrooms. To access this amazing view, please be prepared to ascend a short incline driveway. Below valuation price! Pearl Gardens is a well established gated community with nighttime security. -4 bedrooms -3 bathrooms -7800 sf – Parking for 4+ -Electric Gate -Plunge pool – Recent valuation on hand Asking $2.8M About the Region Diego Martin Diego Martin is a town and is the urban commercial center and capital of the Diego Martin region in Trinidad and Tobago. Its location in the region is just on the southeastern border, west of the capital city of Port of Spain and east of the to",
+      "features": [
+        "Unfurnished",
+        "Gated Compound",
+        "Private Pool",
+        "Air Conditioning",
+        "Patio",
+        "Parking on Compound",
+        "Remote Gate",
+        "Pet Friendly",
+        "Kid Friendly",
+        "Laundry Area/Facility",
+        "Water Tank"
+      ],
+      "scraped_at": "2026-08-06T22:31:28.180641+00:00"
+    },
+    {
+      "url": "https://mybunchofkeys.com/property/property-for-sale-woodford-street-newtown-pos-ttd2-4m/",
+      "title": "PROPERTY FOR SALE - Woodford Street, Newtown, POS - TTD$2.4M - My Bunch of Keys",
+      "price": "$2,400,000",
+      "bok_id": "BOK-1068246",
+      "location": "Newtown Port of Spain Woodbrook",
+      "bedrooms": "",
+      "bathrooms": "",
+      "sqft": "3932sq.ft.",
+      "parking": "",
+      "agent": "Veridian Realty",
+      "agent_agency": "",
+      "agent_phone": "(868) 476-4235",
+      "agent_image": "https://mybunchofkeys.com/wp-content/uploads/2021/09/veridian-logo-320x320.png",
+      "image": "https://mybunchofkeys.com/wp-content/uploads/2026/08/DJI_20260728141127_0859_D-e1786027882628.jpg",
+      "images": [
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/DJI_20260728141127_0859_D-e1786027882628.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/DJI_20260728141150_0863_D-1.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/DSC02491.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/DSC02493.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/DSC02495-2.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/DSC02497.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/DSC02501.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/DSC02505.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/DSC02506.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/DSC02512.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/DSC02513.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/DSC02517.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/DSC02519.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/DSC02521.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/DSC02522.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/DSC02524.jpg"
+      ],
+      "date_published": "2026-08-06T14:52:07+00:00",
+      "lastmod": "2026-08-06T20:01:30+00:00",
+      "property_style": "House",
+      "property_type": "For Sale",
+      "description": "PROPERTY FOR SALE – Woodford Street, Newtown, POS – TTD$2.4M Centrally located on 3,932sf of freehold land, this versatile commercial property features 2 air-conditioned buildings, making it ideal for offices, professional services, or a variety of business uses. The front building offers approximately 1,000sf of space, while the rear building provides an additional 800sf, allowing for flexible occupancy or multiple business operations. Situated in a prime, high-demand location with convenient street parking, this property offers excellent accessibility for both clients and staff. Please contact us for more information: John – 678-8047 Bridget – 483-2242 Sharon – 310-0110 Nalini – 789-3293 Fitz – 353-3248 Giselle – 763-8513 Karen – 678-1518 Talin – 362-5243 Ricarda – 274-2745 Richard – 316-8105 476-4235 | hello@GoVeridian.com | www.GoVeridian.com About the Region Newtown Newtown, is a district in Port of Spain, Trinidad and Tobago. Over the years Newtown has evolved into a fairly well developed business area with large residences being converted into business places or being torn down with the intention to build a more business like location. One of the older buildings which has re",
+      "features": [
+        "Air Conditioning",
+        "Freehold Land",
+        "Office Space"
+      ],
+      "scraped_at": "2026-08-06T22:27:53.231488+00:00"
+    },
+    {
+      "url": "https://mybunchofkeys.com/property/house-for-sale-in-blue-range-4/",
+      "title": "House For Sale In Blue Range - My Bunch of Keys",
+      "price": "$3,900,000",
+      "bok_id": "BOK-1068224",
+      "location": "Blue Range",
+      "bedrooms": "4",
+      "bathrooms": "3",
+      "sqft": "2800sq.ft.",
+      "parking": "2",
+      "agent": "Derek Daniel",
+      "agent_agency": "Terra Caribbean",
+      "agent_phone": "(868) 369-4040",
+      "agent_image": "https://mybunchofkeys.com/wp-content/uploads/2026/04/Derek-Daniel-320x320.jpg",
+      "image": "https://mybunchofkeys.com/wp-content/uploads/2026/08/a-6.jpg",
+      "images": [
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/a-6.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/b-6.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/c-6.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/d-6.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/e-6.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/f-6.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/g-6.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/h-6.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/i-3.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/j-3.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/k-3.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/l-3.jpg"
+      ],
+      "date_published": "2026-08-06T14:24:40+00:00",
+      "lastmod": "2026-08-06T14:24:40+00:00",
+      "property_style": "House",
+      "property_type": "For Sale",
+      "description": "This Blue Range property sits on almost 13,000 sq ft of prime real estate in one of the most sought after communities in North West, Trinidad. The house has 4 bedrooms, 3.5 bathrooms and is located right next to the Blue Range park and tennis courts. The property is ideally suited for a family to shape and make it their own to enjoy all that this location offers. TT29800 About the Region Blue Range Blue Range is located in St. Lucien Road Diego Martin Trinidad and Tobago. It is a well known residential area, at Blue Range there is a tennis court and fitness centre amongst other things. Blue Range is well known for the “Blue Range Carnival Cooler Fete” which promotes success to the community. The community is classed as “a great place to call home” View More Blue Range Listings",
+      "features": [
+        "Unfurnished",
+        "Air Conditioning",
+        "Parking on Compound",
+        "Fully Fenced",
+        "Pet Friendly",
+        "Water Tank",
+        "Water Pump"
+      ],
+      "scraped_at": "2026-08-06T22:31:38.198815+00:00"
+    },
     {
       "url": "https://mybunchofkeys.com/property/boissiere-village-1-saddle-road-maraval/",
       "title": "Boissière Village, #1 Saddle Road, Maraval - My Bunch of Keys",
@@ -2004,6 +1734,137 @@
         "Freehold Land"
       ],
       "scraped_at": "2026-08-06T19:46:16.586305+00:00"
+    },
+    {
+      "url": "https://mybunchofkeys.com/property/bayshore-house-3/",
+      "title": "Bayshore House - My Bunch of Keys",
+      "price": "$4,500 / Mth (USD)",
+      "bok_id": "BOK-1027096",
+      "location": "Bayshore",
+      "bedrooms": "4",
+      "bathrooms": "4",
+      "sqft": "3800sq.ft.",
+      "parking": "2",
+      "agent": "Lesedi D.",
+      "agent_agency": "11.11 Realty",
+      "agent_phone": "(868) 478-1966",
+      "agent_image": "https://mybunchofkeys.com/wp-content/uploads/2025/11/37A953BC-6EFB-453F-B919-D463969CC304-320x320.jpeg",
+      "image": "https://mybunchofkeys.com/wp-content/uploads/2026/04/IMG_2523-2.jpeg",
+      "images": [
+        "https://mybunchofkeys.com/wp-content/uploads/2026/04/IMG_2523-2.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/04/IMG_2525-2-1100x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/04/IMG_2532-1-949x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/04/IMG_2534-1-1085x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/04/IMG_2533-2-1077x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/06/IMG_4356-608x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/06/IMG_4365-608x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/06/IMG_4362-608x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/04/IMG_2536-1-797x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/04/IMG_2535-1-860x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/06/IMG_4399-608x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/06/IMG_4374-608x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/06/IMG_4377-608x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/06/IMG_4378-608x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/06/IMG_4382-608x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/06/IMG_4380-608x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/06/IMG_4381-608x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/04/IMG_2528-1-659x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/06/IMG_4385-608x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/06/IMG_4384-608x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/06/IMG_4388-608x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/06/IMG_4389-608x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/06/IMG_4391-608x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/06/IMG_4383-608x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/06/IMG_4397-608x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/06/IMG_4396-608x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/06/IMG_4395-608x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/06/IMG_4373-830x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/06/IMG_4371-794x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/06/IMG_4403-709x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/06/IMG_4369-827x1080.jpeg"
+      ],
+      "date_published": "2026-08-06T12:57:50+00:00",
+      "lastmod": "2026-08-06T20:56:47+00:00",
+      "property_style": "House",
+      "property_type": "For Rent",
+      "description": "📍 BAYSHORE ✨ Located within the safe and secure neighbourhood of Bayshore, this spacious 4-bedroom, 4.5-bathroom home offers comfortable family living in one of West Trinidad’s most desirable residential communities. This well-appointed home features generous living spaces, a private pool 🏊‍♂️, covered parking 🚗, and a family-friendly environment with nearby parks 🌿 Conveniently located close to malls, supermarkets, pharmacies, banks, and many other everyday amenities 📍 🏡 Property Features: • Approx. 3,800 sq. ft. house • 4 Bedrooms • 4.5 Bathrooms • TV room 📺 • Spacious living room ✨ • Helper’s quarters • Private pool 🏊‍♂️ • Covered parking 🚗 • Safe & secure neighbourhood 🔐 • Family-friendly community 🌿 • Includes pool & garden maintenance 🌱 💰 Asking: USD $4,500 Negotiable 📞 For further information or to arrange a viewing, contact 478-1966. About the Region Bayshore Bayshore is located in the northwest peninsula of Trinidad, only 5.3 kms/3.3 mls from the capital Port of Spain. It is equidistant to Glencoe and Starlite Shopping Plazas and to West Mall Shopping Centre with its large array of shops. Each of these has a large grocery and pharmacy, making the neighbourhood a shopping p",
+      "features": [
+        "Fully Furnished",
+        "Move in Ready",
+        "Private Pool",
+        "Air Conditioning",
+        "Kitchen Appliances",
+        "Kitchen Island",
+        "Powder Room",
+        "Patio",
+        "Security Alarms",
+        "Security Cameras",
+        "Covered Garage",
+        "Parking on Compound",
+        "Remote Gate",
+        "Fully Fenced",
+        "Pet Friendly",
+        "Kid Friendly",
+        "Office Space",
+        "Laundry Area/Facility",
+        "Maid Quarters",
+        "Built-in Closets",
+        "Walk-in Closets",
+        "Water Tank",
+        "Water Pump",
+        "Water Heater"
+      ],
+      "scraped_at": "2026-08-06T22:24:26.370111+00:00"
+    },
+    {
+      "url": "https://mybunchofkeys.com/property/tragarete-rd/",
+      "title": "Tragarete Rd - My Bunch of Keys",
+      "price": "$9,000,000",
+      "bok_id": "BOK-564459",
+      "location": "Newtown",
+      "bedrooms": "",
+      "bathrooms": "",
+      "sqft": "8445sq.ft.",
+      "parking": "6",
+      "agent": "Lesedi D.",
+      "agent_agency": "11.11 Realty",
+      "agent_phone": "(868) 478-1966",
+      "agent_image": "https://mybunchofkeys.com/wp-content/uploads/2025/11/37A953BC-6EFB-453F-B919-D463969CC304-320x320.jpeg",
+      "image": "https://mybunchofkeys.com/wp-content/uploads/2023/03/EF41C6A3-4FE9-49CC-91E6-8170432062B2.jpeg",
+      "images": [
+        "https://mybunchofkeys.com/wp-content/uploads/2023/03/EF41C6A3-4FE9-49CC-91E6-8170432062B2.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2023/04/IMG_3495-1440x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2023/04/IMG_3497-1255x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2023/04/IMG_3498-1440x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2023/04/IMG_3521-810x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2023/04/IMG_3502-1440x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2023/04/IMG_3507-1191x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2023/04/IMG_3506-1440x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2023/04/IMG_3505-1440x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2023/04/IMG_3504-1440x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2023/04/IMG_3503-1440x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2023/04/IMG_3501-1440x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2023/04/IMG_3499-1440x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2023/04/IMG_3509-1068x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2023/04/IMG_3508-1324x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2023/04/IMG_3516-1536x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2023/04/IMG_3515-1440x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2023/04/IMG_3514-1440x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2023/04/IMG_3513-1244x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2023/04/IMG_3518-1440x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2023/04/IMG_3522.jpeg"
+      ],
+      "date_published": "2026-08-06T07:11:45+00:00",
+      "lastmod": "2026-08-06T21:04:12+00:00",
+      "property_style": "",
+      "property_type": "For Sale",
+      "description": "📍 Tragarete Road, Newtown – Commercial Building Prime commercial opportunity located on the corner of Tragarete Road and Gatacre Street , offering excellent visibility and easy access within one of Port of Spain’s most active commercial corridors. 🏢 Tri-Level Commercial Building 📐 Building Size: 8,445 sq ft 📐 Land Size: 4,512 sq ft The building features a ground floor lobby layout that allows for separation of each level , making it ideal for: • Corporate Headquarters • Professional Offices • Media House / Production Studio • Radio Station • Multi-Tenant Commercial Occupancy ✨ Property Features: ✅ Corner building with high daily traffic exposure ✅ Excellent signage and branding potential ✅ Generator installed for operational continuity ✅ Central Port of Spain location ✅ Flexible floor layouts ✅ Parking for 6 vehicles ✅ Suitable for corporate offices, media house, radio station, or professional services 💰 For Sale: TT$9M (Recent Valuation) Rental Options: • Middle Floor: TT$14,000 / month • Top Floor: TT$16,000 / month 📞 Contact: 478-1966 11.11 Realty About the Region Newtown Newtown, is a district in Port of Spain, Trinidad and Tobago. Over the years Newtown has evolved into a fair",
+      "features": [
+        "Air Conditioning",
+        "Powder Room",
+        "Parking on Compound"
+      ],
+      "scraped_at": "2026-08-06T22:23:21.919598+00:00"
     },
     {
       "url": "https://mybunchofkeys.com/property/champs-fleurs-house-for-sale/",
@@ -2289,6 +2150,64 @@
       "scraped_at": "2026-08-06T19:50:34.082290+00:00"
     },
     {
+      "url": "https://mybunchofkeys.com/property/for-rent-brookhaven-chaguanas-2-bedrooms-unfurnished-house/",
+      "title": "FOR RENT – Brookhaven, Chaguanas . 2 Bedrooms Unfurnished House - My Bunch of Keys",
+      "price": "$5,000 / Mth",
+      "bok_id": "BOK-1067551",
+      "location": "Chaguanas",
+      "bedrooms": "2",
+      "bathrooms": "1",
+      "sqft": "",
+      "parking": "3",
+      "agent": "Cindy Cupen-Ramirez",
+      "agent_agency": "House to Home Real Estate",
+      "agent_phone": "(868) 358-3344",
+      "agent_image": "https://mybunchofkeys.com/wp-content/uploads/2018/08/bok-avatar-f-320x320.png",
+      "image": "https://mybunchofkeys.com/wp-content/uploads/2026/08/c34a8e1a-b99d-4eb7-adf8-8a54a72b96e2.jpeg",
+      "images": [
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/c34a8e1a-b99d-4eb7-adf8-8a54a72b96e2.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/13b70953-2d8c-4140-b556-c18db21124eb.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/485986a2-86f1-4e9e-92b8-6f258bccb12a.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/e8decf47-7514-44aa-9e50-9507cfed3222.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/c34a8e1a-b99d-4eb7-adf8-8a54a72b96e2-672x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/3fcb9200-099e-4b71-8a4a-36d04d2d6821-667x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/133f117b-9586-41e9-af37-bb0e4010ab88-740x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/89d2e377-cb4d-4e54-9297-54e0b732b582-624x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/e795b23a-c377-4dba-b2d4-f0cf861759a0.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/0b2f9ab5-3c7d-461c-b335-5f71049b1f4d-810x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/6c4ae406-c67e-4231-81c1-30e6b6e1f9fd-810x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/d7c7d8d7-d088-4e53-bdba-27c1954c433f-810x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/81b1767d-b67e-4161-bb66-3a9c975c94de-810x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/00cd474f-e066-4ec0-947c-84faade6678a-810x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/b3d706f8-fb7a-422c-9693-ef4c372a97a1.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/c385fd8c-f486-423b-b12d-b2ec05cef411.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/bc7cc971-f2e7-46b1-bff0-bf2f779c8c29.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/75fa650f-cf45-4ace-8fb9-da6d88a84083.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/7e3b4ead-1722-4cb4-960d-1adfd7b3fa67-810x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/c6dcfda4-c640-443a-bd50-1112278a2f09.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/e5cac552-2297-485a-9813-9bcbc530c889.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/08/d5c193b7-b6e8-4eb1-b813-cb7ddb92700d-810x1080.jpeg"
+      ],
+      "date_published": "2026-08-05T20:33:24+00:00",
+      "lastmod": "2026-08-05T20:33:24+00:00",
+      "property_style": "House",
+      "property_type": "For Rent",
+      "description": "FOR RENT – Brookhaven, Chaguanas | TT$5,000 Monthly Enjoy comfortable living in this 2-bedroom home located within the secure, gated community of Brookhaven, Chaguanas. Property Features: • 2 spacious bedrooms • Fully air-conditioned throughout • Smart front door lock for added security and convenience • Full CCTV camera security system • Water heater • Water pump • Two 1,000-gallon water storage tanks • Uncovered parking for up to 3 vehicles • Pet-friendly Optional Upgrade: The compound can be fully fenced for added privacy and security at TT$5,500 per month. This home is ideal for individuals, couples, or small families seeking a safe, comfortable, and well-equipped rental in a desirable location. Rental: TT$5,000 per month With optional compound fencing: TT$5,500 per month Please contact House to Home Real Estate – “Where Every Key Opens a New Beginning” About the Region Chaguanas The Borough of Chaguanas is the largest borough with an average population of 83,489 and fastest-growing town in Trinidad and Tobago, it is located in the West-Central area of Trinidad. Chaguanas is popular for its shopping malls, variety stores and street shopping. Many citizens as well as tourists vi",
+      "features": [
+        "Unfurnished",
+        "Move in Ready",
+        "Air Conditioning",
+        "Security Cameras",
+        "Parking on Compound",
+        "Pet Friendly",
+        "Kid Friendly",
+        "Elevator Access",
+        "Water Tank",
+        "Water Heater"
+      ],
+      "scraped_at": "2026-08-06T22:38:36.604618+00:00"
+    },
+    {
       "url": "https://mybunchofkeys.com/property/orange-grove-trincity-house/",
       "title": "orange grove trincity house - My Bunch of Keys",
       "price": "$1,900,000",
@@ -2403,6 +2322,64 @@
         "Water Tank"
       ],
       "scraped_at": "2026-08-06T19:50:44.951320+00:00"
+    },
+    {
+      "url": "https://mybunchofkeys.com/property/house-for-rent-susan-crescent-ocean-park-carenage-%f0%9f%8c%b4%e2%9c%a8/",
+      "title": "HOUSE FOR RENT | Susan Crescent, Ocean Park, Carenage 🌴✨ - My Bunch of Keys",
+      "price": "$35,000 / Mth",
+      "bok_id": "BOK-1045432",
+      "location": "OCEAN PARK, CARENAGE, Carenage",
+      "bedrooms": "9",
+      "bathrooms": "6",
+      "sqft": "",
+      "parking": "",
+      "agent": "Charmaine Noel Properties",
+      "agent_agency": "",
+      "agent_phone": "(868) 768-1615",
+      "agent_image": "https://mybunchofkeys.com/wp-content/uploads/2023/07/Adobe_Express_20230630_1544060_1-320x320.png",
+      "image": "https://mybunchofkeys.com/wp-content/uploads/2026/06/IMG_7903.jpg",
+      "images": [
+        "https://mybunchofkeys.com/wp-content/uploads/2026/06/IMG_7903.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/06/d94115f3-23f4-4e58-84bd-cd92ee0a8a31-810x1080.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/06/a3d8976c-0867-4fad-84ac-4d096555b126-1440x1080.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/06/e4581cbf-1604-477d-8479-7fb2eb701cde-810x1080.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/06/cfaef1ec-4a21-4d6d-a3ef-5489d5aae216-810x1080.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/06/bda8cfcb-5b7c-48d3-bbee-44e1d8268a3a-608x1080.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/06/39471229-1755-4728-8784-75517edebd1c-810x1080.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/06/8198511c-c574-4340-87ea-04529cd90e72-1440x1080.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/06/69117c4e-8a21-47a8-9006-1ff58682fd99-1440x1080.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/06/934f027c-19c6-4f95-8c67-dd002fead594-1440x1080.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/06/363c5d42-a127-4342-97a4-0a22808ba59f-810x1080.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/06/140f306a-00de-46f0-842d-58fdb50ce7ce-810x1080.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/06/33c9ec07-85a9-4cd0-9cea-c167ca02c686-810x1080.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/06/9e831e49-a568-43bf-a123-8bb6e4691f69-608x1080.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/06/IMG_7909-608x1080.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/06/IMG_7905-608x1080.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/06/IMG_7907-608x1080.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/06/IMG_7906-608x1080.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/06/IMG_7900-608x1080.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/06/IMG_7901-608x1080.jpg"
+      ],
+      "date_published": "2026-08-05T12:57:51+00:00",
+      "lastmod": "2026-08-05T14:40:05+00:00",
+      "property_style": "House",
+      "property_type": "For Rent",
+      "description": "A unique opportunity to rent an entire property or choose from three spacious fully furnished and equipped apartments in a serene setting with a shared pool and mature fruit trees. 🏠 Entire Property Available – TT$35,000 🔹 Ground Floor Apartment – TT$10,000 ✔️ 3 Bedrooms | 2 Bathrooms ✔️ Master Ensuite ✔️ Open Plan Living & Kitchen ✔️ Fully Furnished & Equipped ✔️ All Utilities Included ✔️ Shared Pool ✔️ Electronic Gate 🔹 First Floor Apartment – TT$13,000 ✔️ 3 Bedrooms | 2 Bathrooms (1 Ensuite) ✔️ Spacious Open Plan Living & Kitchen ✔️ Wrap-Around Porch Overlooking Pool ✔️ Outdoor Entertainment Patio ✔️ Fully Furnished & Equipped ✔️ All Utilities Included ✔️ Shared Pool ✔️ Electronic Gate ✔️ Mature Fruit Trees 🔹 Top Floor Apartment – TT$12,000 ✔️ 3 Bedrooms | 2 Bathrooms ✔️ Master Ensuite ✔️ Open Plan Living Area ✔️ Galley Style Kitchen ✔️ Wrap-Around Porch Overlooking Pool ✔️ Separate Outdoor Entertainment Patio ✔️ Fully Furnished & Equipped ✔️ All Utilities Included ✔️ Shared Pool ✔️ Electronic Gate ✔️ Mature Fruit Trees Enjoy comfortable living, beautiful outdoor spaces, and the convenience of utilities included in one of Carenage’s desirable residential communities. 📞 Call 768-",
+      "features": [
+        "Fully Furnished",
+        "Move in Ready",
+        "Private Pool",
+        "Electricity",
+        "Air Conditioning",
+        "Kitchen Island",
+        "Remote Gate",
+        "Fully Fenced",
+        "Office Space",
+        "Built-in Closets",
+        "Water Tank",
+        "Water Pump"
+      ],
+      "scraped_at": "2026-08-06T22:41:57.356312+00:00"
     },
     {
       "url": "https://mybunchofkeys.com/property/homes-for-sale-sunkist-drive-phillipine/",
@@ -5811,720 +5788,576 @@
       "scraped_at": "2026-08-06T19:50:25.101415+00:00"
     },
     {
-      "url": "https://mybunchofkeys.com/property/tragarete-rd/",
-      "title": "Tragarete Rd - My Bunch of Keys",
-      "price": "$9,000,000",
-      "bok_id": "BOK-564459",
-      "location": "Newtown",
-      "bedrooms": "",
-      "bathrooms": "",
-      "sqft": "8445sq.ft.",
-      "parking": "6",
-      "agent": "Lesedi D.",
-      "agent_agency": "11.11 Realty",
-      "agent_phone": "(868) 478-1966",
-      "agent_image": "https://mybunchofkeys.com/wp-content/uploads/2025/11/37A953BC-6EFB-453F-B919-D463969CC304-320x320.jpeg",
-      "image": "https://mybunchofkeys.com/wp-content/uploads/2023/03/EF41C6A3-4FE9-49CC-91E6-8170432062B2.jpeg",
-      "images": [
-        "https://mybunchofkeys.com/wp-content/uploads/2023/03/EF41C6A3-4FE9-49CC-91E6-8170432062B2.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2023/04/IMG_3495-1440x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2023/04/IMG_3497-1255x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2023/04/IMG_3498-1440x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2023/04/IMG_3521-810x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2023/04/IMG_3502-1440x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2023/04/IMG_3507-1191x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2023/04/IMG_3506-1440x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2023/04/IMG_3505-1440x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2023/04/IMG_3504-1440x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2023/04/IMG_3503-1440x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2023/04/IMG_3501-1440x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2023/04/IMG_3499-1440x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2023/04/IMG_3509-1068x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2023/04/IMG_3508-1324x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2023/04/IMG_3516-1536x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2023/04/IMG_3515-1440x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2023/04/IMG_3514-1440x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2023/04/IMG_3513-1244x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2023/04/IMG_3518-1440x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2023/04/IMG_3522.jpeg"
-      ],
-      "date_published": "2026-08-06T07:11:45+00:00",
-      "lastmod": "2026-08-06T21:04:12+00:00",
-      "property_style": "",
-      "property_type": "For Sale",
-      "description": "📍 Tragarete Road, Newtown – Commercial Building Prime commercial opportunity located on the corner of Tragarete Road and Gatacre Street , offering excellent visibility and easy access within one of Port of Spain’s most active commercial corridors. 🏢 Tri-Level Commercial Building 📐 Building Size: 8,445 sq ft 📐 Land Size: 4,512 sq ft The building features a ground floor lobby layout that allows for separation of each level , making it ideal for: • Corporate Headquarters • Professional Offices • Media House / Production Studio • Radio Station • Multi-Tenant Commercial Occupancy ✨ Property Features: ✅ Corner building with high daily traffic exposure ✅ Excellent signage and branding potential ✅ Generator installed for operational continuity ✅ Central Port of Spain location ✅ Flexible floor layouts ✅ Parking for 6 vehicles ✅ Suitable for corporate offices, media house, radio station, or professional services 💰 For Sale: TT$9M (Recent Valuation) Rental Options: • Middle Floor: TT$14,000 / month • Top Floor: TT$16,000 / month 📞 Contact: 478-1966 11.11 Realty About the Region Newtown Newtown, is a district in Port of Spain, Trinidad and Tobago. Over the years Newtown has evolved into a fair",
-      "features": [
-        "Air Conditioning",
-        "Powder Room",
-        "Parking on Compound"
-      ],
-      "scraped_at": "2026-08-06T22:23:21.919598+00:00"
-    },
-    {
-      "url": "https://mybunchofkeys.com/property/bayshore-house-3/",
-      "title": "Bayshore House - My Bunch of Keys",
-      "price": "$4,500 / Mth (USD)",
-      "bok_id": "BOK-1027096",
-      "location": "Bayshore",
-      "bedrooms": "4",
-      "bathrooms": "4",
-      "sqft": "3800sq.ft.",
-      "parking": "2",
-      "agent": "Lesedi D.",
-      "agent_agency": "11.11 Realty",
-      "agent_phone": "(868) 478-1966",
-      "agent_image": "https://mybunchofkeys.com/wp-content/uploads/2025/11/37A953BC-6EFB-453F-B919-D463969CC304-320x320.jpeg",
-      "image": "https://mybunchofkeys.com/wp-content/uploads/2026/04/IMG_2523-2.jpeg",
-      "images": [
-        "https://mybunchofkeys.com/wp-content/uploads/2026/04/IMG_2523-2.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/04/IMG_2525-2-1100x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/04/IMG_2532-1-949x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/04/IMG_2534-1-1085x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/04/IMG_2533-2-1077x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/06/IMG_4356-608x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/06/IMG_4365-608x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/06/IMG_4362-608x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/04/IMG_2536-1-797x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/04/IMG_2535-1-860x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/06/IMG_4399-608x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/06/IMG_4374-608x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/06/IMG_4377-608x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/06/IMG_4378-608x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/06/IMG_4382-608x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/06/IMG_4380-608x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/06/IMG_4381-608x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/04/IMG_2528-1-659x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/06/IMG_4385-608x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/06/IMG_4384-608x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/06/IMG_4388-608x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/06/IMG_4389-608x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/06/IMG_4391-608x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/06/IMG_4383-608x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/06/IMG_4397-608x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/06/IMG_4396-608x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/06/IMG_4395-608x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/06/IMG_4373-830x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/06/IMG_4371-794x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/06/IMG_4403-709x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/06/IMG_4369-827x1080.jpeg"
-      ],
-      "date_published": "2026-08-06T12:57:50+00:00",
-      "lastmod": "2026-08-06T20:56:47+00:00",
-      "property_style": "House",
-      "property_type": "For Rent",
-      "description": "📍 BAYSHORE ✨ Located within the safe and secure neighbourhood of Bayshore, this spacious 4-bedroom, 4.5-bathroom home offers comfortable family living in one of West Trinidad’s most desirable residential communities. This well-appointed home features generous living spaces, a private pool 🏊‍♂️, covered parking 🚗, and a family-friendly environment with nearby parks 🌿 Conveniently located close to malls, supermarkets, pharmacies, banks, and many other everyday amenities 📍 🏡 Property Features: • Approx. 3,800 sq. ft. house • 4 Bedrooms • 4.5 Bathrooms • TV room 📺 • Spacious living room ✨ • Helper’s quarters • Private pool 🏊‍♂️ • Covered parking 🚗 • Safe & secure neighbourhood 🔐 • Family-friendly community 🌿 • Includes pool & garden maintenance 🌱 💰 Asking: USD $4,500 Negotiable 📞 For further information or to arrange a viewing, contact 478-1966. About the Region Bayshore Bayshore is located in the northwest peninsula of Trinidad, only 5.3 kms/3.3 mls from the capital Port of Spain. It is equidistant to Glencoe and Starlite Shopping Plazas and to West Mall Shopping Centre with its large array of shops. Each of these has a large grocery and pharmacy, making the neighbourhood a shopping p",
-      "features": [
-        "Fully Furnished",
-        "Move in Ready",
-        "Private Pool",
-        "Air Conditioning",
-        "Kitchen Appliances",
-        "Kitchen Island",
-        "Powder Room",
-        "Patio",
-        "Security Alarms",
-        "Security Cameras",
-        "Covered Garage",
-        "Parking on Compound",
-        "Remote Gate",
-        "Fully Fenced",
-        "Pet Friendly",
-        "Kid Friendly",
-        "Office Space",
-        "Laundry Area/Facility",
-        "Maid Quarters",
-        "Built-in Closets",
-        "Walk-in Closets",
-        "Water Tank",
-        "Water Pump",
-        "Water Heater"
-      ],
-      "scraped_at": "2026-08-06T22:24:26.370111+00:00"
-    },
-    {
-      "url": "https://mybunchofkeys.com/property/executive-columbus-circle-house-for-rent/",
-      "title": "Executive Columbus Circle House for Rent - My Bunch of Keys",
-      "price": "$4,500 / Mth (USD)",
-      "bok_id": "BOK-1068538",
-      "location": "Columbus Circle,",
-      "bedrooms": "4",
-      "bathrooms": "4",
-      "sqft": "",
-      "parking": "",
-      "agent": "Deneco Limited",
-      "agent_agency": "",
-      "agent_phone": "(868) 788-8949",
-      "agent_image": "https://mybunchofkeys.com/wp-content/uploads/2024/04/Deneco-Logo-320x320.jpg",
-      "image": "https://mybunchofkeys.com/wp-content/uploads/2026/08/eb8f1240-996d-4e21-b192-71c9a1cdd653.jpeg",
-      "images": [
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/eb8f1240-996d-4e21-b192-71c9a1cdd653.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/771b87b8-769b-4967-9f82-22cb3e55a136.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/efe70f34-12f3-4636-b7f9-19d2a67328a9.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/09dc8292-b3a0-4833-8d1b-a795323684e1.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/16ea8409-bad8-4668-9856-fe5dddf81980.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/940b3729-9946-4a90-9db8-2e221cbfa11e.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/cf6a04db-b3b0-4780-ac13-0023431600c5.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/a4f929a9-2a58-42d1-819b-d45052ce3739.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/7a96d8f1-09fe-477a-b0f0-5b928b91dac0.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/eb8f1240-996d-4e21-b192-71c9a1cdd653-1.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/04656936-7994-49c7-92f3-ae48390bca8b.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/a3b446e6-2ba7-4c4f-af35-a29ce810cffe.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/b281c9dd-1eea-47bf-9be1-34adde86af30.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/c3179018-7888-488d-a61d-8a9f0cf7f89a.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/b0cc3b7e-1e43-4d9d-9f92-ae5e41bb02c1.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/6833cae6-846e-4014-857c-5f38f099a160.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/9e06ff3b-f87f-4cd4-bb35-6acc01d2a0f3.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/cf36e49d-7101-4b1f-b283-407aa4f605ac.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/c9f86018-c721-47a2-8897-496a956b832d.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/15d35820-6d21-457e-ba62-3707cd5707e4.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/af15329d-e7f2-47b6-abd4-10bc82dbbaab.jpeg"
-      ],
-      "date_published": "2026-08-06T20:30:35+00:00",
-      "lastmod": "2026-08-06T20:30:35+00:00",
-      "property_style": "House",
-      "property_type": "",
-      "description": "Ground floor: Open plan living dining and kitchen with all major appliances Multi purpose see room Full bathroom Utility room en suite Separate Laundry room Patio and swimming pool Internal wooden stair case with landing on the first floor sealed off with a sturdy steel door making the upper floor into a safe space First Floor Master bedroom en suite with walk in closet Two large bedrooms with closets One spacious shared bathroom Horizontal blinds in all rooms Two 400 gallon water tanks Modern with lots of natural light Burglar proofed and security system Listed at USD $4500.00 Call Deneco Limited 788 8949 to arrange a showing Have a Concern? Property Sold or Rented? Click on the button below to let us know about that or any other issues. Report Now",
-      "features": [
-        "Semi Furnished",
-        "Move in Ready",
-        "Private Pool",
-        "Electricity",
-        "Air Conditioning",
-        "Kitchen Appliances",
-        "Patio",
-        "Covered Garage",
-        "Remote Gate",
-        "Pet Friendly",
-        "Kid Friendly",
-        "Laundry Area/Facility",
-        "Maid Quarters",
-        "Built-in Closets",
-        "Walk-in Closets",
-        "Water Tank",
-        "Water Pump",
-        "Water Heater"
-      ],
-      "scraped_at": "2026-08-06T22:26:39.318620+00:00"
-    },
-    {
-      "url": "https://mybunchofkeys.com/property/executive-furnished-home-for-rent-signature-park-mausica-11000/",
-      "title": "*Executive Furnished Home for Rent | Signature Park, Mausica-11000 - My Bunch of Keys",
-      "price": "$11,000 / Mth",
-      "bok_id": "BOK-1068540",
-      "location": "Mausica",
+      "url": "https://mybunchofkeys.com/property/for-rent-fully-furnished-3-bedroom-townhouse-hillview-gardens-gulf-view-san-fernando/",
+      "title": "For Rent – Fully Furnished 3-Bedroom Townhouse | Hillview Gardens, Gulf View, San Fernando - My Bunch of Keys",
+      "price": "$1,500 / Mth (USD)",
+      "bok_id": "BOK-957526",
+      "location": "Gulf View San Fernando",
       "bedrooms": "3",
       "bathrooms": "2.5",
-      "sqft": "",
-      "parking": "4",
-      "agent": "Parker Real Estate",
-      "agent_agency": "",
-      "agent_phone": "(868) 703-7156",
-      "agent_image": "https://mybunchofkeys.com/wp-content/uploads/2025/07/Parker-Real-Estate-Logo-320x320.jpg",
-      "image": "https://mybunchofkeys.com/wp-content/uploads/2026/08/kitchen-1-2.jpeg",
-      "images": [
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/kitchen-1-2.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/bedroom-810x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/bedroom2-1-810x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/front-yard-810x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/house-1440x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/kitchen-1-2-810x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/living-room-1-810x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/tv-room-810x1080.jpeg"
-      ],
-      "date_published": "2026-08-06T20:30:06+00:00",
-      "lastmod": "2026-08-06T20:30:06+00:00",
-      "property_style": "House",
-      "property_type": "For Rent",
-      "description": "**Executive Furnished Home for Rent | Signature Park, Mausica** Experience refined living in this beautifully appointed executive residence, nestled within the prestigious, gated community of **Signature Park, Mausica**. Thoughtfully designed with modern finishes, generous living spaces, and premium furnishings, this exceptional home offers the perfect balance of luxury, comfort, and security for discerning tenants. **Property Features:** **3 Spacious Bedrooms**, including an elegant **Master Suite** complete with a private en-suite bathroom and built-in closets, creating the perfect private retreat. **2.5 Contemporary Bathrooms** with stylish finishes and quality fixtures. **Tastefully Furnished Living Area** fully air-conditioned for year-round comfort, ideal for relaxing or entertaining. **Designer Kitchen** featuring sleek countertops, premium stainless steel appliances, a spacious breakfast island, and elegant pendant lighting. **Dedicated Home Office**—perfect for remote professionals or studying. **Private Gym Room** to enjoy the convenience of working out from home. **Fully Air-Conditioned Throughout** for exceptional comfort in every room. **Fully Furnished** and move-in r",
-      "features": [
-        "Semi Furnished",
-        "Move in Ready",
-        "Gated Community",
-        "Air Conditioning",
-        "Kitchen Island",
-        "Home Gym",
-        "Powder Room",
-        "Patio",
-        "Security Patrols",
-        "Parking on Compound",
-        "Partially Fenced",
-        "Office Space",
-        "Laundry Area/Facility",
-        "Built-in Closets",
-        "Water Tank",
-        "Water Pump",
-        "Water Heater"
-      ],
-      "scraped_at": "2026-08-06T22:26:43.740347+00:00"
-    },
-    {
-      "url": "https://mybunchofkeys.com/property/property-for-sale-woodford-street-newtown-pos-ttd2-4m/",
-      "title": "PROPERTY FOR SALE - Woodford Street, Newtown, POS - TTD$2.4M - My Bunch of Keys",
-      "price": "$2,400,000",
-      "bok_id": "BOK-1068246",
-      "location": "Newtown Port of Spain Woodbrook",
-      "bedrooms": "",
-      "bathrooms": "",
-      "sqft": "3932sq.ft.",
-      "parking": "",
-      "agent": "Veridian Realty",
-      "agent_agency": "",
-      "agent_phone": "(868) 476-4235",
-      "agent_image": "https://mybunchofkeys.com/wp-content/uploads/2021/09/veridian-logo-320x320.png",
-      "image": "https://mybunchofkeys.com/wp-content/uploads/2026/08/DJI_20260728141127_0859_D-e1786027882628.jpg",
-      "images": [
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/DJI_20260728141127_0859_D-e1786027882628.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/DJI_20260728141150_0863_D-1.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/DSC02491.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/DSC02493.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/DSC02495-2.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/DSC02497.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/DSC02501.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/DSC02505.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/DSC02506.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/DSC02512.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/DSC02513.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/DSC02517.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/DSC02519.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/DSC02521.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/DSC02522.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/DSC02524.jpg"
-      ],
-      "date_published": "2026-08-06T14:52:07+00:00",
-      "lastmod": "2026-08-06T20:01:30+00:00",
-      "property_style": "House",
-      "property_type": "For Sale",
-      "description": "PROPERTY FOR SALE – Woodford Street, Newtown, POS – TTD$2.4M Centrally located on 3,932sf of freehold land, this versatile commercial property features 2 air-conditioned buildings, making it ideal for offices, professional services, or a variety of business uses. The front building offers approximately 1,000sf of space, while the rear building provides an additional 800sf, allowing for flexible occupancy or multiple business operations. Situated in a prime, high-demand location with convenient street parking, this property offers excellent accessibility for both clients and staff. Please contact us for more information: John – 678-8047 Bridget – 483-2242 Sharon – 310-0110 Nalini – 789-3293 Fitz – 353-3248 Giselle – 763-8513 Karen – 678-1518 Talin – 362-5243 Ricarda – 274-2745 Richard – 316-8105 476-4235 | hello@GoVeridian.com | www.GoVeridian.com About the Region Newtown Newtown, is a district in Port of Spain, Trinidad and Tobago. Over the years Newtown has evolved into a fairly well developed business area with large residences being converted into business places or being torn down with the intention to build a more business like location. One of the older buildings which has re",
-      "features": [
-        "Air Conditioning",
-        "Freehold Land",
-        "Office Space"
-      ],
-      "scraped_at": "2026-08-06T22:27:53.231488+00:00"
-    },
-    {
-      "url": "https://mybunchofkeys.com/property/592309/",
-      "title": "House for Sale - MARACAS GARDENS, MARACAS, ST JOSEPH - My Bunch of Keys",
-      "price": "$5,200,000",
-      "bok_id": "BOK-592309",
-      "location": "Maracas Valley San Juan St. Augustine Tunapuna",
-      "bedrooms": "4",
-      "bathrooms": "5",
-      "sqft": "22875sq.ft.",
-      "parking": "6",
-      "agent": "Michelle Sharma",
-      "agent_agency": "de Silva Realty",
-      "agent_phone": "(868) 354-1226",
-      "agent_image": "https://mybunchofkeys.com/wp-content/uploads/2023/06/Michelle-Sharma-Profile-Pic-320x320.jpg",
-      "image": "https://mybunchofkeys.com/wp-content/uploads/2023/05/IMG_2753.jpg",
-      "images": [
-        "https://mybunchofkeys.com/wp-content/uploads/2023/05/IMG_2686.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2023/05/IMG_2689.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2023/05/IMG_2691.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2023/05/IMG_2696.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2023/05/IMG_2698.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2023/05/IMG_2732.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2023/05/IMG_2734.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2023/05/IMG_2753.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2023/05/IMG_2692.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2023/05/IMG_2700.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2023/05/IMG_2701.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2023/05/IMG_2704.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2023/05/IMG_2706.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2023/05/IMG_2707.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2023/05/IMG_2708.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2023/05/IMG_2709.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2023/05/IMG_2711.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2023/05/IMG_2716.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2023/05/IMG_2724.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2023/05/IMG_2725.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2023/05/IMG_2729.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2023/05/IMG_2740.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2023/05/IMG_2741.jpg"
-      ],
-      "date_published": "2026-08-06T16:26:31+00:00",
-      "lastmod": "2026-08-06T19:49:21+00:00",
-      "property_style": "House",
-      "property_type": "For Sale",
-      "description": "NICOLE TERRACE, MARACAS GARDENS, MARACAS, ST JOSEPH Gorgeous House, Gorgeous Views! Tri level house on 22,875 sq ft of land with incredible views. Details as follows: 4 bedrooms (2 ensuite) 4 1/2 bathrooms Balconies on all levels 3 car covered garage Electronic gate and Garage Doors Fitness Room with jacuzzi and shower Media Room with large screen projector and music Built in Bar Study with 11 ft wide built in desk 3 Storage rooms (2 internal, 1 external) Laminate floors and teak finishes throughout All bedrooms are Air Conditioned with Ceiling Fans 1,600 gallons of water Mature fruit trees Gated and guarded community HOUSE: 6,000 sq ft LAND: 22,875 sq ft FOR SALE: NOW $5.2M About the Region Maracas Valley Maracas Valley is a valley located in North-East Trinidad. It is separated by two mountains between Maracas–Saint Joseph and Maracas Beach. The valley is home to the nation's tallest waterfall, Maracas Falls, which towers over the valley with a height of 91.5 meters (300 ft) and is the source of the Maracas River. This river provides water for the surrounding communities. Maracas Valley is also the location of the main campus for the University of the Southern Caribbean. Trinidad",
-      "features": [
-        "Semi Furnished",
-        "Fully Furnished",
-        "Move in Ready",
-        "Recently Renovated",
-        "Gated Compound",
-        "Gated Community",
-        "Jacuzzi",
-        "Air Conditioning",
-        "Kitchen Appliances",
-        "Home Gym",
-        "Powder Room",
-        "Patio",
-        "Covered Garage",
-        "Parking on Compound",
-        "Remote Gate",
-        "Leasehold Land",
-        "Fully Fenced",
-        "Pet Friendly",
-        "Kid Friendly",
-        "Office Space",
-        "Laundry Area/Facility",
-        "Built-in Closets",
-        "Walk-in Closets",
-        "Water Tank",
-        "Water Pump"
-      ],
-      "scraped_at": "2026-08-06T22:28:09.445447+00:00"
-    },
-    {
-      "url": "https://mybunchofkeys.com/property/house-for-sale-gulf-view-la-romaine-3-7mtt/",
-      "title": "House For Sale - Gulf View, La Romaine - $3.995MTT - My Bunch of Keys",
-      "price": "$3,995,000",
-      "bok_id": "BOK-1003048",
-      "location": "Bel Air Gulf View La Romain",
-      "bedrooms": "3",
-      "bathrooms": "3",
-      "sqft": "5965sq.ft.",
-      "parking": "2",
-      "agent": "Veridian Realty",
-      "agent_agency": "",
-      "agent_phone": "(868) 476-4235",
-      "agent_image": "https://mybunchofkeys.com/wp-content/uploads/2021/09/veridian-logo-320x320.png",
-      "image": "https://mybunchofkeys.com/wp-content/uploads/2026/03/IMG_6584.jpg",
-      "images": [
-        "https://mybunchofkeys.com/wp-content/uploads/2026/03/WhatsApp-Image-2026-03-04-at-12.53.30.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/03/IMG_6570.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/03/IMG_6572.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/03/IMG_6583.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/03/IMG_6584.jpg"
-      ],
-      "date_published": "2026-08-06T19:35:54+00:00",
-      "lastmod": "2026-08-06T19:35:54+00:00",
-      "property_style": "House",
-      "property_type": "For Sale",
-      "description": "House For Sale – Gulf View, La Romaine – $3.995MTT Impressive two-storey corner property offering 5,965sf of leasehold land with 3,337sf of building space in a prime location close to all amenities. This spacious home features 3 bedrooms and 3 bathrooms, a well-appointed kitchen with living and dining areas, family room, TV room, and a private study. Additional highlights include a laundry area, three enclosed porches, gym space, and a covered two-car garage. The property is secured with a remote-control gate, providing both comfort and convenience. Please contact us for more information: Karen – 678-1518 Sharon – 310-0110 Nalini – 789-3293 Fitz – 353-3248 John – 678-8047 Bridget – 483-2242 Melanie – 788-5761 Giselle – 763-8513 476-4235 | hello@GoVeridian.com | www.GoVeridian.com About the Region Gulf View Gulf View is located in La Romain in the South West region of Trinidad. This is known as a residential and commercial area. Residents have so much to enjoy here as there is the Gulf City Mall, KFC, Mc Donalds, Pennywise, Carnival City Casino, Massy Stores etc. This location is especially busy around the peak seasons where many come to shop, lime, or complete business transactions",
-      "features": [
-        "Unfurnished",
-        "Move in Ready",
-        "Air Conditioning",
-        "Kitchen Island",
-        "Home Gym",
-        "Patio",
-        "Parking on Compound",
-        "Remote Gate",
-        "Fully Fenced",
-        "Pet Friendly",
-        "Kid Friendly",
-        "Office Space",
-        "Laundry Area/Facility",
-        "Built-in Closets",
-        "Water Tank",
-        "Water Pump",
-        "Water Heater"
-      ],
-      "scraped_at": "2026-08-06T22:28:39.014309+00:00"
-    },
-    {
-      "url": "https://mybunchofkeys.com/property/beaumont-ridge-maraval-for-sale-or-rent/",
-      "title": "Beaumont Ridge, Maraval for Rent or Sale - My Bunch of Keys",
-      "price": "$6,000(USD)",
-      "bok_id": "BOK-301646",
-      "location": "Maraval",
-      "bedrooms": "5",
-      "bathrooms": "6",
-      "sqft": "31611sq.ft.",
-      "parking": "6",
-      "agent": "Jennifer Alcazar-Dolsingh",
-      "agent_agency": "Alcazar Realtors",
-      "agent_phone": "(868) 783-3242",
-      "agent_image": "https://mybunchofkeys.com/wp-content/uploads/2021/01/Jennifer-Alcazar-Dolsingh-MBOK-Profile-20-320x320.jpg",
-      "image": "https://mybunchofkeys.com/wp-content/uploads/2021/03/IMG_6528.jpg",
-      "images": [
-        "https://mybunchofkeys.com/wp-content/uploads/2021/03/IMG_6528.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2021/03/IMG_6504.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2021/03/IMG_6507.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2021/03/IMG_6509.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2021/03/IMG_6510.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2021/03/IMG_6511.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2021/03/IMG_6513.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2021/03/IMG_6516.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2021/03/IMG_6517.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2021/03/IMG_6518.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2021/03/IMG_6520.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2021/03/IMG_6521.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2021/03/IMG_6522.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2021/03/IMG_6523.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2021/03/IMG_6524.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2021/03/IMG_6526.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2021/04/unnamed-1-2.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2021/04/unnamed-2-1.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2021/04/unnamed-3-2.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2021/04/unnamed-4-1.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2021/04/unnamed-5.jpg"
-      ],
-      "date_published": "2026-08-06T18:32:21+00:00",
-      "lastmod": "2026-08-06T18:32:43+00:00",
-      "property_style": "House",
-      "property_type": "For Rent",
-      "description": "Beaumont Ridge, Maraval Located in the exclusive gated neighbourhood of Beaumont Ridge, in early Maraval, this 3 storey house is perfectly set to take advantage of the Port of Spain views. The 6,442 sq ft house sits on 31,611 sq ft of split level freehold land with: Beautifully landscaped gardens Pool with jacuzzi, poolside terrace, patio, and bar High ceilings throughout with open plan Kitchen, Living and Dining Rooms Home office Kitchen has Stainless Steel appliances, teak cabinetry and granite countertops Breakfast nook 5 bedrooms (3 with walk-in closets) Housekeeper’s quarters with separate entrance 6 bathrooms Home gym Games Room/Den Parking for 6 (2 covered) Electronic Gate Fully Air Conditioned Balconies off of the Master Bedroom and Living areas Porcelain Tiles and Hardwood floors throughout About the Region Maraval Maraval is one of the northern suburbs of Trinidad's capital, Port of Spain, a valley in northern Trinidad in Trinidad and Tobago. It is situated at the bottom of the hills of Paramin and located east of the Diego Martin valley to which it is connected directly by Morne Coco Road, and west of Santa Cruz valley, to which it is connected by Saddle Road. Maraval is",
-      "features": [
-        "Semi Furnished",
-        "Gated Community",
-        "Private Pool",
-        "Air Conditioning",
-        "Kitchen Appliances",
-        "Home Gym",
-        "Powder Room",
-        "Patio",
-        "Security Cameras",
-        "Covered Garage",
-        "Parking on Compound",
-        "Freehold Land",
-        "Fully Fenced",
-        "Pet Friendly",
-        "Kid Friendly",
-        "Office Space",
-        "Laundry Area/Facility",
-        "Built-in Closets",
-        "Walk-in Closets"
-      ],
-      "scraped_at": "2026-08-06T22:29:26.207198+00:00"
-    },
-    {
-      "url": "https://mybunchofkeys.com/property/aurora-drive-sunrise-park-trinicity-house-for-rent/",
-      "title": "Aurora Avenue, Sunrise Park, Trinicity - House for Rent - My Bunch of Keys",
-      "price": "$8,000 / Mth",
-      "bok_id": "BOK-1068320",
-      "location": "Trincity",
-      "bedrooms": "3",
-      "bathrooms": "2",
-      "sqft": "",
-      "parking": "",
-      "agent": "Laura Homes",
-      "agent_agency": "",
-      "agent_phone": "868-772-5520",
-      "agent_image": "https://mybunchofkeys.com/wp-content/uploads/2018/04/laura-home-logo.png",
-      "image": "https://mybunchofkeys.com/wp-content/uploads/2026/08/WhatsApp-Image-2026-08-06-at-10.37.26-AM.jpg",
-      "images": [
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/WhatsApp-Image-2026-08-06-at-10.37.26-AM.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/WhatsApp-Image-2026-08-06-at-10.37.27-AM-2.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/WhatsApp-Image-2026-08-06-at-10.37.27-AM-3.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/WhatsApp-Image-2026-08-06-at-10.37.26-AM-2.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/WhatsApp-Image-2026-08-06-at-10.37.26-AM-1-505x1080.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/WhatsApp-Image-2026-08-06-at-10.37.26-AM-4.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/WhatsApp-Image-2026-08-06-at-10.37.27-AM.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/WhatsApp-Image-2026-08-06-at-10.37.26-AM-5.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/WhatsApp-Image-2026-08-06-at-10.37.27-AM-6.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/WhatsApp-Image-2026-08-06-at-10.37.27-AM-4.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/WhatsApp-Image-2026-08-06-at-10.37.27-AM-5.jpg"
-      ],
-      "date_published": "2026-08-06T16:06:44+00:00",
-      "lastmod": "2026-08-06T16:19:51+00:00",
-      "property_style": "House",
-      "property_type": "For Rent",
-      "description": "Aurora Avenue, Sunrise Park, Trinicity – House for Rent • Unfurnished rental in a gated community • 1,624 square feet of living space • 3 bedrooms, 2 bathrooms • Modern kitchen with farmhouse sink • Utility room • 2 500 gallons water storage tanks • Spacious backyard • Outdoor storage Rental Price: TTD$8,000 or USD$1,150 For more info contact us at: 622-3831 | 228-9927 772-5520 laurahomestt@gmail.com About the Region Trincity Trincity is a planned community in northern Trinidad. It is located along the East–West Corridor south of Tunapuna and north of Piarco. Trincity was developed by Home Construction Limited. In recent years Trincity has been one of the major growth areas in Trinidad and Tobago. Trincity Mall has been substantially enlarged, to a total of 2 million square feet making it the largest contiguous mall in the Caribbean. Trincity Mall’s anchor tenants include Caribbean Cinemas (eight-screen cineplex), Radio Shack, Francis Fashions, Tru Valu Grand Market, Pennywise Superstore just to name a few. Construction of an office park, three gated communities and a PGA golf course have been completed. Banks are located in both Trincity Mall, HB Legacy Centre and surroundings for",
-      "features": [
-        "Unfurnished",
-        "Gated Community",
-        "Water Tank"
-      ],
-      "scraped_at": "2026-08-06T22:30:51.934072+00:00"
-    },
-    {
-      "url": "https://mybunchofkeys.com/property/aranguez-house-3/",
-      "title": "Aranguez House - My Bunch of Keys",
-      "price": "$2,500,000",
-      "bok_id": "BOK-1068288",
-      "location": "Aranguez",
-      "bedrooms": "4",
-      "bathrooms": "3",
-      "sqft": "6649sq.ft.",
-      "parking": "3",
-      "agent": "Carmino Realty International TT",
-      "agent_agency": "",
-      "agent_phone": "(868) 326-5600",
-      "agent_image": "https://mybunchofkeys.com/wp-content/uploads/2025/12/Carmino-Logo-2025-320x320.jpg",
-      "image": "https://mybunchofkeys.com/wp-content/uploads/2026/08/Aranguez-External.png",
-      "images": [
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/Aranguez-External.png",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/Aranguez-External-1440x1080.png",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/Outside-Yard-Edited.png",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/Kitchen-edited.png",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/Dining-Area-edited-1440x1080.png",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/TV-Room-Edited-1440x1080.png",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/Bedroom-Edited.png",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/Bedroom-2-Edited.png"
-      ],
-      "date_published": "2026-08-06T15:13:15+00:00",
-      "lastmod": "2026-08-06T15:13:15+00:00",
-      "property_style": "House",
-      "property_type": "For Sale",
-      "description": "🏡✨ House for Sale – Aranguez ✨🏡 📍 Location: Aranguez 💰 Price: TT$2,500,000 📄 Freehold Property 📐 Land Size: 6,649 sq. ft. Discover this spacious freehold home in the highly desirable community of Aranguez , offering generous living spaces and an excellent layout for large families, multi-generational living, or investment opportunities. 🌟 Property Features: 🛏️ 4 Spacious Bedrooms 🛁 3 Bathrooms 🍽️ 2 Kitchens 🛋️ 2 Living Rooms 🚗 Parking for 3 Vehicles 💧 1 Water Tank 🚪 Electric Gate 📹 Security Camera System 📋 Recent Property Valuation Available 📍 Location Highlights: 🛒 Close to Supermarkets, Shopping Centres & Restaurants 🏫 Near Schools & Essential Amenities 🚌 Easy Access to Public Transportation 🛣️ Minutes from the Churchill Roosevelt Highway and Port of Spain ✨ Offering space, versatility, and convenience, this Aranguez property is an excellent opportunity for families seeking room to grow or investors looking for a home with multi-family potential. 📞 Contact Carmino Realty International 📲 1-868-326-5600 📧 tt@carminorealty.com 🌐 www.carminorealty.com 🏡 Guiding You Home. About the Region Aranguez Well known for having one of the largest savannahs in Trinidad, famous for hosting Polit",
-      "features": [
-        "Unfurnished",
-        "Air Conditioning",
-        "Security Cameras",
-        "Remote Gate",
-        "Water Tank",
-        "Water Heater"
-      ],
-      "scraped_at": "2026-08-06T22:31:18.141329+00:00"
-    },
-    {
-      "url": "https://mybunchofkeys.com/property/pearl-gardens-diego-martin-3/",
-      "title": "Pearl Gardens, Diego Martin - My Bunch of Keys",
-      "price": "$2,800,000",
-      "bok_id": "BOK-1068264",
-      "location": "Diego Martin",
-      "bedrooms": "4",
-      "bathrooms": "3",
-      "sqft": "7800sq.ft.",
-      "parking": "4",
-      "agent": "Arline Robertson",
-      "agent_agency": "PropertyMatch Real Estate",
-      "agent_phone": "(868) 367 2511",
-      "agent_image": "https://mybunchofkeys.com/wp-content/uploads/2021/01/WhatsApp-Image-2021-01-25-at-10.20.48-AM-320x320.jpeg",
-      "image": "https://mybunchofkeys.com/wp-content/uploads/2026/08/20230426_094217.jpg",
-      "images": [
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/20230426_094217.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/20230426_094217-810x1080.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/20230426_094856-810x1080.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/20230426_094838-810x1080.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/20230426_102226-810x1080.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/20230426_094521-2-810x1080.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/20230426_095217-810x1080.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/20230426_095731-810x1080.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/20230426_100027-810x1080.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/20230426_100257-2-810x1080.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/20230426_100612-810x1080.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/20230426_101323-810x1080.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/20230426_101840-2-810x1080.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/20230426_102150-2-810x1080.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/20230426_102444-2-810x1080.jpg"
-      ],
-      "date_published": "2026-08-06T14:57:46+00:00",
-      "lastmod": "2026-08-06T14:57:46+00:00",
-      "property_style": "House",
-      "property_type": "For Sale",
-      "description": "Charming 4 bedroom, 3 bathroom family home located in Pearl Gardens, Diego Martin with amazing views of the Diego Martin valley and Port of Spain. Situated on approximately 7800 sq ft of mostly flat land, this house offers a good sized and usable garden, parking for 4+ cars, and electric gate. Perfect home for those who like to entertain and with a view like this you would be maximizing usage of the large front patio and plunge pool. Open plan layout of the living and dining rooms with built in bar area plus bonus TV room. The ensuite master bedroom has a walk in closet and there are 3 additional spacious bedrooms. To access this amazing view, please be prepared to ascend a short incline driveway. Below valuation price! Pearl Gardens is a well established gated community with nighttime security. -4 bedrooms -3 bathrooms -7800 sf – Parking for 4+ -Electric Gate -Plunge pool – Recent valuation on hand Asking $2.8M About the Region Diego Martin Diego Martin is a town and is the urban commercial center and capital of the Diego Martin region in Trinidad and Tobago. Its location in the region is just on the southeastern border, west of the capital city of Port of Spain and east of the to",
-      "features": [
-        "Unfurnished",
-        "Gated Compound",
-        "Private Pool",
-        "Air Conditioning",
-        "Patio",
-        "Parking on Compound",
-        "Remote Gate",
-        "Pet Friendly",
-        "Kid Friendly",
-        "Laundry Area/Facility",
-        "Water Tank"
-      ],
-      "scraped_at": "2026-08-06T22:31:28.180641+00:00"
-    },
-    {
-      "url": "https://mybunchofkeys.com/property/house-for-sale-in-blue-range-4/",
-      "title": "House For Sale In Blue Range - My Bunch of Keys",
-      "price": "$3,900,000",
-      "bok_id": "BOK-1068224",
-      "location": "Blue Range",
-      "bedrooms": "4",
-      "bathrooms": "3",
-      "sqft": "2800sq.ft.",
-      "parking": "2",
-      "agent": "Derek Daniel",
-      "agent_agency": "Terra Caribbean",
-      "agent_phone": "(868) 369-4040",
-      "agent_image": "https://mybunchofkeys.com/wp-content/uploads/2026/04/Derek-Daniel-320x320.jpg",
-      "image": "https://mybunchofkeys.com/wp-content/uploads/2026/08/a-6.jpg",
-      "images": [
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/a-6.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/b-6.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/c-6.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/d-6.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/e-6.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/f-6.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/g-6.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/h-6.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/i-3.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/j-3.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/k-3.jpg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/l-3.jpg"
-      ],
-      "date_published": "2026-08-06T14:24:40+00:00",
-      "lastmod": "2026-08-06T14:24:40+00:00",
-      "property_style": "House",
-      "property_type": "For Sale",
-      "description": "This Blue Range property sits on almost 13,000 sq ft of prime real estate in one of the most sought after communities in North West, Trinidad. The house has 4 bedrooms, 3.5 bathrooms and is located right next to the Blue Range park and tennis courts. The property is ideally suited for a family to shape and make it their own to enjoy all that this location offers. TT29800 About the Region Blue Range Blue Range is located in St. Lucien Road Diego Martin Trinidad and Tobago. It is a well known residential area, at Blue Range there is a tennis court and fitness centre amongst other things. Blue Range is well known for the “Blue Range Carnival Cooler Fete” which promotes success to the community. The community is classed as “a great place to call home” View More Blue Range Listings",
-      "features": [
-        "Unfurnished",
-        "Air Conditioning",
-        "Parking on Compound",
-        "Fully Fenced",
-        "Pet Friendly",
-        "Water Tank",
-        "Water Pump"
-      ],
-      "scraped_at": "2026-08-06T22:31:38.198815+00:00"
-    },
-    {
-      "url": "https://mybunchofkeys.com/property/for-rent-brookhaven-chaguanas-2-bedrooms-unfurnished-house/",
-      "title": "FOR RENT – Brookhaven, Chaguanas . 2 Bedrooms Unfurnished House - My Bunch of Keys",
-      "price": "$5,000 / Mth",
-      "bok_id": "BOK-1067551",
-      "location": "Chaguanas",
-      "bedrooms": "2",
-      "bathrooms": "1",
       "sqft": "",
       "parking": "3",
       "agent": "Cindy Cupen-Ramirez",
       "agent_agency": "House to Home Real Estate",
       "agent_phone": "(868) 358-3344",
       "agent_image": "https://mybunchofkeys.com/wp-content/uploads/2018/08/bok-avatar-f-320x320.png",
-      "image": "https://mybunchofkeys.com/wp-content/uploads/2026/08/c34a8e1a-b99d-4eb7-adf8-8a54a72b96e2.jpeg",
+      "image": "https://mybunchofkeys.com/wp-content/uploads/2025/11/IMG_0270.jpeg",
       "images": [
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/c34a8e1a-b99d-4eb7-adf8-8a54a72b96e2.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/13b70953-2d8c-4140-b556-c18db21124eb.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/485986a2-86f1-4e9e-92b8-6f258bccb12a.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/e8decf47-7514-44aa-9e50-9507cfed3222.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/c34a8e1a-b99d-4eb7-adf8-8a54a72b96e2-672x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/3fcb9200-099e-4b71-8a4a-36d04d2d6821-667x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/133f117b-9586-41e9-af37-bb0e4010ab88-740x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/89d2e377-cb4d-4e54-9297-54e0b732b582-624x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/e795b23a-c377-4dba-b2d4-f0cf861759a0.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/0b2f9ab5-3c7d-461c-b335-5f71049b1f4d-810x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/6c4ae406-c67e-4231-81c1-30e6b6e1f9fd-810x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/d7c7d8d7-d088-4e53-bdba-27c1954c433f-810x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/81b1767d-b67e-4161-bb66-3a9c975c94de-810x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/00cd474f-e066-4ec0-947c-84faade6678a-810x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/b3d706f8-fb7a-422c-9693-ef4c372a97a1.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/c385fd8c-f486-423b-b12d-b2ec05cef411.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/bc7cc971-f2e7-46b1-bff0-bf2f779c8c29.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/75fa650f-cf45-4ace-8fb9-da6d88a84083.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/7e3b4ead-1722-4cb4-960d-1adfd7b3fa67-810x1080.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/c6dcfda4-c640-443a-bd50-1112278a2f09.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/e5cac552-2297-485a-9813-9bcbc530c889.jpeg",
-        "https://mybunchofkeys.com/wp-content/uploads/2026/08/d5c193b7-b6e8-4eb1-b813-cb7ddb92700d-810x1080.jpeg"
+        "https://mybunchofkeys.com/wp-content/uploads/2025/11/IMG_0270.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/11/IMG_0270-787x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/11/IMG_0271.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/11/IMG_0272.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/11/IMG_0273.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/11/IMG_0274.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/11/IMG_0275-1027x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/11/IMG_0276-764x1080.jpeg"
       ],
-      "date_published": "2026-08-05T20:33:24+00:00",
-      "lastmod": "2026-08-05T20:33:24+00:00",
-      "property_style": "House",
+      "date_published": "2026-08-06T09:12:05+00:00",
+      "lastmod": "2026-08-06T23:02:22+00:00",
+      "property_style": "Apartment/Townhouse",
       "property_type": "For Rent",
-      "description": "FOR RENT – Brookhaven, Chaguanas | TT$5,000 Monthly Enjoy comfortable living in this 2-bedroom home located within the secure, gated community of Brookhaven, Chaguanas. Property Features: • 2 spacious bedrooms • Fully air-conditioned throughout • Smart front door lock for added security and convenience • Full CCTV camera security system • Water heater • Water pump • Two 1,000-gallon water storage tanks • Uncovered parking for up to 3 vehicles • Pet-friendly Optional Upgrade: The compound can be fully fenced for added privacy and security at TT$5,500 per month. This home is ideal for individuals, couples, or small families seeking a safe, comfortable, and well-equipped rental in a desirable location. Rental: TT$5,000 per month With optional compound fencing: TT$5,500 per month Please contact House to Home Real Estate – “Where Every Key Opens a New Beginning” About the Region Chaguanas The Borough of Chaguanas is the largest borough with an average population of 83,489 and fastest-growing town in Trinidad and Tobago, it is located in the West-Central area of Trinidad. Chaguanas is popular for its shopping malls, variety stores and street shopping. Many citizens as well as tourists vi",
+      "description": "For Rent – Fully Furnished 3-Bedroom Townhouse | Hillview Gardens, Gulf View, San Fernando Discover contemporary comfort and convenience in one of South Trinidad’s most desirable gated communities — Hillview Gardens, Gulf View. This beautifully maintained townhouse offers a secure and elegant lifestyle within walking distance of key amenities. Property Details 3 spacious bedrooms 2.5 modern bathrooms Fully furnished and move-in ready Parking for up to 3 vehicles Gated community with 24-hour security and CCTV surveillance Prime Location Situated just minutes from Gulf City Mall, major banks, supermarkets, restaurants, fitness centres, and entertainment spots — everything you need is right nearby. Rental Price US$1,500 / TT$10,000 per month (utilities excluded) Availability Available from November 2025 Perfect for professionals, families, or expatriates, this townhouse offers the ideal combination of security, style, and accessibility in the heart of Gulf View. For more information or to arrange a viewing: Contact House to Home Real Estate Where Every Key Opens a New Beginning. About the Region Gulf View Gulf View is located in La Romain in the South West region of Trinidad. This is ",
+      "features": [
+        "Fully Furnished",
+        "Move in Ready",
+        "Gated Compound",
+        "Air Conditioning",
+        "Security Cameras",
+        "Parking on Compound",
+        "Kid Friendly",
+        "Laundry Area/Facility"
+      ],
+      "scraped_at": "2026-08-06T23:02:48.346173+00:00"
+    },
+    {
+      "url": "https://mybunchofkeys.com/property/premier-commercial-property-for-sale-in-the-heart-of-port-of-spain/",
+      "title": "Premier Commercial Property for Sale in the Heart of Port of Spain - My Bunch of Keys",
+      "price": "$15,000,000",
+      "bok_id": "BOK-880357",
+      "location": "Port of Spain",
+      "bedrooms": "",
+      "bathrooms": "",
+      "sqft": "14000sq.ft.",
+      "parking": "",
+      "agent": "Cindy Cupen-Ramirez",
+      "agent_agency": "House to Home Real Estate",
+      "agent_phone": "(868) 358-3344",
+      "agent_image": "https://mybunchofkeys.com/wp-content/uploads/2018/08/bok-avatar-f-320x320.png",
+      "image": "https://mybunchofkeys.com/wp-content/uploads/2025/04/IMG_6794.jpeg",
+      "images": [
+        "https://mybunchofkeys.com/wp-content/uploads/2025/04/IMG_6795.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/04/IMG_6794.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/04/IMG_6793.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/04/IMG_6796.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/04/IMG_6797.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/04/IMG_6798.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/04/IMG_6799.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/04/IMG_6800.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/04/IMG_6801.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/04/IMG_6802.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/04/IMG_6803.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/04/IMG_6804.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/04/IMG_6805.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/04/IMG_6806.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/04/IMG_6807.jpeg"
+      ],
+      "date_published": "2026-08-06T09:18:09+00:00",
+      "lastmod": "2026-08-06T23:02:11+00:00",
+      "property_style": "Commercial",
+      "property_type": "For Sale",
+      "description": "Premier Commercial Property for Sale in the Heart of Port of Spain Location: Chacon Street & Brian Lara Promenade, Independence Square Asking Price: TT$15,000,000 Property Highlights Total Building Size: 14,000 sq. ft. across three floors Land Size: 5,100 sq. ft. (Freehold) Ground Floor (4,300 sq. ft.): Currently leased to a reputable franchise, ensuring immediate rental income Middle Floor (6,300 sq. ft.): Available for occupancy Top Floor (3,400 sq. ft.): Available for occupancy​ Key Features Rooftop Lease: Renewed 20-year contract with a major service provider, generating TT$14,000 plus VAT monthly Water Supply: High-pressure water tanks installed Air Conditioning: Central air conditioning throughout the building Access: Separate entrances and exits on both Chacon Street and Brian Lara Promenade, facilitating smooth operations for multiple businesses Accessibility: Wheelchair ramp available Facilities: Conference room, male and female restrooms, and a staff kitchen area Layout: Open-plan design on the first and second floors, with enclosed office spaces on the second and top floors for private offices Compliance: Fully compliant with OSHA safety standards Power Supply: Continuou",
+      "features": [
+        "Air Conditioning"
+      ],
+      "scraped_at": "2026-08-06T23:02:53.197764+00:00"
+    },
+    {
+      "url": "https://mybunchofkeys.com/property/842203/",
+      "title": "Apartment Building For Sale. San Juan - My Bunch of Keys",
+      "price": "$1,450,000",
+      "bok_id": "BOK-842203",
+      "location": "San Juan",
+      "bedrooms": "5",
+      "bathrooms": "4",
+      "sqft": "5000sq.ft.",
+      "parking": "",
+      "agent": "Cindy Cupen-Ramirez",
+      "agent_agency": "House to Home Real Estate",
+      "agent_phone": "(868) 358-3344",
+      "agent_image": "https://mybunchofkeys.com/wp-content/uploads/2018/08/bok-avatar-f-320x320.png",
+      "image": "https://mybunchofkeys.com/wp-content/uploads/2025/01/156dae00-f1dd-4d7c-8ee2-414084bcabcd.jpeg",
+      "images": [
+        "https://mybunchofkeys.com/wp-content/uploads/2025/01/ebf9dc78-7df6-4efc-be5e-65d1aeb0985b-810x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/01/3227cdf9-53cc-472c-829a-45b6df99aa4e.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/01/99a7c0d3-b3bc-4689-b7ac-5888be1d6326.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/01/6066ddf2-b867-4d2e-ae23-b484c3eb643a.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/01/156dae00-f1dd-4d7c-8ee2-414084bcabcd.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/01/d962b93f-80ef-4adf-9a44-27998c75bfa3-810x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/01/a3327196-5aaf-4a42-8f39-5493942bc074.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/01/205f2f09-8ca1-40fd-a7ec-9264c9cee8f1-810x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/01/4cb121b2-c23e-40f7-aef1-8d6cdc843b2b.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/01/3056f077-eec7-4bb2-a354-fb0b202e8e07-810x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/01/fd8adacb-2de9-4ccf-a66a-4c1237382691-608x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/01/4ca2f716-de8f-48c6-ba98-133f339ffb27-810x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/01/b9e1c8f0-07ac-40cf-9d14-bedc0067def5.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/01/ef53f39a-ba47-4ab4-8154-0c967670cb7f.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/01/de7d98fd-d55c-47cb-b00c-d06fd0c7c024.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/01/506b4001-d5bc-4ba0-ae28-7a6ec1e218b0.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/01/909ecbed-2da8-4956-871d-f2e3ec4ff4b5.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/01/f7f9eb70-7110-4971-8502-3543f0c00091.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/01/ae0bcca2-cb0f-435f-a5f7-fb043dfcd008.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/01/b182f5be-f84d-463d-ad0a-d5fbb07c1375.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/01/78f47b45-0b20-4186-846f-c4b9bb74c514.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/01/195d51cc-f863-4d10-b771-7767961c0b72.jpeg"
+      ],
+      "date_published": "2026-08-06T09:21:30+00:00",
+      "lastmod": "2026-08-06T23:02:04+00:00",
+      "property_style": "Apartment/Townhouse",
+      "property_type": "For Sale",
+      "description": "Mission Road, San Juan Prime Investment Opportunity This exceptional investment property is just a 2-minute walk from the bustling Croisée , placing you at the heart of San Juan’s thriving community. Its strategic location ensures unparalleled connectivity via the main road and the Priority Bus Route, providing seamless access to the East-West Corridor. Enjoy the convenience of being steps away from local hotspots such as KFC, Domino’s, supermarkets, the San Juan Market, and major banks. Whether for residential or business purposes, this property offers unmatched accessibility and significant growth potential in San Juan’s dynamic real estate market. PROPERTY FEATURES: Land Size: 5,000 Sq. Ft. Building Area: 2,100 Sq. Ft. 4 Self-Contained Units (Unfurnished) Kitchens with Built-In High and Low-Level Cupboards & Tiled Countertops Tiled Flooring Throughout Multiple Access/Exit Points for Each Unit Storage Room Four Individual Meters APARTMENT DETAILS: Apartment 1: 1 Bedroom | 1 Bathroom | 1 Kitchen | 1 Living Area Apartment 2: 2 Bedrooms | 1 Bathroom | 1 Kitchen | 1 Living Area Apartment 3: 1 Bedroom | 1 Bathroom | 1 Kitchen | 1 Living Area | 1 Porch Apartment 4: 1 Bedroom | 1 Bathro",
+      "features": [
+        "Unfurnished",
+        "Kid Friendly"
+      ],
+      "scraped_at": "2026-08-06T23:02:59.092894+00:00"
+    },
+    {
+      "url": "https://mybunchofkeys.com/property/prime-7-acre-parcel-for-sale-piparo/",
+      "title": "Prime 7-Acre Parcel for Sale – Piparo - My Bunch of Keys",
+      "price": "$2,100,000",
+      "bok_id": "BOK-926448",
+      "location": "Tabaquite",
+      "bedrooms": "",
+      "bathrooms": "",
+      "sqft": "28652sq.ft.",
+      "parking": "",
+      "agent": "Cindy Cupen-Ramirez",
+      "agent_agency": "House to Home Real Estate",
+      "agent_phone": "(868) 358-3344",
+      "agent_image": "https://mybunchofkeys.com/wp-content/uploads/2018/08/bok-avatar-f-320x320.png",
+      "image": "https://mybunchofkeys.com/wp-content/uploads/2025/08/1e62f6aa-5141-4161-b37e-fba29c8933a7.jpeg",
+      "images": [
+        "https://mybunchofkeys.com/wp-content/uploads/2025/08/1e62f6aa-5141-4161-b37e-fba29c8933a7.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/08/415d02a1-9897-47fa-a395-3ea07e63f3fd-810x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/08/b1e03871-cee2-494e-80fc-1eee4444d6e2-810x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/08/14e9f613-b18a-4302-9ccb-4e8545855e45-810x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/08/4c18ef53-7444-4fbe-ab8a-6df60fb61af8-810x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/08/f3d3c4d2-fe91-4db7-ad77-2942419d6e49-810x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/08/1e62f6aa-5141-4161-b37e-fba29c8933a7-810x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/08/IMG_8567-805x1080.jpeg"
+      ],
+      "date_published": "2026-08-06T09:34:39+00:00",
+      "lastmod": "2026-08-06T23:01:44+00:00",
+      "property_style": "Land",
+      "property_type": "For Sale",
+      "description": "Prime 7-Acre Parcel for Sale – Piparo Discover an exceptional opportunity with this flat 7-acre parcel Plot, ideally situated along the paved Piparo Road. Offering unmatched accessibility and convenience, this property boasts: Over 1,200 ft of road frontage along a fully paved roadway All utilities available – water, electricity, and cable ready at the front Flat, usable land – ideal for residential, agricultural, or investment development Rear road reserve access – providing added value and future flexibility The location combines peaceful surroundings with direct road access, making it perfect for a private estate, subdivision, or farming investment. Location: Piparo, Trinidad Size: 7 Acres (approx. 2.8652 Ha) Whether you’re a developer, investor, or looking for the perfect site to build your dream property, this land presents endless possibilities. Asking price $2,100,000 About the Region Tabaquite Tabaquite is a town in central Trinidad, north of Rio Claro and west of the Navet Dam. Miss Trinidad and Tobago 2015 Kimberly Singh hails from Tabaquite. Tabaquite is a primarily rural area and suffered from infrastructural neglect. It was an important cocoa bean producer. Tabaquite i",
+      "features": [],
+      "scraped_at": "2026-08-06T23:03:04.781316+00:00"
+    },
+    {
+      "url": "https://mybunchofkeys.com/property/ttlement-road-calcutta-2-freeport-fully-occupied-apartment-building/",
+      "title": "Settlement Road, Calcutta 2, Freeport. FULLY OCCUPIED APARTMENT BUILDING - My Bunch of Keys",
+      "price": "$5,900,000",
+      "bok_id": "BOK-1015260",
+      "location": "Freeport",
+      "bedrooms": "",
+      "bathrooms": "",
+      "sqft": "8000sq.ft.",
+      "parking": "",
+      "agent": "Cindy Cupen-Ramirez",
+      "agent_agency": "House to Home Real Estate",
+      "agent_phone": "(868) 358-3344",
+      "agent_image": "https://mybunchofkeys.com/wp-content/uploads/2018/08/bok-avatar-f-320x320.png",
+      "image": "https://mybunchofkeys.com/wp-content/uploads/2026/04/76022646-8e14-490f-a407-c4600af4f839.jpeg",
+      "images": [
+        "https://mybunchofkeys.com/wp-content/uploads/2026/04/76022646-8e14-490f-a407-c4600af4f839.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/04/2d333d34-b692-4f17-ae45-2909f53e376b-1080x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/04/3d3f005a-1156-49e5-9e98-94f549c069b8-1080x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/04/669964ff-2068-4c2c-ab01-2286b0716282-1080x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/04/cd19df4b-c84e-4db8-b56d-9b1e7b78242f-1080x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/04/7140ea99-11e0-4e49-ab27-a9cfa6f19abb-1080x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/04/ddd20297-0027-4975-ac71-595026466aad-1080x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/04/0d33c9ad-2786-42cb-b2cb-924482d36a21-1080x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/04/b1f22714-20fa-4082-ba67-02957d3690a2-1080x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/04/77f8ed82-98da-4c83-bc33-b50f8c0cbcb5-1080x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/04/90a45caf-fc5f-4575-a48d-0f06bf847d88-1080x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/04/e61b59b1-bd8d-42bc-bf6f-257ee588d848-1080x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/04/14a81e42-b682-40e5-a13d-f3caeb2540df-1080x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/04/fa8f15b4-dde9-4b89-9a30-ce9654fa7ffe-1080x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2026/04/40e723ca-422a-4f0d-a0b2-71a7269f3a4b-1080x1080.jpeg"
+      ],
+      "date_published": "2026-08-06T09:37:10+00:00",
+      "lastmod": "2026-08-06T23:01:25+00:00",
+      "property_style": "Apartment/Townhouse",
+      "property_type": "For Sale",
+      "description": "Settlement Road, Calcutta 2, Freeport (Approx. 3 minutes from Freeport Police Station) FOR SALE, FULLY OCCUPIED APARTMENT BUILDING An exceptional income-producing investment property with immediate cash flow and strong rental demand. Property Details: 3-Storey Building (12 years old) 10 Units Ground Floor: 5 Apartments (1 bedroom, 1 bath) 1st & 2nd Floors: 5 Spacious 3 Bed | 2.5 Bath Townhouse-Style Units Freehold Land – 8,000 sq ft Proven Income Stream: Monthly Income: TT$34,000 Annual Income: TT$408,000 All Units Fully Occupied Strong Rental Demand: Units are typically rented within 1–2 months High tenant retention Excellent location for consistent occupancy Other Features: Fully air-conditioned units Hot & cold water throughout Adequate water supply with multiple water tanks + pump system Functional layouts with modern finishes Asking Price: TT$5,900,000 Contact us today to schedule your viewing and secure this high-performing asset. House to Home Real Estate Where Every Key opens a new beginning About the Region Freeport Freeport is a town in the Republic of Trinidad and Tobago. It is located in west-central Trinidad, and is administered by the Couva–Tabaquite–Talparo Regional ",
+      "features": [
+        "Unfurnished",
+        "Move in Ready",
+        "Gated Compound",
+        "Air Conditioning",
+        "Parking on Compound",
+        "Remote Gate",
+        "Freehold Land",
+        "Kid Friendly",
+        "Built-in Closets",
+        "Water Tank",
+        "Water Pump",
+        "Water Heater"
+      ],
+      "scraped_at": "2026-08-06T23:03:09.893361+00:00"
+    },
+    {
+      "url": "https://mybunchofkeys.com/property/ruby-gardens-factory-road-piarco/",
+      "title": "Ruby Gardens : Factory Road Piarco - My Bunch of Keys",
+      "price": "$1,600,000",
+      "bok_id": "BOK-935310",
+      "location": "Piarco",
+      "bedrooms": "3",
+      "bathrooms": "2.5",
+      "sqft": "",
+      "parking": "",
+      "agent": "Cindy Cupen-Ramirez",
+      "agent_agency": "House to Home Real Estate",
+      "agent_phone": "(868) 358-3344",
+      "agent_image": "https://mybunchofkeys.com/wp-content/uploads/2018/08/bok-avatar-f-320x320.png",
+      "image": "https://mybunchofkeys.com/wp-content/uploads/2025/09/IMG_9031.jpeg",
+      "images": [
+        "https://mybunchofkeys.com/wp-content/uploads/2025/09/IMG_9031.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/09/IMG_9020-1026x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/09/IMG_9021-954x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/09/IMG_9032.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/09/IMG_9023-1137x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/09/IMG_9024-1070x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/09/IMG_9025-1088x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/09/IMG_9026.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/09/IMG_9027.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/09/IMG_9028.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/09/IMG_9029.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/10/IMG_0094-810x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/10/IMG_0095-810x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/10/IMG_0096-810x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/10/IMG_0097-810x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/10/IMG_0098-810x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/10/IMG_0099-810x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/10/IMG_0102-810x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/10/IMG_0100-810x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/10/IMG_0103-810x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/10/IMG_0104-810x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/10/IMG_0105-1-810x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/10/IMG_0106-1-810x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/10/IMG_0107-1-810x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/10/IMG_0108-1-810x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/10/IMG_0110-1-810x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/10/IMG_0109-1-810x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/10/IMG_0111-1-810x1080.jpeg"
+      ],
+      "date_published": "2026-08-06T09:37:41+00:00",
+      "lastmod": "2026-08-06T23:01:13+00:00",
+      "property_style": "Apartment/Townhouse",
+      "property_type": "For Sale",
+      "description": "New three Bedrooms Townhouse for sale . Please call or email for further information About the Region Piarco Piarco is a town in northern Trinidad and is the site of Piarco International Airport. Piarco includes the villages of Piarco and St. Helena. Piarco is the site of one of the few natural savannahs in Trinidad and Tobago, the Piarco Savannah. Most of this savannah land has been incorporated into the airport. Businesses such as Caribbean Airlines headquarters, Airport Authority Administrative Centre, Swissport Cargo, Civil Aviation, TTPOST just to name a few are located in and around Piarco. Trincity Mall, Piarco Plaza, Service stations, Supermarkets, Pharmacies, Hardware and Hotels can also be found in the vicinity of Piarco. Piarco is also facilitated by one of our many Fire and Police Stations in Trinidad. View More Piarco Listings",
       "features": [
         "Unfurnished",
         "Move in Ready",
         "Air Conditioning",
-        "Security Cameras",
+        "Powder Room",
         "Parking on Compound",
-        "Pet Friendly",
         "Kid Friendly",
-        "Elevator Access",
         "Water Tank",
         "Water Heater"
       ],
-      "scraped_at": "2026-08-06T22:38:36.604618+00:00"
+      "scraped_at": "2026-08-06T23:03:16.104468+00:00"
+    },
+    {
+      "url": "https://mybunchofkeys.com/property/windsor-heights-arima-residential-land-for-sale/",
+      "title": "Windsor Heights Arima - Residential Land for Sale - My Bunch of Keys",
+      "price": "$1,000,000",
+      "bok_id": "BOK-604058",
+      "location": "Arima",
+      "bedrooms": "",
+      "bathrooms": "",
+      "sqft": "12905sq.ft.",
+      "parking": "",
+      "agent": "Cindy Cupen-Ramirez",
+      "agent_agency": "House to Home Real Estate",
+      "agent_phone": "(868) 358-3344",
+      "agent_image": "https://mybunchofkeys.com/wp-content/uploads/2018/08/bok-avatar-f-320x320.png",
+      "image": "https://mybunchofkeys.com/wp-content/uploads/2023/06/IMG-20230619-WA0000.jpg",
+      "images": [
+        "https://mybunchofkeys.com/wp-content/uploads/2023/06/IMG-20230619-WA0000.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2023/06/IMG_20230619_173446.jpg"
+      ],
+      "date_published": "2026-08-06T10:00:00+00:00",
+      "lastmod": "2026-08-06T23:01:05+00:00",
+      "property_style": "Land",
+      "property_type": "For Sale",
+      "description": "Windsor Heights, Arima 12905 sq ft of flat land on the hillside , gently sloping within a gated community. Experience fabulous views of the eastern horizon just minutes away from the Churchill Roosevelt Highway and easy access to Pricemart, Airport and Trincity Mall. Approvals in place Sale price: TT$1,000,000.00 The perfect Canvas to create your dream home. Please contact the agent to book your viewing and make your real estate vision come true About the Region Arima Arima, officially The Royal Chartered Borough of Arima is the easternmost and second largest area of the three boroughs of Trinidad and Tobago. This town is well known for its shopping areas located in the inner most portion of the town. It serves as a main trading hub for environs which makes the town considerably busy. Many persons visit Arima to relax and enjoy the wide array of local bars and street food offered such as burgers, doubles, gyros etc. Home to the famous drag malls, persons can visit Arima to purchase items of Rastafarian heritage. Arima, has primary and secondary schools, hospitals, police and fire services readily available. It attracts persons from all over as it hosts exciting borough day & Jouver",
+      "features": [
+        "Gated Community",
+        "T&C Approved"
+      ],
+      "scraped_at": "2026-08-06T23:03:20.849202+00:00"
+    },
+    {
+      "url": "https://mybunchofkeys.com/property/graceland-heights-santa-cruz-residential-land-for-sale/",
+      "title": "Graceland Heights, Santa Cruz Residential Land for Sale - My Bunch of Keys",
+      "price": "$924,999",
+      "bok_id": "BOK-603900",
+      "location": "Santa Cruz",
+      "bedrooms": "",
+      "bathrooms": "",
+      "sqft": "10306sq.ft.",
+      "parking": "",
+      "agent": "Cindy Cupen-Ramirez",
+      "agent_agency": "House to Home Real Estate",
+      "agent_phone": "(868) 358-3344",
+      "agent_image": "https://mybunchofkeys.com/wp-content/uploads/2018/08/bok-avatar-f-320x320.png",
+      "image": "https://mybunchofkeys.com/wp-content/uploads/2023/06/IMG-20230618-WA0011.jpg",
+      "images": [
+        "https://mybunchofkeys.com/wp-content/uploads/2023/06/IMG-20230618-WA0011.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2023/06/IMG-20230618-WA0012.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2023/06/IMG-20230618-WA0013.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2023/06/IMG-20230618-WA0014.jpg"
+      ],
+      "date_published": "2026-08-06T10:00:00+00:00",
+      "lastmod": "2026-08-06T23:00:58+00:00",
+      "property_style": "Land",
+      "property_type": "For Sale",
+      "description": "Graceland Heights, Santa Cruz 10306 Leasehold land in an upscale gated Community. Access to Schools, police and fire station, postal services etc. Approvals in place Sale price: TT$925,000.00 The perfect Canvas to create your dream home. Please contact the agent to book your viewing and make your real estate vision come true About the Region Santa Cruz Santa Cruz is a town in Trinidad and Tobago. It extends across the Santa Cruz Valley, between Maraval and San Juan, along the Saddle Road. It lies between the hills of the Northern Range, a mountain range Santa Cruz is home for a few primary and secondary schools. Some primary schools include the La Pastora Government Primary School, Santa Cruz Presbyterian School, Cantaro Roman Catholic School and Bourg Mulatresse Primary School. San Juan North Secondary School is also situated in the Lower Santa Cruz Valley and it was constructed along the mountain side in Bourg Mulatresse near the Bourg Mulatresse Primary School. There are two postal delivery offices and fuel stations in Bourg Mulatresse and Cantaro. Santa Cruz is also home of a police station and a fire station. The Santa Cruz Fire Station houses the Land Search and Rescue Team, ",
+      "features": [
+        "Leasehold Land",
+        "T&C Approved"
+      ],
+      "scraped_at": "2026-08-06T23:03:26.473829+00:00"
+    },
+    {
+      "url": "https://mybunchofkeys.com/property/windsor-heights-arima-residential-land-for-sale-2/",
+      "title": "Windsor Heights Arima - Flat Residential Land for Sale - My Bunch of Keys",
+      "price": "$1,000,000",
+      "bok_id": "BOK-605331",
+      "location": "Arima",
+      "bedrooms": "",
+      "bathrooms": "",
+      "sqft": "12905sq.ft.",
+      "parking": "",
+      "agent": "Cindy Cupen-Ramirez",
+      "agent_agency": "House to Home Real Estate",
+      "agent_phone": "(868) 358-3344",
+      "agent_image": "https://mybunchofkeys.com/wp-content/uploads/2018/08/bok-avatar-f-320x320.png",
+      "image": "https://mybunchofkeys.com/wp-content/uploads/2023/06/IMG-20230619-WA0000.jpg",
+      "images": [
+        "https://mybunchofkeys.com/wp-content/uploads/2023/06/IMG-20230619-WA0000.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2023/06/IMG_20230619_173446.jpg"
+      ],
+      "date_published": "2026-08-06T10:00:00+00:00",
+      "lastmod": "2026-08-06T23:00:50+00:00",
+      "property_style": "Land",
+      "property_type": "For Sale",
+      "description": "Windsor Heights, Arima 12905 sq ft of flat land on the hillside mostly flat, within a gated community. Experience fabulous views of the eastern horizon just minutes away from the Churchill Roosevelt Highway and easy access to Pricesmart, Airport and Trincity Mall. Approvals in place Sale price: TT$1,000,000.00 The perfect Canvas to create your dream home. Please contact the agent to book your viewing and make your real estate vision come true About the Region Arima Arima, officially The Royal Chartered Borough of Arima is the easternmost and second largest area of the three boroughs of Trinidad and Tobago. This town is well known for its shopping areas located in the inner most portion of the town. It serves as a main trading hub for environs which makes the town considerably busy. Many persons visit Arima to relax and enjoy the wide array of local bars and street food offered such as burgers, doubles, gyros etc. Home to the famous drag malls, persons can visit Arima to purchase items of Rastafarian heritage. Arima, has primary and secondary schools, hospitals, police and fire services readily available. It attracts persons from all over as it hosts exciting borough day & Jouvert c",
+      "features": [
+        "Gated Community",
+        "T&C Approved"
+      ],
+      "scraped_at": "2026-08-06T23:03:31.411718+00:00"
+    },
+    {
+      "url": "https://mybunchofkeys.com/property/residential-land-heritage-road-chin-chin/",
+      "title": "Residential Land Heritage Road, Chin Chin ( CASH BUY ONLY ) - My Bunch of Keys",
+      "price": "$450,000",
+      "bok_id": "BOK-503340",
+      "location": "Chin Chin",
+      "bedrooms": "",
+      "bathrooms": "",
+      "sqft": "5000sq.ft.",
+      "parking": "",
+      "agent": "Cindy Cupen-Ramirez",
+      "agent_agency": "House to Home Real Estate",
+      "agent_phone": "(868) 358-3344",
+      "agent_image": "https://mybunchofkeys.com/wp-content/uploads/2018/08/bok-avatar-f-320x320.png",
+      "image": "https://mybunchofkeys.com/wp-content/uploads/2022/10/278957010_160511526395695_5145076847786593553_n.jpg",
+      "images": [
+        "https://mybunchofkeys.com/wp-content/uploads/2022/10/278957010_160511526395695_5145076847786593553_n.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2022/10/IMG-20220928-WA0010-810x1080.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2022/10/IMG-20220928-WA0013-810x1080.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2022/10/IMG-20220928-WA0009-810x1080.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2022/10/IMG-20220928-WA0012-810x1080.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2022/10/278852250_493294729003193_4668165173770143732_n.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2022/10/278830086_328197106048147_7320569150203703670_n.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2022/10/278721072_1138291750351377_5723921594761640269_n.jpg"
+      ],
+      "date_published": "2026-08-06T10:00:00+00:00",
+      "lastmod": "2026-08-06T23:00:43+00:00",
+      "property_style": "Land",
+      "property_type": "For Sale",
+      "description": "Heritage Drive,Chin Chin Cunupia Residential lot for sale – just 5 minutes from Cunupia Junction. This flat, ready-to-build parcel comes with electricity, roads, and drainage. Freehold land. Cash buyers only. Asking price: $450,000 About the Region Chin Chin Chin Chin is a road located in Cunupia, Trinidad and Tobago. This area is considered residential, many small and medium sized businesses such as parlours, mini marts, bars, food outlets, car care, grocery and RORO Importers operate in this area. This road can merge travelers into Las Lomas, Madras Road and Cunupia. View More Chin Chin Listings",
+      "features": [
+        "Freehold Land"
+      ],
+      "scraped_at": "2026-08-06T23:03:36.674311+00:00"
+    },
+    {
+      "url": "https://mybunchofkeys.com/property/apt-2-hillside-terrace-south-el-dorado/",
+      "title": "Hillside Terrace South, El Dorado: - My Bunch of Keys",
+      "price": "$2,500 / Mth",
+      "bok_id": "BOK-452711",
+      "location": "El Dorado",
+      "bedrooms": "1",
+      "bathrooms": "1",
+      "sqft": "",
+      "parking": "",
+      "agent": "Cindy Cupen-Ramirez",
+      "agent_agency": "House to Home Real Estate",
+      "agent_phone": "(868) 358-3344",
+      "agent_image": "https://mybunchofkeys.com/wp-content/uploads/2018/08/bok-avatar-f-320x320.png",
+      "image": "https://mybunchofkeys.com/wp-content/uploads/2022/05/IMG_20220516_154738.jpg",
+      "images": [
+        "https://mybunchofkeys.com/wp-content/uploads/2022/05/IMG_20220516_154738.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2022/05/IMG-20220516-WA0007-810x1080.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2022/05/IMG-20220516-WA0008-810x1080.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2022/05/IMG-20220516-WA0009-810x1080.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2022/05/IMG_20220516_154738-810x1080.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2022/05/IMG_20220516_154909-810x1080.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2022/05/IMG-20220516-WA0011-810x1080.jpg"
+      ],
+      "date_published": "2026-08-06T10:00:00+00:00",
+      "lastmod": "2026-08-06T23:00:37+00:00",
+      "property_style": "Apartment/Townhouse",
+      "property_type": "For Rent",
+      "description": "Located in Hillside Terrace South, El Dorado, this spacious one-bedroom apartment is equipped with air-conditioning in the bedroom, pine wood kitchen cabinetry. This unit is a ten-minute walk from all goods and services, and is perfect for a couple or a single person only Monthly rental: $2, 500 No pets allowed. Utilities NOT included. About the Region El Dorado El Dorado is considered both residential and commercial area and is split into North and South by the Priority Bus Route, with South being the commercial district. North provides Secondary and Primary schools and newly developed housing schemes which are privately owned. This area has groceries and many small businesses alongside the Eastern Main Road (EMR) which provides services to the community. The centralized Constantine park provides use for sporting activities and exercising. South functions around Industrial and manufacturing type businesses however there are residence living amongst this activity. This main carriageway located in El Dorado South can divert you to the Churchill Roosevelt Highway where you can find Massy Stores, Popeyes, Service Station etc. El Dorado is protected by the Tunapuna police and Fire serv",
+      "features": [
+        "Unfurnished",
+        "Air Conditioning",
+        "Parking on Compound"
+      ],
+      "scraped_at": "2026-08-06T23:03:42.862162+00:00"
+    },
+    {
+      "url": "https://mybunchofkeys.com/property/land-for-sale-heritage-ext-road-cunupia/",
+      "title": "Land For Sale: Heritage Ext Road Cunupia - My Bunch of Keys",
+      "price": "$300,000",
+      "bok_id": "BOK-758852",
+      "location": "Cunupia",
+      "bedrooms": "",
+      "bathrooms": "",
+      "sqft": "5000sq.ft.",
+      "parking": "",
+      "agent": "Cindy Cupen-Ramirez",
+      "agent_agency": "House to Home Real Estate",
+      "agent_phone": "(868) 358-3344",
+      "agent_image": "https://mybunchofkeys.com/wp-content/uploads/2018/08/bok-avatar-f-320x320.png",
+      "image": "https://mybunchofkeys.com/wp-content/uploads/2024/06/IMG_1078.jpeg",
+      "images": [
+        "https://mybunchofkeys.com/wp-content/uploads/2024/06/IMG_1078.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2024/06/IMG_1077.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2024/06/IMG_1079-810x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2024/06/IMG_1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2024/06/IMG_1078-810x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2024/06/IMG_1082.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2024/06/IMG_1081.jpeg"
+      ],
+      "date_published": "2026-08-06T10:00:08+00:00",
+      "lastmod": "2026-08-06T23:00:28+00:00",
+      "property_style": "Land",
+      "property_type": "For Sale",
+      "description": "Heritage Ext road 1st Street Cunupia Exceptional Freehold Land Opportunity! Build Your Vision, Your Way! Unlock the potential of these three exceptional parcels of freehold land, each boasting 5000 sq ft of prime real estate. Located just a stone’s throw away from the bustling Chin Chin junction, this area is rapidly evolving into a vibrant hub of activity, offering unparalleled convenience and accessibility to a plethora of goods and services. Key Features: 🌟 Three individual parcels of freehold land, each spanning 5000 sq ft 🌟 Flexible purchasing options: buy separately or as one cohesive block 🌟 Prime location just 5 minutes from the thriving Chin Chin junction 🌟 Fast-developing area with immense growth potential 🌟 Easy access to a wide array of goods and services, ensuring convenience at your doorstep Whether you’re an investor seeking to capitalize on the area’s exponential growth or a visionary developer eager to bring your dream project to life, these parcels of land offer the perfect canvas for your ambitions. For residential developments. Contact us today to explore purchasing options and embark on your journey towards realizing your vision. Don’t let this opportunity slip",
+      "features": [
+        "Freehold Land"
+      ],
+      "scraped_at": "2026-08-06T23:03:48.786529+00:00"
+    },
+    {
+      "url": "https://mybunchofkeys.com/property/tunapuna-for-sale-prime-commercial-warehouse/",
+      "title": "Tunapuna For Sale: Prime Commercial Warehouse - My Bunch of Keys",
+      "price": "$4,500,000",
+      "bok_id": "BOK-760114",
+      "location": "Tunapuna",
+      "bedrooms": "",
+      "bathrooms": "",
+      "sqft": "5000sq.ft.",
+      "parking": "",
+      "agent": "Cindy Cupen-Ramirez",
+      "agent_agency": "House to Home Real Estate",
+      "agent_phone": "(868) 358-3344",
+      "agent_image": "https://mybunchofkeys.com/wp-content/uploads/2018/08/bok-avatar-f-320x320.png",
+      "image": "https://mybunchofkeys.com/wp-content/uploads/2024/06/08d758a2-ea2c-46e7-af58-ca0d0e0f43c7.jpeg",
+      "images": [
+        "https://mybunchofkeys.com/wp-content/uploads/2024/06/08d758a2-ea2c-46e7-af58-ca0d0e0f43c7.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2024/06/21865087-b0c9-4593-bd88-0a202a3d8e08-810x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2024/06/08d758a2-ea2c-46e7-af58-ca0d0e0f43c7-810x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2024/06/05eb1d5f-7765-4897-955e-fc1cff084208-810x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2024/06/996a16ca-c2c7-4ab3-b72a-5032fcc8c0b4-810x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2024/06/32a8ceaa-3157-49fb-9846-26e3154b5d35-810x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2024/06/d3ceec4a-c098-4df9-ba83-c12b299a17e9-810x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2024/06/66e7965b-10e1-4faa-b487-8d8ea71e4d10-810x1080.jpeg"
+      ],
+      "date_published": "2026-08-06T10:00:18+00:00",
+      "lastmod": "2026-08-06T23:00:19+00:00",
+      "property_style": "Commercial",
+      "property_type": "For Sale",
+      "description": "Tunapuna/El Dorado For Sale: Prime Commercial Warehouse Location: Prime Commercial Area with High Traffic Road Frontage Land Size: 5000 sq ft Take advantage of this prime location for your business! This warehouse offers excellent road frontage in a bustling commercial area, ensuring high visibility and easy access. Perfect for various commercial uses including storage, distribution, or manufacturing. The asking price is $4.5 million Don’t hesitate to contact us for more details or to arrange a viewing. Don’t miss out on this fantastic opportunity About the Region Tunapuna Tunapuna is a town in the East–West Corridor of the island of Trinidad. For over one hundred years, Tunapuna has been a Carnival venue. Each year this regional carnival, which is a showcase for traditional and conventional mas, steel band, and stick fighting, is organized by the Tunapuna Carnival Committee. It is an important market and commercial card. Tunapuna is well protected by its fire and protective services as they are well positioned in a centralized location in Tunapuna. View More Tunapuna Listings",
+      "features": [],
+      "scraped_at": "2026-08-06T23:03:57.449489+00:00"
+    },
+    {
+      "url": "https://mybunchofkeys.com/property/south-park-san-fernando-three-bedroom-townhouses/",
+      "title": "Residences at South Park, Three Bedroom Condominiums , San Fernado - My Bunch of Keys",
+      "price": "$3,000,000",
+      "bok_id": "BOK-768951",
+      "location": "San Fernando",
+      "bedrooms": "3",
+      "bathrooms": "2.5",
+      "sqft": "1500sq.ft.",
+      "parking": "2",
+      "agent": "Cindy Cupen-Ramirez",
+      "agent_agency": "House to Home Real Estate",
+      "agent_phone": "(868) 358-3344",
+      "agent_image": "https://mybunchofkeys.com/wp-content/uploads/2018/08/bok-avatar-f-320x320.png",
+      "image": "https://mybunchofkeys.com/wp-content/uploads/2024/07/unnamed-15.jpg",
+      "images": [
+        "https://mybunchofkeys.com/wp-content/uploads/2024/07/unnamed-7.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2024/07/unnamed-8.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2024/07/unnamed-19-726x1080.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2024/07/unnamed-11-1.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2024/07/unnamed-14.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2024/07/unnamed-10.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2024/07/unnamed-9.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2024/07/unnamed-15.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2024/07/unnamed-3.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2024/07/unnamed-725x1080.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2024/07/unnamed-18-714x1080.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2024/07/unnamed-2-712x1080.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2024/07/unnamed-16.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2024/07/unnamed-6.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2024/07/unnamed-13.jpg",
+        "https://mybunchofkeys.com/wp-content/uploads/2024/07/unnamed-12-1.jpg"
+      ],
+      "date_published": "2026-08-06T10:00:22+00:00",
+      "lastmod": "2026-08-06T23:00:10+00:00",
+      "property_style": "Apartment/Townhouse",
+      "property_type": "For Sale",
+      "description": "Residences at South Park Location : South Park San Fernando Discover the luxurious lifestyle you’ve dreamed of at Residences at South Park , a premier development offering modern living spaces designed for comfort and style. Property Details: Bedrooms : 3 Bathrooms : 2.5 Size : Approximately 1,500 sq. ft. Features: Open Floor Plan : Perfect for entertaining and family gatherings. High Ceilings : 9-foot high ceilings and 8-foot high doors create a spacious and airy ambiance. Climate Control : AC units are installed in all rooms for optimal comfort year-round. Security : An advanced surveillance system is installed throughout the property. Quality Finishes : Top-notch materials and craftsmanship in every detail. Parking : Two parking spaces per residence. Safety : Individual monitored fire alarm and fire suppression system for peace of mind. Security & Communication : Intercom system and access control at all entries. Convenience : Each unit features dedicated laundry and storage rooms. Elegant Flooring : Beautiful porcelain tiles throughout the residence. Modern Kitchen : Sleek design with quartz countertops. Master Suite : Enjoy a luxurious master bedroom with an en-suite bathroom ",
+      "features": [
+        "Unfurnished",
+        "Gated Compound",
+        "Gated Community",
+        "Shared Pool",
+        "Internet Access",
+        "Cable TV",
+        "Air Conditioning",
+        "Powder Room",
+        "Security Cameras",
+        "Parking on Compound",
+        "Remote Gate",
+        "Kid Friendly",
+        "Laundry Area/Facility",
+        "Built-in Closets",
+        "Walk-in Closets",
+        "Water Tank",
+        "Water Pump"
+      ],
+      "scraped_at": "2026-08-06T23:04:02.950230+00:00"
     }
   ],
-  "updated_at": "2026-08-06T22:38:36.606158+00:00"
+  "updated_at": "2026-08-06T23:04:02.951119+00:00"
 }

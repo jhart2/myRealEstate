@@ -50,19 +50,20 @@
         </dl>
       </div>
 
-      <% if @property.feature_list.any? %>
-        <div class="mt-10">
-          <h2 class="font-display text-2xl font-semibold text-ink">Features</h2>
-          <div class="mt-4">
-            <%= render "properties/feature_chips", property: @property %>
-          </div>
-        </div>
-      <% end %>
-
       <div class="mt-10">
         <h2 class="font-display text-2xl font-semibold text-ink">About this property</h2>
         <p class="mt-4 whitespace-pre-line text-sm leading-relaxed text-ink-2"><%= @property.description %></p>
       </div>
+
+      <% groups = @property.facts_and_features_groups %>
+      <% if groups.any? %>
+        <div class="mt-10">
+          <%= render "properties/facts_and_features",
+                property: @property,
+                groups: groups,
+                heading_class: "font-display text-2xl font-semibold text-ink" %>
+        </div>
+      <% end %>
 
       <% if @related.any? %>
         <div class="mt-16">

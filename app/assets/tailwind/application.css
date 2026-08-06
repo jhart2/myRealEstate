@@ -1314,12 +1314,15 @@ html.lightbox-open body {
 
 .property-lightbox-media-tools {
   position: absolute;
-  inset: 0.75rem 0.75rem auto;
+  top: 1rem;
+  left: 1rem;
+  right: 1rem;
   z-index: 2;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
+  overflow: visible;
 }
 
 .property-lightbox-media-actions {
@@ -1327,15 +1330,19 @@ html.lightbox-open body {
   align-items: center;
   gap: 0.4rem;
   position: relative;
+  overflow: visible;
 }
 
 .property-lightbox-icon-form {
   display: inline-flex;
+  align-items: center;
+  justify-content: center;
   margin: 0;
   padding: 0;
   border: 0;
   background: transparent;
   line-height: 0;
+  overflow: visible;
 }
 
 .property-lightbox-icon-btn {
@@ -1350,11 +1357,11 @@ html.lightbox-open body {
   aspect-ratio: 1 / 1;
   gap: 0;
   border: 0;
-  border-radius: 999px;
+  border-radius: 50%;
   background: rgba(255, 255, 255, 0.94);
   color: #1f1a17;
   padding: 0;
-  overflow: hidden;
+  overflow: visible;
   line-height: 0;
   font-family: var(--font-sans);
   font-size: 0;
@@ -1368,10 +1375,15 @@ html.lightbox-open body {
 .property-lightbox-icon-btn svg {
   display: block;
   flex-shrink: 0;
+  overflow: visible;
 }
 
 .property-lightbox-icon-btn:hover {
   background: #fff;
+}
+
+.property-lightbox-icon-btn.is-saved {
+  color: var(--color-trinidad);
 }
 
 .property-lightbox-share-note {
@@ -1897,6 +1909,70 @@ html.lightbox-open body {
   font-size: 0.75rem;
   font-weight: 500;
   line-height: 1.25;
+}
+
+/* Zillow-style Facts & features — TT Realty tokens */
+.facts-features {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.facts-features-panel {
+  background: transparent;
+}
+
+.facts-features-group + .facts-features-group {
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid color-mix(in srgb, var(--color-ink) 10%, var(--color-border));
+}
+
+.facts-features-group-title {
+  margin: 0 0 0.75rem;
+  padding: 0;
+  background: transparent;
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: 0.92rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+}
+
+.facts-features-categories {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  padding: 0;
+}
+
+.facts-features-category-title {
+  margin: 0 0 0.35rem;
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: 0.88rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.facts-features-list {
+  margin: 0;
+  padding: 0 0 0 1.15rem;
+  list-style: disc;
+  color: var(--color-ink-2);
+  font-family: var(--font-sans);
+  font-size: 0.84rem;
+  font-weight: 400;
+  line-height: 1.55;
+}
+
+.facts-features-list li + li {
+  margin-top: 0.12rem;
+}
+
+.facts-features-list li::marker {
+  color: var(--color-ink);
 }
 
 .listing-agent-card {

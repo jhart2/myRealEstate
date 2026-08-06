@@ -9,7 +9,8 @@ Design goals:
   - Configurable delay + jitter between requests.
   - Clear identifying User-Agent (not disguised).
   - Resume-friendly JSON progress cache.
-  - Houses for sale published/updated in the last N days.
+  - All property styles (house, apartment/townhouse, land, commercial, …)
+    published/updated in the last N days.
 
 Examples:
   python3 scripts/bok_gentle_listings_sync.py --days 30 --delay 4
@@ -440,24 +441,47 @@ def parse_listing(url: str, html: str, lastmod: str = "") -> Listing | None:
     # Style / type chips (“Find More In”)
     find_more = first_match(r"Find More In:(.*?)</div>", html, re.I | re.S)
     find_more_text = strip_tags(find_more).lower() if find_more else ""
+    hint = f"{find_more_text} {title} {url}".lower()
 
     style = ""
-    if re.search(r"\bhouse\b", find_more_text):
+    if (
+        re.search(r"\bhouse\b", find_more_text)
+        and "townhouse" not in find_more_text
+        and "apartment" not in find_more_text
+    ):
         style = "House"
     elif "apartment" in find_more_text or "townhouse" in find_more_text:
         style = "Apartment/Townhouse"
-    elif re.search(r"\bland\b", find_more_text):
+    elif re.search(r"\bland\b", find_more_text) or "acreage" in find_more_text:
         style = "Land"
+    elif any(
+        token in find_more_text
+        for token in ("commercial", "office", "warehouse", "retail", "industrial", "storage")
+    ):
+        style = "Commercial"
 
-    ptype = ""
-    if "for sale" in find_more_text or "buy" in find_more_text:
-        ptype = "For Sale"
-    elif "for rent" in find_more_text or "rent" in find_more_text:
-        ptype = "For Rent"
+    if not style:
+        if "townhouse" in hint or "apartment" in hint:
+            style = "Apartment/Townhouse"
+        elif re.search(r"\bland\b|\bacre", hint):
+            style = "Land"
+        elif any(
+            token in hint
+            for token in ("commercial", "office", "warehouse", "retail", "gym-space", "storage")
+        ):
+            style = "Commercial"
+        elif re.search(r"\bhouse\b|\bhome\b|\bvilla\b|\bpenthouse\b", hint):
+            style = "House"
 
-    # Fallback style detection
+    # Taxonomy markup fallbacks
     if not style and re.search(r'property_style[^>]*>\s*House\s*<', html, re.I):
         style = "House"
+    if not style and re.search(r'property_style[^>]*>\s*Apartment', html, re.I):
+        style = "Apartment/Townhouse"
+    if not style and re.search(r'property_style[^>]*>\s*Land\s*<', html, re.I):
+        style = "Land"
+    if not style and re.search(r'property_style[^>]*>\s*Commercial', html, re.I):
+        style = "Commercial"
 
     price_block = first_match(r'<div class="column-half price">(.*?)</div>\s*<div', html, re.I | re.S)
     price = ""
@@ -467,6 +491,16 @@ def parse_listing(url: str, html: str, lastmod: str = "") -> Listing | None:
         price = candidates[0] if candidates else ""
     if not price:
         price = first_match(r'<h4[^>]*>\s*(\$[^<]+)\s*</h4>', html)
+
+    ptype = ""
+    if "for sale" in find_more_text or "buy" in find_more_text:
+        ptype = "For Sale"
+    elif "for rent" in find_more_text or re.search(r"\brent\b", find_more_text):
+        ptype = "For Rent"
+    elif "/ mth" in price.lower() or "/mth" in price.lower() or "for-rent" in hint or "for rent" in hint:
+        ptype = "For Rent"
+    elif "for-sale" in hint or "for sale" in hint:
+        ptype = "For Sale"
 
     location = first_match(r"<strong>Location:</strong>\s*<br\s*/?>\s*([^<\n]+)", html)
     if not location:
@@ -580,7 +614,7 @@ def main() -> int:
     parser.add_argument(
         "--skip-search-crawl",
         action="store_true",
-        help="Only use sitemap candidates; still verify House on detail pages",
+        help="Only use sitemap candidates (all styles); still parse type on detail pages",
     )
     parser.add_argument(
         "--refetch",
@@ -673,7 +707,7 @@ def main() -> int:
         candidate_set = set(candidates)
         for row in cache.get("listings", []):
             dt = parse_dt(row.get("date_published") or row.get("lastmod"))
-            if dt and dt >= cutoff and (row.get("property_style") == "House" or not row.get("property_style")):
+            if dt and dt >= cutoff:
                 # urls-file / from-cache resumes should retain prior enriched rows
                 if (
                     args.urls_file
@@ -712,27 +746,9 @@ def main() -> int:
                 continue
 
             published = parse_dt(listing.date_published) or parse_dt(listing.lastmod)
-            is_house = listing.property_style == "House" or (
-                args.skip_search_crawl
-                and re.search(r"\bhouse\b", (listing.title + " " + listing.description).lower())
-                and listing.property_style != "Apartment/Townhouse"
-                and listing.property_style != "Land"
-            )
-
-            # Prefer explicit House chip when present
-            if listing.property_style and listing.property_style != "House":
-                completed[url] = {"ok": True, "kept": False, "reason": f"style={listing.property_style}"}
-                continue
-
             if published and published < cutoff:
                 completed[url] = {"ok": True, "kept": False, "reason": "too_old"}
                 continue
-
-            if not is_house and listing.property_style != "House":
-                # Intersection path should usually already be houses; keep if chip missing but from house search
-                if args.skip_search_crawl:
-                    completed[url] = {"ok": True, "kept": False, "reason": "not_house"}
-                    continue
 
             if not has_usable_images(listing):
                 completed[url] = {"ok": True, "kept": False, "reason": "no_images"}
@@ -740,8 +756,13 @@ def main() -> int:
                 continue
 
             listings.append(listing)
-            completed[url] = {"ok": True, "kept": True}
-            print(f"  kept: {listing.bok_id or listing.title[:60]} | {listing.price} | {listing.location}", flush=True)
+            style_label = listing.property_style or "Unknown"
+            completed[url] = {"ok": True, "kept": True, "style": style_label}
+            print(
+                f"  kept: {listing.bok_id or listing.title[:60]} | {style_label} | "
+                f"{listing.price} | {listing.location}",
+                flush=True,
+            )
 
             cache = {
                 "completed": completed,

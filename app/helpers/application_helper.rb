@@ -2,7 +2,9 @@ module ApplicationHelper
   CATEGORIES = [
     { label: "Houses", type: "House", image: "https://images.unsplash.com/photo-1566908829550-e6551b00979b?w=600&h=400&fit=crop&auto=format" },
     { label: "Apartments", type: "Apartment", image: "https://images.unsplash.com/photo-1760887497519-3b1c5a525836?w=600&h=400&fit=crop&auto=format" },
+    { label: "Townhouses", type: "Townhouse", image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&h=400&fit=crop&auto=format" },
     { label: "Commercial", type: "Commercial", image: "https://images.unsplash.com/photo-1770622006495-86de934162b5?w=600&h=400&fit=crop&auto=format" },
+    { label: "Land", type: "Land", image: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=600&h=400&fit=crop&auto=format" },
     { label: "Villas", type: "Villa", image: "https://images.unsplash.com/photo-1762811054947-605b20298615?w=600&h=400&fit=crop&auto=format" }
   ].freeze
 

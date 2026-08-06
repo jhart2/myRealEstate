@@ -592,7 +592,10 @@ export default class extends Controller {
     stats.push(`<span class="popup-stat">${listing.statusLabel || listing.tag}</span>`)
 
     return `
-      <a href="${listing.url}" class="popup-card">
+      <a href="${listing.url}"
+         class="popup-card"
+         data-turbo-frame="property_lightbox"
+         data-action="click->property-lightbox#open">
         <div class="popup-media">
           ${image}
           <div class="popup-dots" aria-hidden="true">

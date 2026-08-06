@@ -1,0 +1,26 @@
+<%# locals: (property:, groups: nil, heading_class: "font-display text-xl font-semibold text-ink") %>
+<% groups = groups.nil? ? property.facts_and_features_groups : groups %>
+<% if groups.any? %>
+  <section class="facts-features" aria-labelledby="facts-features-heading-<%= property.id %>">
+    <h2 id="facts-features-heading-<%= property.id %>" class="<%= heading_class %>">Facts &amp; features</h2>
+    <div class="facts-features-panel" data-testid="category-group">
+      <% groups.each do |group| %>
+        <div class="facts-features-group">
+          <h3 class="facts-features-group-title"><%= group[:name] %></h3>
+          <div class="facts-features-categories">
+            <% group[:categories].each do |category| %>
+              <div class="facts-features-category">
+                <h4 class="facts-features-category-title"><%= category[:name] %></h4>
+                <ul class="facts-features-list">
+                  <% category[:items].each do |item| %>
+                    <li><%= item %></li>
+                  <% end %>
+                </ul>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </section>
+<% end %>

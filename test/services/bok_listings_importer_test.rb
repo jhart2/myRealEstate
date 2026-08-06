@@ -51,8 +51,60 @@ class BokListingsImporterTest < ActiveSupport::TestCase
     assert_equal 1, result.created
     property = Property.find_by!(bok_id: "BOK-GOOD")
     assert_equal "active", property.status
+    assert_equal "House", property.property_type
+    assert_equal "sale", property.tag
     assert property.image_urls.any?
     assert property.image_url.present?
+  end
+
+  test "maps apartment for rent from BOK style and price" do
+    path = write_feed([
+      good_row.merge(
+        "bok_id" => "BOK-APT-RENT",
+        "url" => "https://mybunchofkeys.com/property/cozy-apartment-for-rent/",
+        "title" => "Cozy Apartment for Rent - My Bunch of Keys",
+        "price" => "$4,500 / Mth",
+        "property_style" => "Apartment/Townhouse",
+        "property_type" => "For Rent"
+      )
+    ])
+
+    result = BokListingsImporter.import!(path, agent: @agent)
+
+    assert_equal 1, result.created
+    property = Property.find_by!(bok_id: "BOK-APT-RENT")
+    assert_equal "Apartment", property.property_type
+    assert_equal "rent", property.tag
+  end
+
+  test "maps land and commercial styles" do
+    path = write_feed([
+      good_row.merge(
+        "bok_id" => "BOK-LAND",
+        "url" => "https://mybunchofkeys.com/property/land-for-sale-arima/",
+        "title" => "Land for Sale Arima - My Bunch of Keys",
+        "property_style" => "Land",
+        "property_type" => "For Sale"
+      ),
+      good_row.merge(
+        "bok_id" => "BOK-COMM",
+        "url" => "https://mybunchofkeys.com/property/warehouse-space-longdenville/",
+        "title" => "Warehouse Space - My Bunch of Keys",
+        "property_style" => "Commercial",
+        "property_type" => "For Rent",
+        "price" => "$8,000 / Mth"
+      )
+    ])
+
+    result = BokListingsImporter.import!(path, agent: @agent)
+
+    assert_equal 2, result.created
+    land = Property.find_by!(bok_id: "BOK-LAND")
+    commercial = Property.find_by!(bok_id: "BOK-COMM")
+    assert_equal "Land", land.property_type
+    assert_equal "sale", land.tag
+    assert_equal "Commercial", commercial.property_type
+    assert_equal "rent", commercial.tag
   end
 
   test "destroys an existing public listing when re-import has no usable images" do
@@ -121,6 +173,8 @@ class BokListingsImporterTest < ActiveSupport::TestCase
       "bedrooms" => "3",
       "bathrooms" => "2",
       "sqft" => "2000sq.ft.",
+      "property_style" => "House",
+      "property_type" => "For Sale",
       "image" => "https://mybunchofkeys.com/wp-content/uploads/2024/01/archer-1.jpg",
       "images" => [
         "https://mybunchofkeys.com/wp-content/uploads/2024/01/archer-1.jpg",

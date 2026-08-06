@@ -10,28 +10,54 @@ export default class extends Controller {
   connect() {
     this.onKeydown = this.onKeydown.bind(this)
     this.onFrameLoad = this.onFrameLoad.bind(this)
-    this.frameTarget?.addEventListener("turbo:frame-load", this.onFrameLoad)
+    this.onFrameMissing = this.onFrameMissing.bind(this)
+
+    // Delegate on the controller root so listeners survive Turbo replacing the frame element.
+    this.element.addEventListener("turbo:frame-load", this.onFrameLoad)
+    this.element.addEventListener("turbo:frame-missing", this.onFrameMissing)
     document.addEventListener("keydown", this.onKeydown)
   }
 
   disconnect() {
     document.removeEventListener("keydown", this.onKeydown)
-    this.frameTarget?.removeEventListener("turbo:frame-load", this.onFrameLoad)
+    this.element.removeEventListener("turbo:frame-load", this.onFrameLoad)
+    this.element.removeEventListener("turbo:frame-missing", this.onFrameMissing)
     this.unlockScroll()
   }
 
   open(event) {
-    // Let Turbo fill the frame; reveal overlay immediately for feedback
+    // Cmd/Ctrl/Shift/middle-click → let the browser open the full property page.
+    if (!this.#isPrimaryActivation(event)) return
+
+    const url = event.currentTarget.getAttribute("href")
+    if (!url || !this.hasFrameTarget) return
+
+    // Intercept before Turbo Drive can fall through to a full-page visit when the
+    // frame redirector fails to claim the click (missing FrameElement upgrade, etc.).
+    event.preventDefault()
+
     this.showOverlay()
+    this.#loadIntoFrame(url)
   }
 
-  onFrameLoad() {
+  onFrameLoad(event) {
+    if (!this.hasFrameTarget || event.target !== this.frameTarget) return
+
     if (!this.frameHasContent()) {
       this.close()
       return
     }
+
     this.showOverlay()
     this.initDetailMap()
+  }
+
+  onFrameMissing(event) {
+    if (!this.hasFrameTarget || event.target !== this.frameTarget) return
+
+    // Never let a missing-frame response navigate away from search.
+    event.preventDefault()
+    this.close()
   }
 
   showOverlay() {
@@ -55,7 +81,10 @@ export default class extends Controller {
 
     window.setTimeout(() => {
       this.overlayTarget.classList.add("hidden")
-      if (this.hasFrameTarget) this.frameTarget.innerHTML = ""
+      if (this.hasFrameTarget) {
+        this.frameTarget.removeAttribute("src")
+        this.frameTarget.innerHTML = ""
+      }
       this.unlockScroll()
     }, 180)
   }
@@ -140,6 +169,11 @@ export default class extends Controller {
     }
   }
 
+  promptSignIn(event) {
+    event.preventDefault()
+    this.flashShare("Sign in to save homes")
+  }
+
   flashShare(message) {
     const note = this.overlayTarget.querySelector("[data-share-note]")
     if (!note) return
@@ -192,5 +226,34 @@ export default class extends Controller {
     mapEl.dataset.ready = "1"
     mapEl._leaflet_map = map
     window.setTimeout(() => map.invalidateSize(), 80)
+  }
+
+  #isPrimaryActivation(event) {
+    if (event.defaultPrevented) return false
+    if (typeof event.button === "number" && event.button !== 0) return false
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return false
+    return true
+  }
+
+  #loadIntoFrame(url) {
+    if (!this.hasFrameTarget) return
+
+    const frame = this.frameTarget
+    const next = new URL(url, window.location.href).href
+    const currentAttr = frame.getAttribute("src")
+    const current = currentAttr ? new URL(currentAttr, window.location.href).href : ""
+
+    if (current === next) {
+      // Re-open the same listing: force a reload so turbo:frame-load fires again.
+      if (typeof frame.reload === "function") {
+        frame.reload()
+      } else {
+        frame.removeAttribute("src")
+        frame.src = url
+      }
+      return
+    }
+
+    frame.src = url
   }
 }

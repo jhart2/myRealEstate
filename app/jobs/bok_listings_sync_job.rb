@@ -26,6 +26,7 @@ class BokListingsSyncJob < ApplicationJob
     skip_search = boolean_opt(skip_search_crawl, "BOK_SYNC_SKIP_SEARCH", true)
 
     seed_known_urls_into_cache!
+    reopen_style_skips_in_cache!
     json_path = run_scraper!(days:, max_details:, delay:, skip_search_crawl: skip_search)
     result = BokListingsImporter.import!(json_path)
 
@@ -84,6 +85,28 @@ class BokListingsSyncJob < ApplicationJob
     out_dir.mkpath
     cache_path.write(JSON.pretty_generate(cache))
     Rails.logger.info("[BokListingsSyncJob] seeded #{added} known source_urls into progress cache")
+  end
+
+  # Older runs skipped non-House styles. Clear those cache rows so the next
+  # sync re-fetches them now that all styles are imported.
+  def reopen_style_skips_in_cache!
+    return unless cache_path.exist?
+
+    cache = JSON.parse(cache_path.read)
+    completed = cache["completed"]
+    return unless completed.is_a?(Hash)
+
+    reopen_reasons = /\Astyle=|not_house\z/
+    removed = completed.keys.select do |url|
+      meta = completed[url]
+      meta.is_a?(Hash) && meta["kept"] == false && meta["reason"].to_s.match?(reopen_reasons)
+    end
+    return if removed.empty?
+
+    removed.each { |url| completed.delete(url) }
+    cache["updated_at"] = Time.current.utc.iso8601
+    cache_path.write(JSON.pretty_generate(cache))
+    Rails.logger.info("[BokListingsSyncJob] reopened #{removed.size} previously style-skipped URLs")
   end
 
   def run_scraper!(days:, max_details:, delay:, skip_search_crawl:)

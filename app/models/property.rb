@@ -7,7 +7,7 @@ class Property < ApplicationRecord
   has_many :inquiries, dependent: :destroy
 
   TAGS = %w[sale rent new].freeze
-  PROPERTY_TYPES = %w[House Apartment Villa Penthouse Commercial Modern\ Home].freeze
+  PROPERTY_TYPES = %w[House Apartment Townhouse Villa Penthouse Commercial Land Modern\ Home].freeze
   STATUSES = %w[active pending sold rented].freeze
 
   scope :active, -> { where(status: "active") }
@@ -232,6 +232,12 @@ class Property < ApplicationRecord
     Array(features).map { |f| f.to_s.strip }.reject(&:blank?).uniq
   end
 
+  # Zillow-style Facts & features: group headers → category headings → bullet rows.
+  # Uses first-class attributes plus heuristic buckets for flat BOK amenity strings.
+  def facts_and_features_groups
+    Taxonomy.build(self)
+  end
+
   def gallery_image_urls
     urls = Array(image_urls).map { |u| u.to_s.strip }.reject(&:blank?)
     primary = self[:image_url].presence
@@ -322,6 +328,135 @@ class Property < ApplicationRecord
     derived = (BigDecimal(lot_sqft.to_s) / LotSizeExtractor::SQFT_PER_ACRE).round(4)
     BigDecimal(acres.to_s).round(4) == derived
   end
+
+  # Maps known BOK amenity strings into Interior / Exterior / Other categories.
+  module Taxonomy
+    CATEGORY_ORDER = {
+      "Interior" => [
+        "Bedrooms & bathrooms",
+        "Kitchen",
+        "Heating & cooling",
+        "Laundry",
+        "Interior features",
+        "Furnishings",
+        "Condition"
+      ],
+      "Exterior" => [
+        "Lot",
+        "Parking",
+        "Outdoor living",
+        "Security",
+        "Community"
+      ],
+      "Other" => [
+        "Utilities",
+        "Accessibility",
+        "Features"
+      ]
+    }.freeze
+
+    GROUP_ORDER = CATEGORY_ORDER.keys.freeze
+
+    FEATURE_PLACEMENT = {
+      "Air Conditioning" => [ "Interior", "Heating & cooling" ],
+      "Central Air Conditioning" => [ "Interior", "Heating & cooling" ],
+      "Kitchen Appliances" => [ "Interior", "Kitchen" ],
+      "Kitchen Island" => [ "Interior", "Kitchen" ],
+      "Pantry" => [ "Interior", "Kitchen" ],
+      "Powder Room" => [ "Interior", "Bedrooms & bathrooms" ],
+      "Jacuzzi" => [ "Interior", "Bedrooms & bathrooms" ],
+      "Built-in Closets" => [ "Interior", "Interior features" ],
+      "Walk-in Closets" => [ "Interior", "Interior features" ],
+      "Office Space" => [ "Interior", "Interior features" ],
+      "Studio" => [ "Interior", "Interior features" ],
+      "Attic" => [ "Interior", "Interior features" ],
+      "Maid Quarters" => [ "Interior", "Interior features" ],
+      "Annex" => [ "Interior", "Interior features" ],
+      "Home Gym" => [ "Interior", "Interior features" ],
+      "Wet Bar" => [ "Interior", "Interior features" ],
+      "Smart Devices" => [ "Interior", "Interior features" ],
+      "Cable TV" => [ "Interior", "Interior features" ],
+      "Internet Access" => [ "Interior", "Interior features" ],
+      "Laundry Area/Facility" => [ "Interior", "Laundry" ],
+      "Unfurnished" => [ "Interior", "Furnishings" ],
+      "Fully Furnished" => [ "Interior", "Furnishings" ],
+      "Semi Furnished" => [ "Interior", "Furnishings" ],
+      "Move in Ready" => [ "Interior", "Condition" ],
+      "Recently Renovated" => [ "Interior", "Condition" ],
+      "Freehold Land" => [ "Exterior", "Lot" ],
+      "Leasehold Land" => [ "Exterior", "Lot" ],
+      "Fully Fenced" => [ "Exterior", "Lot" ],
+      "Partially Fenced" => [ "Exterior", "Lot" ],
+      "T&C Approved" => [ "Exterior", "Lot" ],
+      "Parking on Compound" => [ "Exterior", "Parking" ],
+      "Covered Garage" => [ "Exterior", "Parking" ],
+      "Patio" => [ "Exterior", "Outdoor living" ],
+      "Private Pool" => [ "Exterior", "Outdoor living" ],
+      "Shared Pool" => [ "Exterior", "Outdoor living" ],
+      "Remote Gate" => [ "Exterior", "Security" ],
+      "Gated Compound" => [ "Exterior", "Security" ],
+      "Gated Community" => [ "Exterior", "Security" ],
+      "Security Cameras" => [ "Exterior", "Security" ],
+      "Security Patrols" => [ "Exterior", "Security" ],
+      "Security Alarms" => [ "Exterior", "Security" ],
+      "Pet Friendly" => [ "Exterior", "Community" ],
+      "Kid Friendly" => [ "Exterior", "Community" ],
+      "Water Heater" => [ "Other", "Utilities" ],
+      "Water Tank" => [ "Other", "Utilities" ],
+      "Water Pump" => [ "Other", "Utilities" ],
+      "Electricity" => [ "Other", "Utilities" ],
+      "3-Phase Electricity" => [ "Other", "Utilities" ],
+      "Utilities included" => [ "Other", "Utilities" ],
+      "Accessible" => [ "Other", "Accessibility" ]
+    }.freeze
+
+    module_function
+
+    def build(property)
+      buckets = Hash.new { |h, group| h[group] = Hash.new { |c, cat| c[cat] = [] } }
+
+      add_structured!(buckets, property)
+      property.feature_list.each { |feature| place_feature!(buckets, feature) }
+
+      GROUP_ORDER.filter_map do |group_name|
+        categories = CATEGORY_ORDER.fetch(group_name).filter_map do |category_name|
+          items = buckets[group_name][category_name]
+          next if items.blank?
+
+          { name: category_name, items: items }
+        end
+        next if categories.empty?
+
+        { name: group_name, categories: categories }
+      end
+    end
+
+    def add_structured!(buckets, property)
+      room_items = []
+      room_items << "Bedrooms: #{property.beds}" if property.beds.present?
+      room_items << "Bathrooms: #{property.baths}" if property.baths.present?
+      buckets["Interior"]["Bedrooms & bathrooms"].concat(room_items) if room_items.any?
+
+      lot_items = []
+      if property.sqft.present?
+        lot_items << "Building size: #{ActiveSupport::NumberHelper.number_to_delimited(property.sqft)} sqft"
+      end
+      lot_items << "Lot size: #{property.acreage_label}" if property.acreage_label.present?
+      lot_items << "Type: #{property.property_type}" if property.property_type.present?
+      buckets["Exterior"]["Lot"].concat(lot_items) if lot_items.any?
+    end
+
+    def place_feature!(buckets, feature)
+      group, category = FEATURE_PLACEMENT[feature]
+      if group
+        buckets[group][category] << feature
+      else
+        buckets["Other"]["Features"] << feature
+      end
+    end
+    private_class_method :add_structured!, :place_feature!
+  end
+  private_constant :Taxonomy
 
   private
 

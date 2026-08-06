@@ -241,8 +241,8 @@ class BokListingsImporter
       source_url: row["url"].presence,
       title: title,
       slug: slug_for(row),
-      tag: "sale",
-      property_type: "House",
+      tag: map_tag(row),
+      property_type: map_property_type(row),
       status: "active",
       address: address,
       city: city,
@@ -268,14 +268,60 @@ class BokListingsImporter
     end
   end
 
+  def map_tag(row)
+    intent = row["property_type"].to_s.downcase
+    price = row["price"].to_s.downcase
+    url = row["url"].to_s.downcase
+    title = row["title"].to_s.downcase
+
+    return "rent" if intent.include?("rent")
+    return "rent" if price.include?("/ mth") || price.include?("/mth") || price.include?("per month")
+    return "rent" if url.include?("for-rent") || title.include?("for rent")
+    return "sale" if intent.include?("sale") || intent.include?("buy")
+
+    "sale"
+  end
+
+  def map_property_type(row)
+    style = row["property_style"].to_s.strip
+    blob = "#{row['title']} #{row['description']} #{row['url']}".downcase
+
+    case style
+    when "House"
+      return "Villa" if blob.include?("villa")
+      return "Penthouse" if blob.include?("penthouse")
+      return "Modern Home" if blob.include?("modern home")
+      "House"
+    when "Apartment/Townhouse"
+      return "Townhouse" if blob.include?("townhouse") || blob.include?("town house") || blob.include?("town-house")
+      "Apartment"
+    when "Land"
+      "Land"
+    when "Commercial"
+      "Commercial"
+    when "Villa"
+      "Villa"
+    when "Penthouse"
+      "Penthouse"
+    else
+      return "Townhouse" if blob.include?("townhouse")
+      return "Apartment" if blob.include?("apartment")
+      return "Land" if blob.match?(/\bland\b|\bacre/)
+      return "Commercial" if blob.match?(/commercial|office|warehouse|retail|storage/)
+      return "Villa" if blob.include?("villa")
+      return "Penthouse" if blob.include?("penthouse")
+      "House"
+    end
+  end
+
   def clean_title(raw, url)
     title = unescape(raw.to_s).gsub(SITE_SUFFIX, "").strip
     return title if title.present?
 
     path = URI.parse(url.to_s).path.to_s
-    path.split("/").reject(&:blank?).last.to_s.tr("-", " ").titleize.presence || "House listing"
+    path.split("/").reject(&:blank?).last.to_s.tr("-", " ").titleize.presence || "BOK listing"
   rescue URI::InvalidURIError
-    "House listing"
+    "BOK listing"
   end
 
   def address_from(title, city)
