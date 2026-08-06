@@ -1,0 +1,242 @@
+# Imports JSON produced by scripts/bok_gentle_listings_sync.py into Property records.
+#
+#   bin/rails bok:import[scripts/bok_sync_data/houses_last_month_….json]
+#   bin/rails bok:import  # latest houses_last_month_*.json under scripts/bok_sync_data
+#
+class BokListingsImporter
+  SITE_SUFFIX = /\s*[-–—]\s*My Bunch of Keys\s*\z/i
+  DEFAULT_COORDS = [ 10.6549, -61.5019 ].freeze # Port of Spain centroid fallback
+
+  # Approximate community centroids for Trinidad map pins (not survey-grade).
+  CITY_COORDS = {
+    "maraval" => [ 10.7015, -61.5278 ],
+    "port of spain" => [ 10.6549, -61.5019 ],
+    "san fernando" => [ 10.2820, -61.4585 ],
+    "chaguaramas" => [ 10.6885, -61.6382 ],
+    "westmoorings" => [ 10.6755, -61.5585 ],
+    "cascade" => [ 10.6850, -61.5120 ],
+    "champs fleurs" => [ 10.6480, -61.4210 ],
+    "diego martin" => [ 10.7205, -61.5580 ],
+    "arima" => [ 10.6370, -61.2820 ],
+    "tunapuna" => [ 10.6520, -61.3880 ],
+    "st augustine" => [ 10.6410, -61.3990 ],
+    "st. augustine" => [ 10.6410, -61.3990 ],
+    "st joseph" => [ 10.6530, -61.4150 ],
+    "st. joseph" => [ 10.6530, -61.4150 ],
+    "curepe" => [ 10.6360, -61.4020 ],
+    "san juan" => [ 10.6460, -61.4460 ],
+    "barataria" => [ 10.6440, -61.4600 ],
+    "woodbrook" => [ 10.6630, -61.5240 ],
+    "st ann's" => [ 10.6850, -61.5150 ],
+    "st anns" => [ 10.6850, -61.5150 ],
+    "belmont" => [ 10.6620, -61.5050 ],
+    "glencoe" => [ 10.6780, -61.5450 ],
+    "goodwood park" => [ 10.6820, -61.5520 ],
+    "valsayn" => [ 10.6300, -61.4100 ],
+    "trincity" => [ 10.6350, -61.3500 ],
+    "tobago" => [ 11.1800, -60.7400 ],
+    "scarborough" => [ 11.1810, -60.7350 ],
+    "couva" => [ 10.4220, -61.4670 ],
+    "chaguanas" => [ 10.5160, -61.4110 ],
+    "point fortin" => [ 10.1830, -61.6840 ],
+    "princes town" => [ 10.2660, -61.3740 ],
+    "sangre grande" => [ 10.5870, -61.1110 ],
+    "mayaro" => [ 10.2910, -61.0060 ],
+    "rio claro" => [ 10.3050, -61.1750 ],
+    "freeport" => [ 10.4600, -61.4100 ],
+    "carapichaima" => [ 10.4650, -61.4500 ],
+    "santa cruz" => [ 10.7200, -61.4600 ],
+    "maracas" => [ 10.7600, -61.4400 ],
+    "las cuevas" => [ 10.7800, -61.4000 ],
+    "petit valley" => [ 10.7000, -61.5500 ],
+    "diamond vale" => [ 10.7050, -61.5650 ]
+  }.freeze
+
+  Result = Struct.new(:created, :updated, :skipped, :errors, keyword_init: true)
+
+  def self.import!(path = nil, agent: nil)
+    new(path, agent: agent).import!
+  end
+
+  def initialize(path = nil, agent: nil)
+    @path = resolve_path(path)
+    @agent = agent
+  end
+
+  def import!
+    rows = JSON.parse(File.read(@path))
+    raise ArgumentError, "Expected a JSON array in #{@path}" unless rows.is_a?(Array)
+
+    agent = @agent || import_agent
+    result = Result.new(created: 0, updated: 0, skipped: 0, errors: [])
+
+    rows.each do |row|
+      import_row(row, agent, result)
+    end
+
+    Agent.reset_counters(agent.id, :properties)
+    result
+  end
+
+  private
+
+  def resolve_path(path)
+    return Pathname.new(path) if path.present?
+
+    dir = Rails.root.join("scripts/bok_sync_data")
+    latest = Dir.glob(dir.join("houses_last_month_*.json")).max_by { |f| File.mtime(f) }
+    raise ArgumentError, "No houses_last_month_*.json under #{dir}" unless latest
+
+    Pathname.new(latest)
+  end
+
+  def import_agent
+    Agent.find_or_create_by!(email: "import@mybunchofkeys.com") do |a|
+      a.name = "My Bunch of Keys"
+      a.title = "Listing Feed"
+      a.bio = "Listings synced from mybunchofkeys.com"
+      a.phone = ""
+      a.active = true
+      a.show_on_homepage = false
+      a.listings_count = 0
+    end
+  end
+
+  def import_row(row, agent, result)
+    bok_id = row["bok_id"].to_s.strip.presence
+    source_url = row["url"].to_s.strip.presence
+    if bok_id.blank? && source_url.blank?
+      result.skipped += 1
+      return
+    end
+
+    price_cents = parse_price_cents(row["price"])
+    if price_cents.nil? || price_cents <= 0
+      result.skipped += 1
+      result.errors << "#{bok_id || source_url}: missing/invalid price"
+      return
+    end
+
+    property = find_property(bok_id, source_url)
+    attrs = build_attrs(row, agent, price_cents)
+
+    if property
+      property.assign_attributes(attrs.except(:slug))
+      if property.changed?
+        property.save!
+        result.updated += 1
+      else
+        result.skipped += 1
+      end
+    else
+      Property.create!(attrs)
+      result.created += 1
+    end
+  rescue ActiveRecord::RecordInvalid => e
+    result.errors << "#{bok_id || source_url}: #{e.record.errors.full_messages.to_sentence}"
+    result.skipped += 1
+  end
+
+  def find_property(bok_id, source_url)
+    scope = Property.all
+    by_bok = bok_id.present? ? scope.find_by(bok_id: bok_id) : nil
+    return by_bok if by_bok
+
+    source_url.present? ? scope.find_by(source_url: source_url) : nil
+  end
+
+  def build_attrs(row, agent, price_cents)
+    city = (row["location"].presence || "Trinidad").to_s.strip
+    lat, lng = coords_for(city)
+    title = clean_title(row["title"], row["url"])
+    address = address_from(title, city)
+
+    {
+      agent: agent,
+      bok_id: row["bok_id"].presence,
+      source_url: row["url"].presence,
+      title: title,
+      slug: slug_for(row),
+      tag: "sale",
+      property_type: "House",
+      status: "active",
+      address: address,
+      city: city,
+      state: "Trinidad",
+      zip: "",
+      price_cents: price_cents,
+      beds: row["bedrooms"].to_s[/\d+/]&.to_i,
+      baths: row["bathrooms"].to_s[/\d+/]&.to_i,
+      sqft: parse_sqft(row["sqft"]),
+      description: row["description"].to_s.strip.presence || title,
+      image_url: row["image"].presence,
+      latitude: lat,
+      longitude: lng,
+      featured: false
+    }.tap do |attrs|
+      lot = LotSizeExtractor.call([ title, attrs[:description] ].join("\n"))
+      if lot
+        attrs[:acres] = lot.acres
+        attrs[:lot_sqft] = lot.lot_sqft
+      end
+    end
+  end
+
+  def clean_title(raw, url)
+    title = unescape(raw.to_s).gsub(SITE_SUFFIX, "").strip
+    return title if title.present?
+
+    path = URI.parse(url.to_s).path.to_s
+    path.split("/").reject(&:blank?).last.to_s.tr("-", " ").titleize.presence || "House listing"
+  rescue URI::InvalidURIError
+    "House listing"
+  end
+
+  def address_from(title, city)
+    # Prefer the lead clause of the listing title, then fall back to city.
+    lead = title.split(/\s*[-–,|]\s*/, 2).first.to_s.strip
+    return lead if lead.present? && lead.downcase != city.downcase
+
+    city
+  end
+
+  def slug_for(row)
+    from_url = row["url"].to_s[%r{/property/([^/]+)/?}i, 1]
+    base = (from_url.presence || row["bok_id"].presence || row["title"]).to_s.parameterize
+    base = "bok-listing" if base.blank?
+    candidate = base
+    n = 2
+    while Property.exists?(slug: candidate)
+      existing = Property.find_by(slug: candidate)
+      break if existing && (existing.bok_id == row["bok_id"] || existing.source_url == row["url"])
+
+      candidate = "#{base}-#{n}"
+      n += 1
+    end
+    candidate
+  end
+
+  def parse_price_cents(raw)
+    digits = raw.to_s.gsub(/[^\d.]/, "")
+    return nil if digits.blank?
+
+    (BigDecimal(digits) * 100).to_i
+  end
+
+  def parse_sqft(raw)
+    digits = raw.to_s.gsub(/[^\d]/, "")
+    digits.present? ? digits.to_i : nil
+  end
+
+  def coords_for(city)
+    key = city.to_s.downcase.strip
+    return CITY_COORDS[key] if CITY_COORDS.key?(key)
+
+    match = CITY_COORDS.find { |name, _| key.include?(name) || name.include?(key) }
+    match ? match.last : DEFAULT_COORDS
+  end
+
+  def unescape(text)
+    CGI.unescapeHTML(text.to_s)
+  end
+end

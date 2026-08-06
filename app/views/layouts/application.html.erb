@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title><%= page_document_title %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="TT Realty">
+    <meta name="description" content="<%= content_for?(:meta_description) ? yield(:meta_description) : "Premium property listings and expert real estate advisory across Trinidad & Tobago." %>">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <%= yield :head %>
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+  <body class="min-h-screen bg-ground text-ink antialiased <%= 'overflow-hidden' if content_for?(:hide_footer) || @hide_footer %>">
+    <%= render "shared/flash" %>
+    <%= render "shared/navbar" %>
+    <main class="<%= 'h-[calc(100dvh-4rem)]' if content_for?(:hide_footer) || @hide_footer %>">
+      <%= yield %>
+    </main>
+    <% unless content_for?(:hide_footer) || @hide_footer %>
+      <%= render "shared/footer" %>
+    <% end %>
+  </body>
+</html>

@@ -1,0 +1,17 @@
+.git
+.gitignore
+tmp
+log
+storage
+node_modules
+vendor/bundle
+.ruby-lsp
+coverage
+spec
+test
+README.md
+docs
+agent-transcripts
+.cursor
+*.sqlite3
+scripts/bok_sync_data

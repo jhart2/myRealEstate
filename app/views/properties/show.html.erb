@@ -1,0 +1,99 @@
+<% content_for :title, @property.title %>
+
+<section class="bg-ink">
+  <div class="aspect-[21/9] overflow-hidden bg-ink-2">
+    <img src="<%= @property.display_image_url %>" alt="<%= @property.title %>" class="h-full w-full object-cover opacity-90">
+  </div>
+</section>
+
+<section class="mx-auto max-w-7xl px-6 py-12">
+  <div class="grid gap-12 lg:grid-cols-3">
+    <div class="lg:col-span-2">
+      <div class="flex flex-wrap items-center gap-3">
+        <span class="rounded px-2.5 py-1 text-xs font-semibold text-white <%= @property.tag == 'sale' ? 'bg-trinidad' : 'bg-ink-2' %>"><%= @property.tag_label %></span>
+        <span class="text-xs font-medium uppercase tracking-wide text-ink-3"><%= @property.property_type %></span>
+      </div>
+      <h1 class="font-display mt-3 text-4xl font-light text-ink md:text-5xl"><%= @property.title %></h1>
+      <p class="mt-2 text-ink-3"><%= @property.full_address %></p>
+      <p class="font-display mt-6 text-3xl font-semibold text-ink"><%= @property.display_price %></p>
+
+      <div class="mt-8 flex flex-wrap gap-8 border-y border-border py-6 text-sm text-ink-2">
+        <div><span class="block font-display text-2xl font-semibold text-ink"><%= @property.beds %></span> Bedrooms</div>
+        <div><span class="block font-display text-2xl font-semibold text-ink"><%= @property.baths %></span> Bathrooms</div>
+        <div><span class="block font-display text-2xl font-semibold text-ink"><%= number_with_delimiter(@property.sqft) %></span> Sq Ft</div>
+      </div>
+
+      <div class="property-lightbox-stats-wrap mt-5">
+        <dl class="property-lightbox-stats">
+          <div class="property-lightbox-stat">
+            <dt class="sr-only">Time on market</dt>
+            <dd>
+              <strong><%= @property.days_on_estate %></strong>
+              <%= @property.days_on_estate == 1 ? "day" : "days" %> on
+              <span class="property-lightbox-stat-tip" title="Calendar days since this listing was published on TT Realty">TT</span>
+            </dd>
+          </div>
+          <div class="property-lightbox-stat">
+            <dt class="sr-only">Views</dt>
+            <dd>
+              <strong><%= number_with_delimiter(@property.views_count) %></strong>
+              <span class="property-lightbox-stat-tip" title="Unique sessions that opened this listing">views</span>
+            </dd>
+          </div>
+          <div class="property-lightbox-stat">
+            <dt class="sr-only">Saves</dt>
+            <dd>
+              <strong><%= number_with_delimiter(@property.saves_count) %></strong>
+              <span class="property-lightbox-stat-tip" title="Buyers who saved this home to favorites">saves</span>
+            </dd>
+          </div>
+        </dl>
+      </div>
+
+      <div class="mt-10">
+        <h2 class="font-display text-2xl font-semibold text-ink">About this property</h2>
+        <p class="mt-4 whitespace-pre-line text-sm leading-relaxed text-ink-2"><%= @property.description %></p>
+      </div>
+
+      <% if @related.any? %>
+        <div class="mt-16">
+          <h2 class="font-display mb-6 text-2xl font-semibold text-ink">Similar properties</h2>
+          <div class="grid gap-6 md:grid-cols-3">
+            <% @related.each do |property| %>
+              <%= render "properties/card", property: property %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <aside class="lg:col-span-1">
+      <div class="sticky top-24 rounded-xl border border-border bg-panel p-6 shadow-[0_2px_12px_rgba(26,23,20,0.06)]">
+        <h3 class="font-display text-xl font-semibold text-ink">Request a tour</h3>
+        <p class="mt-1 mb-5 text-sm text-ink-3">An advisor will respond within one business day.</p>
+
+        <%= form_with model: @inquiry, url: inquiries_path, class: "space-y-3" do |f| %>
+          <%= f.hidden_field :property_id %>
+          <%= f.hidden_field :agent_id, value: @property.agent_id %>
+          <%= f.text_field :name, placeholder: "Full name", required: true, class: "field" %>
+          <%= f.email_field :email, placeholder: "Email", required: true, class: "field" %>
+          <%= f.telephone_field :phone, placeholder: "Phone (optional)", class: "field" %>
+          <%= f.text_area :message, placeholder: "I'm interested in this property…", rows: 4, required: true, class: "field" %>
+          <%= f.submit "Send inquiry", class: "btn-accent w-full cursor-pointer" %>
+        <% end %>
+
+        <div class="mt-4">
+          <% if authenticated? %>
+            <% if current_user.favorited?(@property) %>
+              <%= button_to "Remove from favorites", property_favorite_path(@property), method: :delete, class: "btn-outline w-full cursor-pointer !px-4 !py-2.5" %>
+            <% else %>
+              <%= button_to "Save to favorites", property_favorite_path(@property), method: :post, class: "btn-outline w-full cursor-pointer !px-4 !py-2.5" %>
+            <% end %>
+          <% else %>
+            <%= link_to "Sign in to save", new_session_path, class: "btn-outline w-full !px-4 !py-2.5" %>
+          <% end %>
+        </div>
+      </div>
+    </aside>
+  </div>
+</section>

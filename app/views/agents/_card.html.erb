@@ -1,0 +1,30 @@
+<%# locals: (agent:) %>
+<div class="group overflow-hidden rounded-xl bg-panel shadow-[0_2px_12px_rgba(26,23,20,0.06)] transition-transform hover:-translate-y-1">
+  <%= link_to agent_path(agent) do %>
+    <div class="relative aspect-[3/4] overflow-hidden bg-stone-light">
+      <img src="<%= agent.display_image_url %>" alt="<%= agent.name %>" class="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-105">
+      <div class="absolute inset-0" style="background: linear-gradient(to top, rgba(26,23,20,0.7) 0%, transparent 50%)"></div>
+      <div class="absolute bottom-0 left-0 p-4">
+        <p class="font-display text-lg font-semibold text-ground"><%= agent.name %></p>
+        <p class="mt-0.5 text-xs text-ground/65"><%= agent.title %></p>
+        <% if agent.years_experience.present? %>
+          <p class="mt-1 text-xs text-white/80"><%= agent.experience_label %></p>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+  <div class="flex items-center justify-between border-t border-stone-light px-4 py-3">
+    <div class="text-center">
+      <p class="font-display text-base font-semibold text-ink"><%= agent.listings_count %></p>
+      <p class="text-xs text-ink-3">Listings</p>
+    </div>
+    <div class="h-8 w-px bg-stone-light"></div>
+    <div class="text-center">
+      <p class="font-display text-base font-semibold text-ink"><%= agent.sales_volume %></p>
+      <p class="text-xs text-ink-3">Sales Vol.</p>
+    </div>
+    <%= link_to agent_path(agent), class: "flex h-8 w-8 items-center justify-center rounded-full bg-ground text-ink-2 transition-colors hover:bg-ink hover:text-ground", aria: { label: "Contact #{agent.name}" } do %>
+      <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+    <% end %>
+  </div>
+</div>

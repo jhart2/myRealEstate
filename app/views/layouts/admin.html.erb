@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title><%= content_for?(:title) ? "#{yield(:title)} · Admin" : "Admin · TT Realty" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+  <body class="min-h-screen bg-panel-warm text-ink antialiased">
+    <div class="flex min-h-screen">
+      <aside class="hidden w-60 shrink-0 border-r border-border bg-ink text-ground md:block">
+        <div class="border-b border-white/10 px-5 py-5">
+          <%= link_to root_path, class: "font-display text-xl font-semibold" do %>
+            TT <span class="text-xs font-sans font-medium uppercase tracking-[0.2em] text-trinidad">Realty</span>
+          <% end %>
+        </div>
+        <nav class="flex flex-col gap-1 p-3 text-sm">
+          <%= link_to "Dashboard", admin_root_path, class: "rounded-lg px-3 py-2 hover:bg-white/10 #{current_page?(admin_root_path) ? 'bg-white/10' : ''}" %>
+          <%= link_to "Properties", admin_properties_path, class: "rounded-lg px-3 py-2 hover:bg-white/10" %>
+          <%= link_to "Agents", admin_agents_path, class: "rounded-lg px-3 py-2 hover:bg-white/10" %>
+          <%= link_to "Inquiries", admin_inquiries_path, class: "rounded-lg px-3 py-2 hover:bg-white/10" %>
+          <%= link_to "View site →", root_path, class: "mt-4 rounded-lg px-3 py-2 text-trinidad hover:bg-white/10" %>
+        </nav>
+      </aside>
+      <div class="flex min-w-0 flex-1 flex-col">
+        <header class="flex items-center justify-between border-b border-border bg-panel px-6 py-4">
+          <p class="text-sm text-ink-3">Signed in as <%= current_user.name %></p>
+          <%= button_to "Sign out", session_path, method: :delete, class: "text-sm text-ink-2 hover:text-ink" %>
+        </header>
+        <%= render "shared/flash" %>
+        <div class="flex-1 p-6">
+          <%= yield %>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

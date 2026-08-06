@@ -1,0 +1,26 @@
+<% content_for :title, "Inquiry ##{@inquiry.id}" %>
+
+<div class="mb-6">
+  <%= link_to "← Inquiries", admin_inquiries_path, class: "text-sm text-ink-3 hover:text-ink" %>
+</div>
+
+<div class="grid max-w-3xl gap-6">
+  <div class="rounded-xl border border-border bg-panel p-6">
+    <h1 class="font-display text-3xl font-light"><%= @inquiry.name %></h1>
+    <p class="mt-1 text-sm text-ink-3"><%= @inquiry.email %><% if @inquiry.phone.present? %> · <%= @inquiry.phone %><% end %></p>
+    <p class="mt-6 whitespace-pre-line text-sm leading-relaxed text-ink-2"><%= @inquiry.message %></p>
+    <dl class="mt-6 grid gap-2 text-sm text-ink-3">
+      <div>Property: <%= @inquiry.property&.title || "—" %></div>
+      <div>Agent: <%= @inquiry.agent&.name || "—" %></div>
+      <div>Received: <%= @inquiry.created_at.strftime("%b %-d, %Y at %-l:%M %p") %></div>
+    </dl>
+  </div>
+
+  <%= form_with model: [:admin, @inquiry], class: "rounded-xl border border-border bg-panel p-6 space-y-4" do |f| %>
+    <div class="field-group">
+      <%= f.label :status, class: "field-label" %>
+      <%= f.select :status, Inquiry::STATUSES.map { |s| [s.titleize, s] }, {}, class: "field" %>
+    </div>
+    <%= f.submit "Update status", class: "btn-primary cursor-pointer" %>
+  <% end %>
+</div>

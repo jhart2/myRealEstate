@@ -1,0 +1,35 @@
+<%# locals: (property:) %>
+<article
+  id="listing-<%= property.id %>"
+  class="group cursor-pointer bg-panel transition-colors hover:bg-panel-warm"
+  data-search-map-target="card"
+  data-listing-id="<%= property.id %>"
+  data-action="mouseenter->search-map#highlightCard mouseleave->search-map#unhighlightCard click->search-map#focusCard"
+>
+  <%= link_to property_path(property),
+        class: "flex gap-3 p-4",
+        data: {
+          turbo_frame: "property_lightbox",
+          action: "click->property-lightbox#open"
+        } do %>
+    <div class="relative h-28 w-36 shrink-0 overflow-hidden rounded-lg bg-stone-light">
+      <% if property.display_image_url.present? %>
+        <img src="<%= property.display_image_url %>" alt="<%= property.title %>" class="h-full w-full object-cover">
+      <% end %>
+      <span class="absolute left-2 top-2 rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white <%= property.tag == 'sale' ? 'bg-trinidad' : 'bg-ink-2' %>">
+        <%= property.tag_label %>
+      </span>
+    </div>
+
+    <div class="min-w-0 flex-1 py-0.5">
+      <p class="font-display text-lg font-semibold leading-tight text-ink"><%= property.display_price %></p>
+      <p class="mt-1 truncate text-sm font-medium text-ink"><%= property.title %></p>
+      <p class="mt-0.5 truncate text-xs text-ink-3"><%= property.full_address %></p>
+      <p class="mt-2 text-xs text-ink-2">
+        <% if property.beds.to_i > 0 %><span class="font-semibold text-ink"><%= property.beds %></span> bd · <% end %>
+        <span class="font-semibold text-ink"><%= property.baths %></span> ba
+        <% if property.sqft.present? %> · <span class="font-semibold text-ink"><%= number_with_delimiter(property.sqft) %></span> sqft<% end %>
+      </p>
+    </div>
+  <% end %>
+</article>

@@ -1,0 +1,202 @@
+<% content_for :title, "Homes for Sale in Trinidad & Tobago" %>
+
+<section class="relative flex min-h-[90vh] flex-col justify-end bg-ink">
+  <div class="absolute inset-0">
+    <img
+      src="https://images.unsplash.com/photo-1762811054947-605b20298615?w=1600&h=1000&fit=crop&auto=format"
+      alt="Modern illuminated house at dusk"
+      class="h-full w-full object-cover opacity-55">
+    <div class="absolute inset-0" style="background: linear-gradient(to bottom, rgba(26,23,20,0.2) 0%, rgba(26,23,20,0.85) 100%)"></div>
+  </div>
+
+  <div class="relative z-10 mx-auto w-full max-w-7xl px-6 pb-20 pt-32">
+    <div class="mb-6 flex items-center gap-3">
+      <span class="block h-px w-8 bg-white"></span>
+      <span class="text-xs font-medium uppercase tracking-[0.25em] text-white/80">Trinidad &amp; Tobago Real Estate</span>
+    </div>
+
+    <h1 class="font-display mb-4 max-w-[14ch] text-5xl font-light leading-none text-ground md:text-7xl">
+      Find homes for sale in <em class="italic font-semibold text-white">Trinidad</em>.
+    </h1>
+    <p class="mb-12 max-w-lg text-base text-ground/65">
+      Browse <%= number_with_delimiter(Property.active.count) %> verified listings across Trinidad &amp; Tobago — apartments, houses, and more from Port of Spain to Tobago.
+    </p>
+
+    <%= form_with url: properties_path, method: :get, class: "max-w-[820px] rounded-xl bg-white p-1", data: { turbo: false } do %>
+      <div class="mb-1 flex gap-1 rounded-lg bg-ground p-1" data-controller="tabs">
+        <% [["sale", "Buy"], ["rent", "Rent"], ["new", "New Homes"]].each_with_index do |(value, label), i| %>
+          <label class="flex-1 cursor-pointer">
+            <input type="radio" name="intent" value="<%= value %>" class="peer sr-only" <%= "checked" if i.zero? %>>
+            <span class="block rounded-md py-2 text-center text-sm font-medium text-ink-2 transition-all peer-checked:bg-ink peer-checked:text-ground"><%= label %></span>
+          </label>
+        <% end %>
+      </div>
+
+      <div class="flex flex-col gap-2 p-2 md:flex-row">
+        <div
+          class="relative z-50 min-w-0 flex-1 overflow-visible"
+          data-controller="location-autocomplete"
+          data-location-autocomplete-auto-submit-value="false"
+        >
+          <input
+            type="text"
+            name="location"
+            placeholder="Address, neighborhood, city…"
+            autocomplete="off"
+            class="w-full rounded-lg bg-panel-warm px-3 py-3 text-sm text-ink outline-none"
+            data-location-autocomplete-target="input"
+            data-action="input->location-autocomplete#onInput focus->location-autocomplete#onFocus blur->location-autocomplete#onBlur keydown->location-autocomplete#onKeydown"
+          >
+          <div
+            class="location-ac-menu absolute left-0 right-0 top-full z-[60] mt-1.5 hidden"
+            data-location-autocomplete-target="menu"
+            hidden
+          ></div>
+        </div>
+        <select name="property_type" class="cursor-pointer rounded-lg bg-panel-warm px-3 py-3 text-sm text-ink outline-none md:w-44">
+          <option>Any Type</option>
+          <% Property::PROPERTY_TYPES.each do |type| %>
+            <option><%= type %></option>
+          <% end %>
+        </select>
+        <select name="budget" class="cursor-pointer rounded-lg bg-panel-warm px-3 py-3 text-sm text-ink outline-none md:w-40">
+          <option>Any Price</option>
+          <option>Under $500K</option>
+          <option>$500K – $1M</option>
+          <option>$1M – $3M</option>
+          <option>$3M – $7M</option>
+          <option>$7M+</option>
+        </select>
+        <button type="submit" class="btn-accent md:w-auto px-6 py-3">Search</button>
+      </div>
+    <% end %>
+
+    <div class="mt-10 flex flex-wrap gap-8">
+      <% [
+        [number_with_delimiter(Property.active.count) + "+", "Homes for Sale"],
+        [Agent.active.count.to_s + "+", "Local Agents"],
+        ["Island-Wide", "Trinidad & Tobago"],
+        ["Port of Spain", "And Beyond"]
+      ].each do |val, label| %>
+        <div>
+          <div class="font-display text-2xl font-semibold text-ground"><%= val %></div>
+          <div class="mt-0.5 text-xs text-ground/50"><%= label %></div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</section>
+
+<section class="mx-auto max-w-7xl px-6 py-24">
+  <div class="mb-12 flex flex-col justify-between gap-6 md:flex-row md:items-end">
+    <div>
+      <span class="section-eyebrow">Featured Properties</span>
+      <h2 class="font-display mt-2 text-4xl font-light text-ink md:text-5xl">Curated listings</h2>
+    </div>
+    <%= link_to "View all →", properties_path, class: "text-sm font-medium text-ink-2 hover:text-ink" %>
+  </div>
+
+  <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+    <% @properties.each do |property| %>
+      <%= render "properties/card", property: property %>
+    <% end %>
+  </div>
+
+  <div class="mt-12 text-center">
+    <%= link_to "View All Listings →", properties_path, class: "btn-outline" %>
+  </div>
+</section>
+
+<section class="bg-ink py-24">
+  <div class="mx-auto max-w-7xl px-6">
+    <div class="mb-12 flex flex-col justify-between gap-4 md:flex-row md:items-end">
+      <div>
+        <span class="section-eyebrow">Browse By Type</span>
+        <h2 class="font-display mt-2 text-4xl font-light text-ground md:text-5xl">Property categories</h2>
+      </div>
+      <p class="max-w-xs text-sm text-ground/50">From compact city apartments to sweeping country estates — find what fits.</p>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4 lg:grid-cols-4">
+      <% ApplicationHelper::CATEGORIES.each do |cat| %>
+        <%= link_to properties_path(property_type: cat[:type]), class: "group relative overflow-hidden rounded-xl text-left focus:outline-none", style: "aspect-ratio: 3/4; background-color: #2e2825" do %>
+          <img src="<%= cat[:image] %>" alt="<%= cat[:label] %>" class="absolute inset-0 h-full w-full object-cover opacity-50 transition-all duration-500 group-hover:scale-105 group-hover:opacity-70">
+          <div class="absolute inset-0" style="background: linear-gradient(to top, rgba(26,23,20,0.9) 0%, transparent 60%)"></div>
+          <div class="absolute bottom-0 left-0 p-5">
+            <p class="font-display text-2xl font-semibold text-ground"><%= cat[:label] %></p>
+            <p class="mt-1 text-sm text-ground/55"><%= property_type_count(cat[:type], @category_counts) %> listings</p>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</section>
+
+<section class="mx-auto max-w-7xl px-6 py-24">
+  <div class="grid items-center gap-16 lg:grid-cols-2">
+    <div class="relative">
+      <div class="aspect-[4/5] overflow-hidden rounded-xl bg-stone-light">
+        <img src="https://images.unsplash.com/photo-1564078516393-cf04bd966897?w=800&h=1000&fit=crop&auto=format" alt="Elegant interior" class="h-full w-full object-cover">
+      </div>
+      <div class="absolute -right-4 bottom-12 rounded-xl bg-panel px-6 py-5 shadow-xl">
+        <p class="font-display text-4xl font-semibold text-ink">98%</p>
+        <p class="mt-1 text-sm text-ink-3">Client satisfaction rate</p>
+      </div>
+    </div>
+    <div>
+      <span class="section-eyebrow">Why TT Realty</span>
+      <h2 class="font-display mt-3 mb-10 text-4xl font-light text-ink md:text-5xl">
+        A smarter way to find <em class="not-italic font-semibold">your next home.</em>
+      </h2>
+      <div class="flex flex-col gap-8">
+        <% [
+          ["01", "Verified Listings Only", "Every property is confirmed by our agents and updated in real time — no duplicates, no phantom listings."],
+          ["02", "Expert Local Agents", "Work with specialists who know the neighborhood, the market, and the deal structure that's right for you."],
+          ["03", "End-to-End Support", "From search to close, our advisors guide you through financing, inspection, negotiation, and move-in."],
+          ["04", "Transparent Pricing", "No hidden fees, no surprise commissions. Our pricing structure is published and fully explained upfront."]
+        ].each do |num, title, body| %>
+          <div class="flex gap-5">
+            <span class="font-display mt-0.5 shrink-0 text-sm font-semibold text-trinidad"><%= num %></span>
+            <div>
+              <p class="mb-1 text-sm font-semibold text-ink"><%= title %></p>
+              <p class="text-sm leading-relaxed text-ink-2"><%= body %></p>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</section>
+
+<% if @agents.any? %>
+<section class="bg-panel-warm py-24">
+  <div class="mx-auto max-w-7xl px-6">
+    <div class="mb-12 flex flex-col justify-between gap-4 md:flex-row md:items-end">
+      <div>
+        <span class="section-eyebrow">Our Specialists</span>
+        <h2 class="font-display mt-2 text-4xl font-light text-ink md:text-5xl">Meet the agents</h2>
+      </div>
+      <%= link_to "View all agents →", agents_path, class: "self-start text-sm font-medium text-ink-2 hover:text-ink md:self-auto" %>
+    </div>
+    <div class="grid grid-cols-2 gap-5 lg:grid-cols-4">
+      <% @agents.each do |agent| %>
+        <%= render "agents/card", agent: agent %>
+      <% end %>
+    </div>
+  </div>
+</section>
+<% end %>
+
+<section class="relative overflow-hidden bg-ink py-28">
+  <div class="absolute inset-0 opacity-20" style="background-image: radial-gradient(circle at 20% 50%, hsl(353 85% 44%) 0%, transparent 50%), radial-gradient(circle at 80% 20%, #8a7f78 0%, transparent 40%)"></div>
+  <div class="relative z-10 mx-auto max-w-3xl px-6 text-center">
+    <span class="section-eyebrow">Stay Ahead</span>
+    <h2 class="font-display mt-3 mb-5 text-4xl font-light text-ground md:text-5xl">New listings, straight to your inbox.</h2>
+    <p class="mx-auto mb-10 max-w-md text-sm text-ground/55">Get weekly curated properties matched to your search criteria before they hit the market.</p>
+    <%= form_with url: subscriptions_path, class: "mx-auto flex max-w-lg flex-col gap-2 rounded-xl bg-white/8 p-2 sm:flex-row" do |f| %>
+      <input type="email" name="email" required placeholder="Your email address" class="flex-1 rounded-lg bg-white/8 px-4 py-3 text-sm text-ground outline-none placeholder:text-ground/40">
+      <button type="submit" class="btn-accent whitespace-nowrap px-6 py-3">Subscribe</button>
+    <% end %>
+    <p class="mt-4 text-xs text-ground/35">No spam. Unsubscribe any time.</p>
+  </div>
+</section>

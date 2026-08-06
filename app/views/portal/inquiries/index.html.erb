@@ -1,0 +1,35 @@
+<% content_for :title, "Inquiries" %>
+
+<h1 class="font-display text-3xl font-light">Inquiries</h1>
+
+<div class="mt-6 overflow-hidden rounded-xl border border-border bg-panel">
+  <% if @inquiries.any? %>
+    <table class="w-full text-left text-sm">
+      <thead class="border-b border-border bg-panel-warm text-xs uppercase tracking-wider text-ink-3">
+        <tr>
+          <th class="px-4 py-3">From</th>
+          <th class="px-4 py-3">Regarding</th>
+          <th class="px-4 py-3">Status</th>
+          <th class="px-4 py-3">Date</th>
+          <th class="px-4 py-3"></th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-border">
+        <% @inquiries.each do |inquiry| %>
+          <tr>
+            <td class="px-4 py-3">
+              <p class="font-medium"><%= inquiry.name %></p>
+              <p class="text-ink-3"><%= inquiry.email %></p>
+            </td>
+            <td class="px-4 py-3 text-ink-3"><%= inquiry.property&.title || "General" %></td>
+            <td class="px-4 py-3"><%= inquiry.status %></td>
+            <td class="px-4 py-3 text-ink-3"><%= inquiry.created_at.strftime("%b %-d, %Y") %></td>
+            <td class="px-4 py-3 text-right"><%= link_to "Open", portal_inquiry_path(inquiry), class: "text-trinidad hover:underline" %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <div class="p-12 text-center text-sm text-ink-3">No inquiries yet.</div>
+  <% end %>
+</div>

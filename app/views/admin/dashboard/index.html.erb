@@ -1,0 +1,50 @@
+<% content_for :title, "Dashboard" %>
+
+<h1 class="font-display text-3xl font-light text-ink">Dashboard</h1>
+
+<div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+  <% @stats.each do |label, value| %>
+    <div class="rounded-xl border border-border bg-panel p-5">
+      <p class="text-xs uppercase tracking-wider text-ink-3"><%= label.to_s.titleize %></p>
+      <p class="font-display mt-2 text-3xl font-semibold text-ink"><%= value %></p>
+    </div>
+  <% end %>
+</div>
+
+<div class="mt-10 grid gap-8 lg:grid-cols-2">
+  <div class="rounded-xl border border-border bg-panel p-6">
+    <div class="mb-4 flex items-center justify-between">
+      <h2 class="font-display text-xl font-semibold">Recent inquiries</h2>
+      <%= link_to "View all", admin_inquiries_path, class: "text-sm text-ink-3 hover:text-ink" %>
+    </div>
+    <ul class="divide-y divide-border">
+      <% @recent_inquiries.each do |inquiry| %>
+        <li class="flex items-center justify-between py-3 text-sm">
+          <div>
+            <p class="font-medium text-ink"><%= inquiry.name %></p>
+            <p class="text-ink-3"><%= inquiry.property&.title || "General inquiry" %></p>
+          </div>
+          <%= link_to inquiry.status.titleize, admin_inquiry_path(inquiry), class: "text-xs text-trinidad" %>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+
+  <div class="rounded-xl border border-border bg-panel p-6">
+    <div class="mb-4 flex items-center justify-between">
+      <h2 class="font-display text-xl font-semibold">Latest properties</h2>
+      <%= link_to "Manage", admin_properties_path, class: "text-sm text-ink-3 hover:text-ink" %>
+    </div>
+    <ul class="divide-y divide-border">
+      <% @recent_properties.each do |property| %>
+        <li class="flex items-center justify-between py-3 text-sm">
+          <div>
+            <p class="font-medium text-ink"><%= property.title %></p>
+            <p class="text-ink-3"><%= property.display_price %></p>
+          </div>
+          <%= link_to "Edit", edit_admin_property_path(property), class: "text-xs text-trinidad" %>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+</div>

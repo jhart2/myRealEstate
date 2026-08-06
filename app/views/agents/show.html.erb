@@ -1,0 +1,65 @@
+<% content_for :title, @agent.name %>
+
+<section class="bg-ink py-16">
+  <div class="mx-auto grid max-w-7xl items-end gap-10 px-6 lg:grid-cols-2">
+    <div class="aspect-[4/5] max-w-md overflow-hidden rounded-xl bg-ink-2">
+      <img src="<%= @agent.display_image_url %>" alt="<%= @agent.name %>" class="h-full w-full object-cover object-top">
+    </div>
+    <div class="pb-4">
+      <span class="section-eyebrow">Agent Profile</span>
+      <h1 class="font-display mt-3 text-5xl font-light text-ground"><%= @agent.name %></h1>
+      <p class="mt-2 text-trinidad"><%= @agent.title %></p>
+      <div class="mt-8 flex flex-wrap gap-10">
+        <% if @agent.years_experience.present? %>
+          <div>
+            <p class="font-display text-3xl font-semibold text-ground"><%= @agent.years_experience %></p>
+            <p class="text-xs text-ground/50">Years experience</p>
+          </div>
+        <% end %>
+        <div>
+          <p class="font-display text-3xl font-semibold text-ground"><%= @agent.listings_count %></p>
+          <p class="text-xs text-ground/50">Active listings</p>
+        </div>
+        <div>
+          <p class="font-display text-3xl font-semibold text-ground"><%= @agent.sales_volume %></p>
+          <p class="text-xs text-ground/50">Sales volume</p>
+        </div>
+      </div>
+      <% if @agent.bio.present? %>
+        <p class="mt-8 max-w-lg text-sm leading-relaxed text-ground/65"><%= @agent.bio %></p>
+      <% end %>
+      <p class="mt-6 text-sm text-ground/55"><%= @agent.email %><% if @agent.phone.present? %> · <%= @agent.phone %><% end %></p>
+    </div>
+  </div>
+</section>
+
+<section class="mx-auto max-w-7xl px-6 py-16">
+  <div class="grid gap-12 lg:grid-cols-3">
+    <div class="lg:col-span-2">
+      <h2 class="font-display mb-8 text-3xl font-light text-ink">Listings by <%= @agent.name.split.first %></h2>
+      <% if @properties.any? %>
+        <div class="grid gap-6 md:grid-cols-2">
+          <% @properties.each do |property| %>
+            <%= render "properties/card", property: property %>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="text-sm text-ink-3">No active listings at the moment.</p>
+      <% end %>
+    </div>
+
+    <aside>
+      <div class="rounded-xl border border-border bg-panel p-6">
+        <h3 class="font-display text-xl font-semibold text-ink">Contact <%= @agent.name.split.first %></h3>
+        <%= form_with model: @inquiry, url: inquiries_path, class: "mt-5 space-y-3" do |f| %>
+          <%= f.hidden_field :agent_id %>
+          <%= f.text_field :name, placeholder: "Full name", required: true, class: "field" %>
+          <%= f.email_field :email, placeholder: "Email", required: true, class: "field" %>
+          <%= f.telephone_field :phone, placeholder: "Phone", class: "field" %>
+          <%= f.text_area :message, rows: 4, placeholder: "How can we help?", required: true, class: "field" %>
+          <%= f.submit "Send message", class: "btn-accent w-full cursor-pointer" %>
+        <% end %>
+      </div>
+    </aside>
+  </div>
+</section>

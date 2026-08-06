@@ -1,0 +1,43 @@
+<% content_for :title, "My Listings" %>
+
+<div class="mb-6 flex items-center justify-between">
+  <h1 class="font-display text-3xl font-light">My listings</h1>
+  <%= link_to "Add listing", new_portal_property_path, class: "btn-primary" %>
+</div>
+
+<div class="overflow-hidden rounded-xl border border-border bg-panel">
+  <% if @properties.any? %>
+    <table class="w-full text-left text-sm">
+      <thead class="border-b border-border bg-panel-warm text-xs uppercase tracking-wider text-ink-3">
+        <tr>
+          <th class="px-4 py-3">Title</th>
+          <th class="px-4 py-3">Type</th>
+          <th class="px-4 py-3">Price</th>
+          <th class="px-4 py-3">Status</th>
+          <th class="px-4 py-3"></th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-border">
+        <% @properties.each do |property| %>
+          <tr>
+            <td class="px-4 py-3 font-medium"><%= property.title %></td>
+            <td class="px-4 py-3 text-ink-3"><%= property.tag_label %> · <%= property.property_type %></td>
+            <td class="px-4 py-3"><%= property.display_price %></td>
+            <td class="px-4 py-3"><%= property.status %></td>
+            <td class="px-4 py-3 text-right">
+              <%= link_to "View", property_path(property), class: "text-ink-3 hover:underline" %>
+              <%= link_to "Edit", edit_portal_property_path(property), class: "ml-3 text-trinidad hover:underline" %>
+              <%= button_to "Delete", portal_property_path(property), method: :delete, class: "ml-3 text-red-600 hover:underline", form: { class: "inline", data: { turbo_confirm: "Remove this listing?" } } %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <div class="p-12 text-center">
+      <p class="font-display text-2xl text-ink">No listings yet</p>
+      <p class="mt-2 text-sm text-ink-3">Publish your first property for clients to find.</p>
+      <%= link_to "Add listing", new_portal_property_path, class: "btn-primary mt-6" %>
+    </div>
+  <% end %>
+</div>

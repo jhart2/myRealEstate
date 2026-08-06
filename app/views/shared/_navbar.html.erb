@@ -1,0 +1,105 @@
+<nav class="sticky top-0 z-50 border-b border-border bg-ground" data-controller="nav">
+  <!-- Desktop -->
+  <div class="mx-auto hidden h-16 max-w-7xl items-center justify-between px-6 md:flex">
+    <%= link_to root_path, class: "flex shrink-0 items-center gap-2" do %>
+      <span class="font-display text-xl font-semibold tracking-tight text-ink">TT</span>
+      <span class="mt-0.5 text-xs font-medium uppercase tracking-[0.2em] text-trinidad">Realty</span>
+    <% end %>
+
+    <div class="flex items-center gap-8">
+      <%= nav_link_to "Buy", properties_path(intent: "sale") %>
+      <%= nav_link_to "Rent", properties_path(intent: "rent") %>
+      <%= nav_link_to "New Homes", properties_path(intent: "new") %>
+      <%= nav_link_to "Agents", agents_path %>
+      <%= nav_link_to "About", about_path %>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <% if authenticated? %>
+        <%= link_to "Saved", favorites_path, class: "btn-ghost" %>
+        <% if current_user.agent? && current_agent %>
+          <%= link_to "Portal", portal_root_path, class: "btn-ghost" %>
+        <% end %>
+        <% if admin? %>
+          <%= link_to "Admin", admin_root_path, class: "btn-ghost" %>
+        <% end %>
+        <%= button_to "Sign out", session_path, method: :delete, class: "btn-ghost cursor-pointer" %>
+      <% else %>
+        <%= link_to "Sign In", new_session_path, class: "btn-ghost" %>
+        <%= link_to "List Property", contact_path, class: "btn-primary" %>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Mobile (Zillow-style: menu · search · sign in) -->
+  <div class="flex h-[60px] items-center gap-2.5 px-3 md:hidden">
+    <button
+      type="button"
+      class="mobile-nav-menu-btn"
+      data-action="nav#toggle"
+      aria-label="Open menu"
+      aria-expanded="false"
+      data-nav-target="toggle"
+    >
+      <span class="mobile-nav-burger" aria-hidden="true">
+        <span data-nav-target="bar"></span>
+        <span data-nav-target="bar"></span>
+        <span data-nav-target="bar"></span>
+      </span>
+    </button>
+
+    <%= form_with url: properties_path, method: :get, class: "mobile-nav-search", html: { data: { turbo: false } } do %>
+      <label class="sr-only" for="mobile_nav_location">Search location</label>
+      <input
+        id="mobile_nav_location"
+        type="search"
+        name="location"
+        value="<%= params[:location] %>"
+        placeholder="Address, neighborhood, city…"
+        autocomplete="off"
+        class="mobile-nav-search-input"
+      >
+      <button type="submit" class="mobile-nav-search-submit" aria-label="Search">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <circle cx="11" cy="11" r="7"/>
+          <path d="m20 20-3.5-3.5"/>
+        </svg>
+      </button>
+    <% end %>
+
+    <% if authenticated? %>
+      <%= link_to "Account", favorites_path, class: "mobile-nav-signin" %>
+    <% else %>
+      <%= link_to "Sign in", new_session_path, class: "mobile-nav-signin" %>
+    <% end %>
+  </div>
+
+  <div class="hidden border-t border-border bg-panel-warm px-4 py-4 md:!hidden" data-nav-target="menu">
+    <%= link_to root_path, class: "mb-4 flex items-center gap-2" do %>
+      <span class="font-display text-lg font-semibold tracking-tight text-ink">TT</span>
+      <span class="text-[10px] font-medium uppercase tracking-[0.2em] text-trinidad">Realty</span>
+    <% end %>
+    <div class="flex flex-col gap-3.5">
+      <%= link_to "Buy", properties_path(intent: "sale"), class: "text-sm font-medium text-ink-2" %>
+      <%= link_to "Rent", properties_path(intent: "rent"), class: "text-sm font-medium text-ink-2" %>
+      <%= link_to "New Homes", properties_path(intent: "new"), class: "text-sm font-medium text-ink-2" %>
+      <%= link_to "Agents", agents_path, class: "text-sm font-medium text-ink-2" %>
+      <%= link_to "About", about_path, class: "text-sm font-medium text-ink-2" %>
+      <div class="flex flex-wrap gap-3 border-t border-border pt-3">
+        <% if authenticated? %>
+          <%= link_to "Saved", favorites_path, class: "text-sm font-medium text-ink-2" %>
+          <% if current_user.agent? && current_agent %>
+            <%= link_to "Portal", portal_root_path, class: "text-sm font-medium text-ink-2" %>
+          <% end %>
+          <% if admin? %>
+            <%= link_to "Admin", admin_root_path, class: "text-sm font-medium text-ink-2" %>
+          <% end %>
+          <%= button_to "Sign out", session_path, method: :delete, class: "text-sm font-medium text-ink-2" %>
+        <% else %>
+          <%= link_to "Sign In", new_session_path, class: "text-sm font-medium text-ink-2" %>
+          <%= link_to "List Property", contact_path, class: "btn-primary !px-3 !py-2 text-sm" %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</nav>

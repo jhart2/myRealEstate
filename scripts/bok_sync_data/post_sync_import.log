@@ -1,0 +1,41 @@
+Waiting for sync PID 1779709…
+Sync finished at 2026-08-06T15:15:34Z
+  GET [552] 200 https://mybunchofkeys.com/property/valsayn-house-for-sale-6-8m/
+  kept: BOK-990354 | $5,990,000 | Valsayn
+  GET [553] 200 https://mybunchofkeys.com/property/valsayn-north-4/
+  kept: BOK-1028286 | $8,000,000 | Prince Charles Ave Valsayn North,
+  GET [554] 200 https://mybunchofkeys.com/property/valsayn-north-house-for-sale-3/
+  kept: BOK-1020171 | $5,300,000 | Valsayn
+  GET [555] 200 https://mybunchofkeys.com/property/valsayn-north-house-for-sale-4/
+  kept: BOK-1026120 | $12,000,000 | Valsayn
+  GET [556] 200 https://mybunchofkeys.com/property/valsayn-south-3-bedroom-2-5-bath-2-storey/
+  kept: BOK-843028 | $7,750,000 | Valsayn
+  GET [557] 200 https://mybunchofkeys.com/property/valsayn-stand-alone-north-east-home-for-sale-6m/
+  kept: BOK-920142 | $6,000,000 | Valsayn
+  GET [558] 200 https://mybunchofkeys.com/property/villas-of-les-boix-morne-coco-road-maraval/
+  kept: BOK-1062643 | $3,500,000 | Maraval
+  GET [559] 200 https://mybunchofkeys.com/property/welcome-residences-cunupia/
+  kept: BOK-1065179 | $1,350,000 | Cunupia
+  GET [560] 200 https://mybunchofkeys.com/property/welcome-road-cunupia-home-for-sale-tt1-95m/
+  kept: BOK-968605 | $1,850,000 | Chaguanas Cunupia
+  GET [561] 200 https://mybunchofkeys.com/property/welcome-road-cunupia-housing-development-tt-1-55m/
+  kept: BOK-617062 | $1,400,000 | Cunupia
+  GET [562] 200 https://mybunchofkeys.com/property/westmoorings-home-for-sale/
+  kept: BOK-532850 | $5,800,000 | Bayshore Port of Spain Westmoorings
+  GET [563] 200 https://mybunchofkeys.com/property/williamsville-residential-commercial-property-for-sale-tt2-5m/
+  kept: BOK-807491 | $2,500,000 | Gasparillo Piparo Reform Williamsville
+  GET [564] 200 https://mybunchofkeys.com/property/woodbrook-commercial/
+  GET [565] 200 https://mybunchofkeys.com/property/woodbrook-investment-property/
+Wrote 241 listings →
+  /home/javon/Desktop/Real Estate Website Builder/scripts/bok_sync_data/houses_last_month_20260806_111506.json
+  /home/javon/Desktop/Real Estate Website Builder/scripts/bok_sync_data/houses_last_month_20260806_111506.csv
+Done. Requests made: 565
+Importing scripts/bok_sync_data/houses_last_month_20260806_111506.json
+Importing from scripts/bok_sync_data/houses_last_month_20260806_111506.json…
+Created: 0
+Updated: 4
+Skipped: 237
+Errors (3):
+  - BOK-1061746: missing/invalid price
+  - https://mybunchofkeys.com/property/for-rent-a-well-appointed-3-bedroom-home-in-emerald-gardens-2/: missing/invalid price
+  - BOK-1057458: missing/invalid price

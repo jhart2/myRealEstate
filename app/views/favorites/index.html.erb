@@ -1,0 +1,24 @@
+<% content_for :title, "Saved Homes" %>
+
+<section class="border-b border-border bg-panel-warm">
+  <div class="mx-auto max-w-7xl px-6 py-12">
+    <span class="section-eyebrow">Your Collection</span>
+    <h1 class="font-display mt-2 text-4xl font-light text-ink md:text-5xl">Saved homes</h1>
+  </div>
+</section>
+
+<section class="mx-auto max-w-7xl px-6 py-16">
+  <% if @properties.any? %>
+    <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <% @properties.each do |property| %>
+        <%= render "properties/card", property: property %>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="rounded-xl border border-border bg-panel p-12 text-center">
+      <p class="font-display text-2xl text-ink">No saved homes yet</p>
+      <p class="mt-2 text-sm text-ink-3">Heart a listing to keep it here.</p>
+      <%= link_to "Browse properties", properties_path, class: "btn-primary mt-6" %>
+    </div>
+  <% end %>
+</section>

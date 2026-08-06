@@ -1,0 +1,295 @@
+<%# locals: (property:, inquiry:) %>
+<% share_url = "#{request.base_url}#{property_path(property)}" %>
+<article
+  class="property-lightbox-panel"
+  data-property-lightbox-detail
+>
+  <div class="property-lightbox-media">
+    <div class="property-lightbox-media-tools">
+      <button
+        type="button"
+        class="property-lightbox-icon-btn"
+        data-action="property-lightbox#close"
+        aria-label="Back to search"
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M15 18l-6-6 6-6"/>
+        </svg>
+        <span>Back</span>
+      </button>
+
+      <div class="property-lightbox-media-actions">
+        <% if authenticated? %>
+          <% if current_user.favorited?(property) %>
+            <%= button_to property_favorite_path(property), method: :delete, class: "property-lightbox-icon-btn", form: { data: { turbo: false } } do %>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21s-7-4.6-9.5-9.2C.8 8.2 2.4 5 6 5c2 0 3.2 1.2 4 2.2C10.8 6.2 12 5 14 5c3.6 0 5.2 3.2 3.5 6.8C19 16.4 12 21 12 21z"/></svg>
+              Saved
+            <% end %>
+          <% else %>
+            <%= button_to property_favorite_path(property), method: :post, class: "property-lightbox-icon-btn", form: { data: { turbo: false } } do %>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 21s-7-4.6-9.5-9.2C.8 8.2 2.4 5 6 5c2 0 3.2 1.2 4 2.2C10.8 6.2 12 5 14 5c3.6 0 5.2 3.2 3.5 6.8C19 16.4 12 21 12 21z"/></svg>
+              Save
+            <% end %>
+          <% end %>
+        <% else %>
+          <%= link_to new_session_path, class: "property-lightbox-icon-btn" do %>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 21s-7-4.6-9.5-9.2C.8 8.2 2.4 5 6 5c2 0 3.2 1.2 4 2.2C10.8 6.2 12 5 14 5c3.6 0 5.2 3.2 3.5 6.8C19 16.4 12 21 12 21z"/></svg>
+            Save
+          <% end %>
+        <% end %>
+
+        <button
+          type="button"
+          class="property-lightbox-icon-btn"
+          data-action="property-lightbox#share"
+          data-share-url="<%= share_url %>"
+          data-share-title="<%= property.title %>"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+            <path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"/>
+            <path d="M12 3v12"/>
+            <path d="M8 7l4-4 4 4"/>
+          </svg>
+          Share
+        </button>
+        <span class="property-lightbox-share-note hidden" data-share-note></span>
+      </div>
+    </div>
+
+    <div data-media-panel="photos" class="property-lightbox-hero">
+      <% if property.display_image_url.present? %>
+        <img src="<%= property.display_image_url %>" alt="<%= property.title %>" class="h-full w-full object-cover">
+      <% else %>
+        <div class="flex h-full items-center justify-center bg-stone-light text-sm text-ink-3">No photo available</div>
+      <% end %>
+    </div>
+
+    <div data-media-panel="map" class="property-lightbox-hero hidden">
+      <% if property.mappable? %>
+        <div
+          class="h-full w-full"
+          data-detail-map
+          data-lat="<%= property.latitude %>"
+          data-lng="<%= property.longitude %>"
+        ></div>
+      <% else %>
+        <div class="flex h-full items-center justify-center bg-stone-light text-sm text-ink-3">Map location unavailable</div>
+      <% end %>
+    </div>
+
+    <div class="property-lightbox-media-tabs" role="tablist" aria-label="Listing media">
+      <button type="button" role="tab" class="property-lightbox-media-tab is-active" data-media="photos" data-media-tab data-action="property-lightbox#showMedia">Photos</button>
+      <button type="button" role="tab" class="property-lightbox-media-tab" data-media="map" data-media-tab data-action="property-lightbox#showMedia" <%= "disabled" unless property.mappable? %>>Map</button>
+    </div>
+  </div>
+
+  <div class="property-lightbox-body">
+    <div class="property-lightbox-main">
+      <div class="property-lightbox-overview">
+        <div class="property-lightbox-overview-main">
+          <span class="property-lightbox-status">
+            <span class="property-lightbox-status-dot <%= property.tag == 'sale' || property.tag == 'new' ? 'is-sale' : '' %>"></span>
+            <%= property.tag_label %>
+          </span>
+          <p class="property-lightbox-price"><%= property.display_price %></p>
+          <p class="property-lightbox-address"><%= property.full_address %></p>
+        </div>
+
+        <div class="property-lightbox-specs" aria-label="Property details">
+          <div class="property-lightbox-spec">
+            <span class="property-lightbox-spec-value"><%= property.beds %></span>
+            <span class="property-lightbox-spec-label">beds</span>
+          </div>
+          <div class="property-lightbox-spec">
+            <span class="property-lightbox-spec-value"><%= property.baths %></span>
+            <span class="property-lightbox-spec-label">baths</span>
+          </div>
+          <% if property.sqft.present? %>
+            <div class="property-lightbox-spec">
+              <span class="property-lightbox-spec-value"><%= number_with_delimiter(property.sqft) %></span>
+              <span class="property-lightbox-spec-label">sqft</span>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <% if property.estimated_payment_label.present? %>
+        <div
+          class="property-lightbox-payment mt-3"
+          title="Estimate assumes <%= (MortgageEstimate::DEFAULT_DOWN_PAYMENT_RATE * 100).to_i %>% down, <%= MortgageEstimate::DEFAULT_TERM_YEARS %> years, <%= (MortgageEstimate::DEFAULT_ANNUAL_RATE * 100).to_s.sub(/\.?0+$/, "") %>% interest. Principal &amp; interest only — not a loan offer."
+        >
+          <p class="property-lightbox-payment-est">
+            <abbr class="property-lightbox-payment-abbr" title="Principal & interest estimate">Est.</abbr><span class="property-lightbox-payment-colon">:</span>
+            <strong><%= property.estimated_payment_label %></strong>
+          </p>
+          <%= link_to "Get pre-qualified", contact_path, class: "property-lightbox-payment-cta", data: { turbo: false } %>
+        </div>
+      <% end %>
+
+      <% if property.acreage_label.present? || property.property_type.present? %>
+        <div class="property-lightbox-facts mt-4">
+          <% if property.property_type.present? %>
+            <div class="property-lightbox-fact">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
+                <path d="M4 20V10l8-6 8 6v10"/>
+                <path d="M9 20v-6h6v6"/>
+              </svg>
+              <span><%= property.property_type %><%= property.tag == "sale" || property.tag == "new" ? ", residential" : "" %></span>
+            </div>
+          <% end %>
+          <% if property.acreage_label.present? %>
+            <div class="property-lightbox-fact">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
+                <path d="M4 18h16"/>
+                <path d="M5 18V9l4 3 3-5 3 4 4-2v9"/>
+                <circle cx="17" cy="7" r="1.4"/>
+              </svg>
+              <span><%= property.acreage_label %></span>
+            </div>
+          <% end %>
+          <% if property.sqft.present? && property.price_cents.to_i > 0 %>
+            <div class="property-lightbox-fact">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
+                <path d="M4 20V10l8-6 8 6v10"/>
+                <path d="M12 8v4"/>
+                <path d="M10.5 10h3"/>
+              </svg>
+              <span>$<%= number_with_delimiter((property.price_cents / 100.0 / property.sqft).round) %> price/sqft</span>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+
+      <div class="property-lightbox-stats-wrap mt-4">
+        <dl class="property-lightbox-stats">
+          <div class="property-lightbox-stat">
+            <dt class="sr-only">Time on market</dt>
+            <dd>
+              <strong><%= property.days_on_estate %></strong>
+              <%= property.days_on_estate == 1 ? "day" : "days" %> on
+              <span class="property-lightbox-stat-tip" title="Calendar days since this listing was published on TT Realty">TT</span>
+            </dd>
+          </div>
+          <div class="property-lightbox-stat">
+            <dt class="sr-only">Views</dt>
+            <dd>
+              <strong><%= number_with_delimiter(property.views_count) %></strong>
+              <span class="property-lightbox-stat-tip" title="Unique sessions that opened this listing">views</span>
+            </dd>
+          </div>
+          <div class="property-lightbox-stat">
+            <dt class="sr-only">Saves</dt>
+            <dd>
+              <strong><%= number_with_delimiter(property.saves_count) %></strong>
+              <span class="property-lightbox-stat-tip" title="Buyers who saved this home to favorites">saves</span>
+            </dd>
+          </div>
+        </dl>
+      </div>
+
+      <% if property.description.present? %>
+        <div class="mt-6">
+          <h2 class="font-display text-xl font-semibold text-ink">About this home</h2>
+          <p class="mt-3 whitespace-pre-line text-sm leading-relaxed text-ink-2"><%= truncate(property.description, length: 720) %></p>
+        </div>
+      <% end %>
+
+      <div class="mt-6">
+        <%= link_to "View full listing", property_path(property), class: "btn-outline inline-flex !px-4 !py-2.5", data: { turbo: false } %>
+      </div>
+
+      <div
+        class="travel-times mt-6"
+        data-controller="travel-times"
+        <% if property.mappable? %>
+          data-travel-times-lat-value="<%= property.latitude %>"
+          data-travel-times-lng-value="<%= property.longitude %>"
+        <% end %>
+        data-action="location-autocomplete:selected->travel-times#destinationSelected"
+      >
+        <div class="travel-times-header">
+          <h2 class="travel-times-title">Travel times</h2>
+        </div>
+
+        <% if property.mappable? %>
+          <div class="travel-times-compose" data-travel-times-target="compose">
+            <div
+              class="travel-times-field"
+              data-controller="location-autocomplete"
+              data-location-autocomplete-auto-submit-value="false"
+            >
+              <span class="travel-times-car" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+                  <path d="M5 16h14v2a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1v-1H8v1a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-2Z"/>
+                  <path d="M5 16l1.2-5.2A2 2 0 0 1 8.1 9h7.8a2 2 0 0 1 1.9 1.8L19 16"/>
+                  <path d="M7.5 19.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Zm9 0a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z"/>
+                </svg>
+              </span>
+              <input
+                type="text"
+                class="travel-times-input"
+                placeholder="Add a destination"
+                autocomplete="off"
+                data-travel-times-target="input"
+                data-location-autocomplete-target="input"
+                data-action="input->location-autocomplete#onInput focus->location-autocomplete#onFocus blur->location-autocomplete#onBlur keydown->location-autocomplete#onKeydown"
+              >
+              <div
+                class="location-ac-menu absolute left-0 right-0 top-full z-[70] mt-1.5 hidden"
+                data-location-autocomplete-target="menu"
+                hidden
+              ></div>
+            </div>
+            <p class="travel-times-status hidden" data-travel-times-target="status"></p>
+          </div>
+
+          <div class="travel-times-result hidden" data-travel-times-target="result">
+            <div class="travel-times-card">
+              <span class="travel-times-marker" aria-hidden="true">A</span>
+              <div class="travel-times-card-copy">
+                <p class="travel-times-card-to" data-travel-times-target="resultLabel">To destination</p>
+                <p class="travel-times-card-mode">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                    <path d="M5 16h14v2a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1v-1H8v1a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-2Z"/>
+                    <path d="M5 16l1.2-5.2A2 2 0 0 1 8.1 9h7.8a2 2 0 0 1 1.9 1.8L19 16"/>
+                  </svg>
+                  By car <strong data-travel-times-target="resultTime">—</strong>
+                </p>
+              </div>
+              <button type="button" class="travel-times-edit" data-action="travel-times#edit">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                  <path d="M12 20h9"/>
+                  <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>
+                </svg>
+                Edit
+              </button>
+            </div>
+            <button type="button" class="travel-times-add" data-action="travel-times#clear">
+              <span class="travel-times-add-icon" aria-hidden="true">+</span>
+              Add another destination
+            </button>
+          </div>
+        <% else %>
+          <p class="travel-times-unavailable">Map location unavailable for commute estimates.</p>
+        <% end %>
+      </div>
+    </div>
+
+    <aside class="property-lightbox-aside">
+      <div class="rounded-xl border border-border bg-panel p-5">
+        <h3 class="font-display text-lg font-semibold text-ink">Request a tour</h3>
+        <p class="mt-1 mb-4 text-sm text-ink-3">An advisor will respond within one business day.</p>
+
+        <%= form_with model: inquiry, url: inquiries_path, class: "space-y-3", data: { turbo: false } do |f| %>
+          <%= f.hidden_field :property_id %>
+          <%= f.hidden_field :agent_id, value: property.agent_id %>
+          <%= f.text_field :name, placeholder: "Full name", required: true, class: "field" %>
+          <%= f.email_field :email, placeholder: "Email", required: true, class: "field" %>
+          <%= f.telephone_field :phone, placeholder: "Phone (optional)", class: "field" %>
+          <%= f.text_area :message, placeholder: "I'm interested in this property…", rows: 3, required: true, class: "field" %>
+          <%= f.submit "Send inquiry", class: "btn-accent w-full cursor-pointer" %>
+        <% end %>
+      </div>
+    </aside>
+  </div>
+</article>

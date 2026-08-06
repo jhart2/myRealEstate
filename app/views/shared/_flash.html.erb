@@ -1,0 +1,6 @@
+<% flash.each do |type, message| %>
+  <% next if message.blank? %>
+  <div class="flash-banner <%= flash_class(type) %>" data-controller="flash" data-action="animationend->flash#remove">
+    <%= message %>
+  </div>
+<% end %>

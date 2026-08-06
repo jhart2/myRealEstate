@@ -1,0 +1,288 @@
+{
+  "port of spain": {
+    "file": "port-of-spain.geojson",
+    "name": "Port of Spain",
+    "osm_id": 7363637,
+    "bbox": [
+      -61.5481359,
+      10.635395,
+      -61.4941448,
+      10.6810521
+    ]
+  },
+  "san fernando": {
+    "file": "san-fernando.geojson",
+    "name": "San Fernando",
+    "osm_id": 7363416,
+    "bbox": [
+      -61.5018095,
+      10.245889,
+      -61.4328029,
+      10.3146523
+    ]
+  },
+  "chaguanas": {
+    "file": "chaguanas.geojson",
+    "name": "Chaguanas",
+    "osm_id": 7363641,
+    "bbox": [
+      -61.4682953,
+      10.5031318,
+      -61.3644917,
+      10.5662804
+    ]
+  },
+  "arima": {
+    "file": "arima.geojson",
+    "name": "Arima",
+    "osm_id": 11146288,
+    "bbox": [
+      -61.297543,
+      10.6051547,
+      -61.2626105,
+      10.6552555
+    ]
+  },
+  "point fortin": {
+    "file": "point-fortin.geojson",
+    "name": "Point Fortin",
+    "osm_id": 7363418,
+    "bbox": [
+      -61.7076352,
+      10.1410015,
+      -61.6327949,
+      10.2065537
+    ]
+  },
+  "couva": {
+    "file": "couva.geojson",
+    "name": "Couva",
+    "osm_id": 566476581,
+    "bbox": [
+      -61.5028033,
+      10.3646928,
+      -61.3905894,
+      10.4799418
+    ]
+  },
+  "tunapuna": {
+    "file": "tunapuna.geojson",
+    "name": "Tunapuna",
+    "osm_id": 7363639,
+    "bbox": [
+      -61.4397258,
+      10.5655053,
+      -61.1548591,
+      10.8078565
+    ]
+  },
+  "diego martin": {
+    "file": "diego-martin.geojson",
+    "name": "Diego Martin",
+    "osm_id": 7363636,
+    "bbox": [
+      -61.7647786,
+      10.657288,
+      -61.4956187,
+      10.7721315
+    ]
+  },
+  "westmoorings": {
+    "file": "westmoorings.geojson",
+    "name": "Westmoorings",
+    "osm_id": 549726264,
+    "bbox": [
+      -61.5622104,
+      10.6732891,
+      -61.5584564,
+      10.6816622
+    ]
+  },
+  "cascade": {
+    "file": "cascade.geojson",
+    "name": "Cascade",
+    "osm_id": 256656087,
+    "bbox": [
+      -61.496418,
+      10.6784126,
+      -61.4950125,
+      10.6795987
+    ]
+  },
+  "st james": {
+    "file": "st-james.geojson",
+    "name": "St. James",
+    "osm_id": 3071277,
+    "bbox": [
+      -61.5441167,
+      10.6705433,
+      -61.5291121,
+      10.6987688
+    ]
+  },
+  "st. james": {
+    "file": "st-james.geojson",
+    "name": "St. James",
+    "osm_id": 3071277,
+    "bbox": [
+      -61.5441167,
+      10.6705433,
+      -61.5291121,
+      10.6987688
+    ]
+  },
+  "santa cruz": {
+    "file": "santa-cruz.geojson",
+    "name": "Santa Cruz",
+    "osm_id": 386658867,
+    "bbox": [
+      -61.4883189,
+      10.7043709,
+      -61.4654977,
+      10.7409893
+    ]
+  },
+  "champs fleurs": {
+    "file": "champs-fleurs.geojson",
+    "name": "Champs Fleurs",
+    "osm_id": 146542617,
+    "bbox": [
+      -61.4276258,
+      10.650452,
+      -61.426608,
+      10.6506302
+    ]
+  },
+  "princes town": {
+    "file": "princes-town.geojson",
+    "name": "Princes Town",
+    "osm_id": 7361803,
+    "bbox": [
+      -61.4463102,
+      10.0693892,
+      -61.1827661,
+      10.3409468
+    ]
+  },
+  "sangre grande": {
+    "file": "sangre-grande.geojson",
+    "name": "Sangre Grande",
+    "osm_id": 7363640,
+    "bbox": [
+      -61.2452495,
+      10.4306158,
+      -60.9070578,
+      10.8438566
+    ]
+  },
+  "mayaro": {
+    "file": "mayaro.geojson",
+    "name": "Mayaro",
+    "osm_id": 7361804,
+    "bbox": [
+      -61.2455164,
+      10.0750512,
+      -60.9655353,
+      10.4446518
+    ]
+  },
+  "siparia": {
+    "file": "siparia.geojson",
+    "name": "Siparia",
+    "osm_id": 7363417,
+    "bbox": [
+      -62.0154447,
+      10.042842,
+      -61.4717247,
+      10.2515229
+    ]
+  },
+  "debe": {
+    "file": "debe.geojson",
+    "name": "Debe",
+    "osm_id": 7363419,
+    "bbox": [
+      -61.5243712,
+      10.0674561,
+      -61.3721206,
+      10.2629849
+    ]
+  },
+  "penal": {
+    "file": "penal.geojson",
+    "name": "Penal",
+    "osm_id": 7363419,
+    "bbox": [
+      -61.5243712,
+      10.0674561,
+      -61.3721206,
+      10.2629849
+    ]
+  },
+  "diamond vale": {
+    "file": "diamond-vale.geojson",
+    "name": "Diamond Vale",
+    "osm_id": 704286047,
+    "bbox": [
+      -61.5559435,
+      10.7167913,
+      -61.5551428,
+      10.7176488
+    ]
+  },
+  "goodwood park": {
+    "file": "goodwood-park.geojson",
+    "name": "Goodwood Park",
+    "osm_id": 544870575,
+    "bbox": [
+      -61.5667725,
+      10.6815961,
+      -61.564854,
+      10.6825962
+    ]
+  },
+  "moka": {
+    "file": "moka.geojson",
+    "name": "Moka",
+    "osm_id": 386692206,
+    "bbox": [
+      -61.5011605,
+      10.713205,
+      -61.5002753,
+      10.7138489
+    ]
+  },
+  "tobago": {
+    "file": "tobago.geojson",
+    "name": "Tobago",
+    "osm_id": 5176041,
+    "bbox": [
+      -60.8457023,
+      11.1341153,
+      -60.5176038,
+      11.3467272
+    ]
+  },
+  "piarco": {
+    "file": "piarco.geojson",
+    "name": "Piarco",
+    "osm_id": 7363639,
+    "bbox": [
+      -61.4397258,
+      10.5655053,
+      -61.1548591,
+      10.8078565
+    ]
+  },
+  "cumuto": {
+    "file": "cumuto.geojson",
+    "name": "Cumuto",
+    "osm_id": 117032126,
+    "bbox": [
+      -61.2019242,
+      10.5691506,
+      -61.1516939,
+      10.5917121
+    ]
+  }
+}

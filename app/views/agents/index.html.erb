@@ -1,0 +1,17 @@
+<% content_for :title, "Agents" %>
+
+<section class="border-b border-border bg-panel-warm">
+  <div class="mx-auto max-w-7xl px-6 py-12">
+    <span class="section-eyebrow">Our Specialists</span>
+    <h1 class="font-display mt-2 text-4xl font-light text-ink md:text-5xl">Meet the agents</h1>
+    <p class="mt-3 max-w-xl text-sm text-ink-3">Local experts across residential, luxury, commercial, and investment markets.</p>
+  </div>
+</section>
+
+<section class="mx-auto max-w-7xl px-6 py-16">
+  <div class="grid grid-cols-2 gap-5 lg:grid-cols-4">
+    <% @agents.each do |agent| %>
+      <%= render "agents/card", agent: agent %>
+    <% end %>
+  </div>
+</section>

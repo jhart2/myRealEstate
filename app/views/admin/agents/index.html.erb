@@ -1,0 +1,36 @@
+<% content_for :title, "Agents" %>
+
+<div class="mb-6 flex items-center justify-between">
+  <h1 class="font-display text-3xl font-light">Agents</h1>
+  <%= link_to "Add agent", new_admin_agent_path, class: "btn-primary" %>
+</div>
+
+<div class="overflow-hidden rounded-xl border border-border bg-panel">
+  <table class="w-full text-left text-sm">
+    <thead class="border-b border-border bg-panel-warm text-xs uppercase tracking-wider text-ink-3">
+      <tr>
+        <th class="px-4 py-3">Name</th>
+        <th class="px-4 py-3">Title</th>
+        <th class="px-4 py-3">Experience</th>
+        <th class="px-4 py-3">Listings</th>
+        <th class="px-4 py-3">Active</th>
+        <th class="px-4 py-3"></th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-border">
+      <% @agents.each do |agent| %>
+        <tr>
+          <td class="px-4 py-3 font-medium"><%= agent.name %></td>
+          <td class="px-4 py-3 text-ink-3"><%= agent.title %></td>
+          <td class="px-4 py-3"><%= agent.years_experience.present? ? "#{agent.years_experience} yrs" : "—" %></td>
+          <td class="px-4 py-3"><%= agent.listings_count %></td>
+          <td class="px-4 py-3"><%= agent.active? ? "Yes" : "No" %></td>
+          <td class="px-4 py-3 text-right">
+            <%= link_to "Edit", edit_admin_agent_path(agent), class: "text-trinidad hover:underline" %>
+            <%= button_to "Delete", admin_agent_path(agent), method: :delete, class: "ml-3 text-red-600 hover:underline", form: { data: { turbo_confirm: "Delete this agent?" } } %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

@@ -1,0 +1,8 @@
+#!/bin/bash -e
+
+# Prepare DB when launching the Rails server (directly or via Thruster).
+if [[ " $* " == *" ./bin/rails "* ]] && [[ " $* " == *" server"* ]]; then
+  ./bin/rails db:prepare
+fi
+
+exec "${@}"

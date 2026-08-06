@@ -1,0 +1,70 @@
+<% content_for :title, "Dashboard" %>
+
+<h1 class="font-display text-3xl font-light text-ink">Welcome back, <%= agent.name.split.first %></h1>
+<p class="mt-1 text-sm text-ink-3"><%= agent.title %><% if agent.experience_label %> · <%= agent.experience_label %><% end %></p>
+
+<div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+  <div class="rounded-xl border border-border bg-panel p-5">
+    <p class="text-xs uppercase tracking-wider text-ink-3">Listings</p>
+    <p class="font-display mt-2 text-3xl font-semibold text-ink"><%= @stats[:listings] %></p>
+  </div>
+  <div class="rounded-xl border border-border bg-panel p-5">
+    <p class="text-xs uppercase tracking-wider text-ink-3">Active</p>
+    <p class="font-display mt-2 text-3xl font-semibold text-ink"><%= @stats[:active] %></p>
+  </div>
+  <div class="rounded-xl border border-border bg-panel p-5">
+    <p class="text-xs uppercase tracking-wider text-ink-3">Open inquiries</p>
+    <p class="font-display mt-2 text-3xl font-semibold text-ink"><%= @stats[:inquiries] %></p>
+  </div>
+  <div class="rounded-xl border border-border bg-panel p-5">
+    <p class="text-xs uppercase tracking-wider text-ink-3">Experience</p>
+    <p class="font-display mt-2 text-3xl font-semibold text-ink"><%= @stats[:experience].present? ? "#{@stats[:experience]} yrs" : "—" %></p>
+  </div>
+</div>
+
+<div class="mt-10 grid gap-8 lg:grid-cols-2">
+  <div class="rounded-xl border border-border bg-panel p-6">
+    <div class="mb-4 flex items-center justify-between">
+      <h2 class="font-display text-xl font-semibold">Recent listings</h2>
+      <%= link_to "Manage", portal_properties_path, class: "text-sm text-ink-3 hover:text-ink" %>
+    </div>
+    <% if @properties.any? %>
+      <ul class="divide-y divide-border">
+        <% @properties.each do |property| %>
+          <li class="flex items-center justify-between py-3 text-sm">
+            <div>
+              <p class="font-medium text-ink"><%= property.title %></p>
+              <p class="text-ink-3"><%= property.display_price %> · <%= property.status %></p>
+            </div>
+            <%= link_to "Edit", edit_portal_property_path(property), class: "text-xs text-trinidad" %>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p class="text-sm text-ink-3">No listings yet.</p>
+      <%= link_to "Add a listing", new_portal_property_path, class: "btn-primary mt-4" %>
+    <% end %>
+  </div>
+
+  <div class="rounded-xl border border-border bg-panel p-6">
+    <div class="mb-4 flex items-center justify-between">
+      <h2 class="font-display text-xl font-semibold">Open inquiries</h2>
+      <%= link_to "View all", portal_inquiries_path, class: "text-sm text-ink-3 hover:text-ink" %>
+    </div>
+    <% if @open_inquiries.any? %>
+      <ul class="divide-y divide-border">
+        <% @open_inquiries.each do |inquiry| %>
+          <li class="flex items-center justify-between py-3 text-sm">
+            <div>
+              <p class="font-medium text-ink"><%= inquiry.name %></p>
+              <p class="text-ink-3"><%= inquiry.property&.title || "General" %></p>
+            </div>
+            <%= link_to inquiry.status.titleize, portal_inquiry_path(inquiry), class: "text-xs text-trinidad" %>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p class="text-sm text-ink-3">No open inquiries.</p>
+    <% end %>
+  </div>
+</div>
