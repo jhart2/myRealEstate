@@ -15,7 +15,7 @@ namespace :bok do
     end
   end
 
-  desc "Scrape up to BOK_SYNC_MAX_DETAILS (default 250) newest unfinished BOK houses, then import"
+  desc "Scrape up to BOK_SYNC_MAX_DETAILS (default 250) newest unfinished BOK houses, then import (and push changes to staging)"
   task sync: :environment do
     puts "Starting BOK sync (newest first, lookback #{ENV.fetch("BOK_SYNC_DAYS", "7")} days)…"
     summary = BokListingsSyncJob.perform_now
@@ -24,13 +24,25 @@ namespace :bok do
     puts "Updated: #{summary[:updated]}"
     puts "Skipped: #{summary[:skipped]}"
     puts "Removed: #{summary[:removed]}" if summary[:removed].positive?
+    puts "Staging push: #{summary[:staging_pushed] ? "yes" : "skipped"}"
     if summary[:errors].any?
       puts "Errors (#{summary[:errors].size}):"
       summary[:errors].first(20).each { |msg| puts "  - #{msg}" }
     end
   end
 
-  desc "Re-fetch full descriptions for every Property with a BOK source_url, then re-import"
+  desc "Push a BOK listings JSON file to staging Postgres. Usage: bin/rails \"bok:push_staging[path/to.json]\" or FILE=path"
+  task :push_staging, [ :file ] => :environment do |_t, args|
+    path = args[:file].presence || ENV["FILE"].presence
+    path ||= Dir.glob(Rails.root.join("scripts/bok_sync_data/houses_last_month_*.json")).max_by { |p| File.mtime(p) }
+    abort "No listings JSON to push. Pass a path or set FILE=." unless path
+
+    puts "Pushing #{path} to staging…"
+    StagingListingsPusher.push!(path)
+    puts "Done."
+  end
+
+  desc "Re-fetch full descriptions for every Property with a BOK source_url (updates description only)"
   task refresh_descriptions: :environment do
     urls = Property.where.not(source_url: [ nil, "" ]).order(:id).pluck(:source_url).uniq
     abort "No properties with source_url to refresh." if urls.empty?
@@ -57,12 +69,36 @@ namespace :bok do
     newest = Dir.glob(out_dir.join("houses_last_month_*.json")).max_by { |p| File.mtime(p) }
     abort "No sync JSON written" unless newest
 
-    result = BokListingsImporter.import!(newest)
+    rows = JSON.parse(File.read(newest))
+    updated = 0
+    missing = 0
+    unchanged = 0
+    rows.each do |row|
+      desc = row["description"].to_s.strip
+      next if desc.blank?
+
+      property = if row["bok_id"].present?
+        Property.find_by(bok_id: row["bok_id"]) || Property.find_by(source_url: row["url"])
+      else
+        Property.find_by(source_url: row["url"])
+      end
+      unless property
+        missing += 1
+        next
+      end
+
+      if property.description.to_s == desc
+        unchanged += 1
+      else
+        property.update!(description: desc)
+        updated += 1
+      end
+    end
+
     puts "JSON: #{newest}"
-    puts "Created: #{result.created}"
-    puts "Updated: #{result.updated}"
-    puts "Skipped: #{result.skipped}"
-    puts "Removed: #{result.removed}" if result.removed.positive?
+    puts "Updated descriptions: #{updated}"
+    puts "Unchanged: #{unchanged}"
+    puts "Rows without matching property: #{missing}"
     long = Property.where.not(bok_id: nil).where("LENGTH(description) > 1200").count
     puts "BOK descriptions longer than 1200 chars: #{long}"
   end

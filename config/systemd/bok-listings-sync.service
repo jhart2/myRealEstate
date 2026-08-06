@@ -1,5 +1,5 @@
 [Unit]
-Description=TT Realty BOK listings sync (scrape + import)
+Description=TT Realty BOK listings sync — scrape, import, and staging DB push
 After=network-online.target
 Wants=network-online.target
 
@@ -11,7 +11,11 @@ Environment=BOK_SYNC_DAYS=7
 Environment=BOK_SYNC_MAX_DETAILS=250
 Environment=BOK_SYNC_DELAY=4
 Environment=BOK_SYNC_SKIP_SEARCH=1
-Environment=PATH=/home/javon/.local/share/mise/shims:/home/javon/.local/bin:/usr/local/bin:/usr/bin:/bin
+Environment=BOK_SYNC_PUSH_STAGING=1
+Environment=STAGING_GCP_PROJECT=tt-realty-staging
+Environment=STAGING_CLOUDSQL_CONNECTION=tt-realty-staging:us-east1:tt-realty-stg-db
+Environment=STAGING_SQL_PROXY_PORT=5433
+Environment=PATH=/home/javon/.local/share/google-cloud-sdk/bin:/home/javon/.local/share/mise/shims:/home/javon/.local/bin:/usr/local/bin:/usr/bin:/bin
 Environment=HOME=/home/javon
 # Quote the rails binary path (project dir has spaces).
 ExecStart=/home/javon/Desktop/Real\x20Estate\x20Website\x20Builder/bin/rails bok:sync

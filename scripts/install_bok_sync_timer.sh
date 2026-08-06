@@ -14,7 +14,7 @@ mkdir -p "$UNIT_DIR"
 
 cat > "$UNIT_DIR/bok-listings-sync.service" <<EOF
 [Unit]
-Description=TT Realty BOK listings sync (scrape + import)
+Description=TT Realty BOK listings sync — scrape, import, and staging DB push
 After=network-online.target
 Wants=network-online.target
 
@@ -26,7 +26,11 @@ Environment=BOK_SYNC_DAYS=7
 Environment=BOK_SYNC_MAX_DETAILS=250
 Environment=BOK_SYNC_DELAY=4
 Environment=BOK_SYNC_SKIP_SEARCH=1
-Environment=PATH=$HOME/.local/share/mise/shims:$HOME/.local/bin:/usr/local/bin:/usr/bin:/bin
+Environment=BOK_SYNC_PUSH_STAGING=1
+Environment=STAGING_GCP_PROJECT=tt-realty-staging
+Environment=STAGING_CLOUDSQL_CONNECTION=tt-realty-staging:us-east1:tt-realty-stg-db
+Environment=STAGING_SQL_PROXY_PORT=5433
+Environment=PATH=$HOME/.local/share/google-cloud-sdk/bin:$HOME/.local/share/mise/shims:$HOME/.local/bin:/usr/local/bin:/usr/bin:/bin
 Environment=HOME=$HOME
 ExecStart=${ROOT_ESC}/bin/rails bok:sync
 Nice=10

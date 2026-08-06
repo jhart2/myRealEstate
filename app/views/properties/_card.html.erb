@@ -42,11 +42,19 @@
           <%= render "properties/feature_chips", property: property, limit: 3 %>
         </div>
       <% end %>
-      <div class="flex items-center gap-4 border-t border-stone-light pt-4 text-sm text-ink-2">
-        <span><%= property.beds %> bed</span>
-        <span><%= property.baths %> bath</span>
-        <span><%= number_with_delimiter(property.sqft) %> ft²</span>
-      </div>
+      <% if property_spec_present?(property.beds) || property_spec_present?(property.baths) || property_spec_present?(property.sqft) %>
+        <div class="flex items-center gap-4 border-t border-stone-light pt-4 text-sm text-ink-2">
+          <% if property_spec_present?(property.beds) %>
+            <span><%= property.beds %> bed</span>
+          <% end %>
+          <% if property_spec_present?(property.baths) %>
+            <span><%= property.baths %> bath</span>
+          <% end %>
+          <% if property_spec_present?(property.sqft) %>
+            <span><%= number_with_delimiter(property.sqft) %> ft²</span>
+          <% end %>
+        </div>
+      <% end %>
     <% end %>
   </div>
 </article>

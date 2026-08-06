@@ -17,11 +17,19 @@
       <p class="mt-2 text-ink-3"><%= @property.full_address %></p>
       <p class="font-display mt-6 text-3xl font-semibold text-ink"><%= @property.display_price %></p>
 
-      <div class="mt-8 flex flex-wrap gap-8 border-y border-border py-6 text-sm text-ink-2">
-        <div><span class="block font-display text-2xl font-semibold text-ink"><%= @property.beds %></span> Bedrooms</div>
-        <div><span class="block font-display text-2xl font-semibold text-ink"><%= @property.baths %></span> Bathrooms</div>
-        <div><span class="block font-display text-2xl font-semibold text-ink"><%= number_with_delimiter(@property.sqft) %></span> Sq Ft</div>
-      </div>
+      <% if property_spec_present?(@property.beds) || property_spec_present?(@property.baths) || property_spec_present?(@property.sqft) %>
+        <div class="mt-8 flex flex-wrap gap-8 border-y border-border py-6 text-sm text-ink-2">
+          <% if property_spec_present?(@property.beds) %>
+            <div><span class="block font-display text-2xl font-semibold text-ink"><%= @property.beds %></span> Bedrooms</div>
+          <% end %>
+          <% if property_spec_present?(@property.baths) %>
+            <div><span class="block font-display text-2xl font-semibold text-ink"><%= @property.baths %></span> Bathrooms</div>
+          <% end %>
+          <% if property_spec_present?(@property.sqft) %>
+            <div><span class="block font-display text-2xl font-semibold text-ink"><%= number_with_delimiter(@property.sqft) %></span> Sq Ft</div>
+          <% end %>
+        </div>
+      <% end %>
 
       <div class="property-lightbox-stats-wrap mt-5">
         <dl class="property-lightbox-stats">

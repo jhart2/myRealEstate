@@ -1,0 +1,434 @@
+Refreshing descriptions for 248 listings…
+python3 /home/javon/Desktop/Real Estate Website Builder/scripts/bok_gentle_listings_sync.py --urls-file /home/javon/Desktop/Real Estate Website Builder/scripts/bok_sync_data/refresh_description_urls.txt --refetch --days 3650 --delay 4 --out-dir /home/javon/Desktop/Real Estate Website Builder/scripts/bok_sync_data
+Window: since 2016-08-08T23:18:59.826921+00:00 UTC
+Delay: 4.0s + up to 1.5s jitter (sequential)
+From urls-file: 248 listing URLs
+Refetch mode: re-downloading every candidate detail page.
+  GET [1] 200 https://mybunchofkeys.com/property/1-bedroom-starter-home-cunupia-925000-neg/
+  kept: BOK-1065192 | House | $925,000 | Cunupia
+  GET [2] 200 https://mybunchofkeys.com/property/1052577/
+  kept: BOK-1052577 | House | $8,750,000 | 
+  GET [3] 200 https://mybunchofkeys.com/property/1057432/
+  kept: BOK-1057432 | House | $10,000,000 | Valsayn Avenue, Valsayn North, Valsayn
+  GET [4] 200 https://mybunchofkeys.com/property/114-226-saddle-road-maraval-moniques-guest-house-next-to-chaconia-inn-for-sale/
+  kept: BOK-920657 | House | $8,000,000 | Maraval
+  GET [5] 200 https://mybunchofkeys.com/property/120-navin-circular-elizabeth-gardends/
+  kept: BOK-320 | House | $5,000,000 | St. Joseph
+  GET [6] 200 https://mybunchofkeys.com/property/156-anne-avenue-block-4-palmiste-san-fernando-for-sale-4m/
+  kept: BOK-978503 | House | $3,750,000 | 156 Anne Street Block 4 , PALMISTE , Palmiste
+  GET [7] 200 https://mybunchofkeys.com/property/27-allan-drive-enterprise-chaguanas/
+  kept: BOK-1051074 | House | $1,400,000 | 27 Allan Drive, Enterprise, Chaguanas, Chaguanas
+  GET [8] 200 https://mybunchofkeys.com/property/3-bed-house-orange-grove-tacarigua-for-sale/
+  kept: BOK-1046356 | House | $1,990,000 | Tacarigua
+  GET [9] 200 https://mybunchofkeys.com/property/3-bedroom-house-cunupia-3/
+  kept: BOK-997571 | House | $1,800,000 | Cunupia St. Helena
+  GET [10] 200 https://mybunchofkeys.com/property/3-bedroom-house-for-sale-the-crossings-tumpuna-road-arima-ttd2-1m/
+  kept: BOK-1058260 | House | $1,950,000 | Arima
+  GET [11] 200 https://mybunchofkeys.com/property/3bedroom-freeport-house/
+  kept: BOK-1058437 | House | $1,950,000 | freeport, Balmain Chaguanas Couva Freeport
+  GET [12] 200 https://mybunchofkeys.com/property/4-bedroom-3-bathroom-house-located-in-moka-heights-maraval-for-sale-or-rent/
+  kept: 4 BEDROOM, 3 BATHROOM HOUSE LOCATED IN MOKA HEIGHTS- MARAVAL | House | $5,000,000 | Maraval Moka
+  GET [13] 200 https://mybunchofkeys.com/property/5-bedroom-home-gulf-view-san-fernando/
+  kept: BOK-1062636 | House | $3,000,000 | Gulf View La Romain San Fernando
+  GET [14] 200 https://mybunchofkeys.com/property/5-bedroom-home-sierra-vista-drive-arima/
+  kept: BOK-1064727 | House | $2,400,000 | Sierra Vista Drive, N/A
+  GET [15] 200 https://mybunchofkeys.com/property/5-bedroom-house-elizabeth-gardens/
+  kept: BOK-1066596 | House | $3,200,000 | Maracas Valley St. Joseph
+  GET [16] 200 https://mybunchofkeys.com/property/592309/
+  kept: BOK-592309 | House | $5,200,000 | Maracas Valley San Juan St. Augustine Tunapuna
+  GET [17] 200 https://mybunchofkeys.com/property/6-4-acres-land-with-house-for-sale-at-tableland/
+  kept: BOK-975308 | House | $1,100,000 | Nohar Road, Tableland., Tableland
+  GET [18] 200 https://mybunchofkeys.com/property/apartment-building-for-sale-watts-street-curepe-2-6mtt/
+  kept: BOK-990204 | House | $2,600,000 | Curepe St. Augustine St. Joseph
+  GET [19] 200 https://mybunchofkeys.com/property/aranguez-house-3/
+  kept: BOK-1068288 | House | $2,500,000 | Aranguez
+  GET [20] 200 https://mybunchofkeys.com/property/arima-home-for-sale-tt2-25m/
+  kept: BOK-708675 | House | $2,000,000 | Arima
+  GET [21] 200 https://mybunchofkeys.com/property/aurora-drive-sunrise-park-trinicity-house-for-rent/
+  kept: BOK-1068320 | House | $8,000 / Mth | Trincity
+  GET [22] 200 https://mybunchofkeys.com/property/bacolet-gardens-tobago-five-bedroom-villa-for-sale/
+  kept: BOK-1014654 | House | $542,000(USD) | Bacolet
+  GET [23] 200 https://mybunchofkeys.com/property/bacolet-tobago/
+  kept: BOK-1005489 | House | $2,495,000 | Bacolet , Bacolet
+  GET [24] 200 https://mybunchofkeys.com/property/bayshore-house-3/
+  kept: BOK-1027096 | House | $4,500 / Mth (USD) | Bayshore
+  GET [25] 200 https://mybunchofkeys.com/property/beaumont-ridge-maraval-for-sale-or-rent/
+  kept: BOK-301646 | House | $6,000(USD) | Maraval
+  GET [26] 200 https://mybunchofkeys.com/property/bel-air-home-for-sale-tt3-5m/
+  kept: BOK-999110 | House | $3,500,000 | Bel Air La Romain San Fernando
+  GET [27] 200 https://mybunchofkeys.com/property/blanchisseuse-hillside-haven/
+  kept: BOK-988960 | House | $3,700,000 | North Coast Road , Blanchisseuse
+  GET [28] 200 https://mybunchofkeys.com/property/blanchisseuse-hime-for-sale/
+  kept: BOK-842871 | House | $1,750,000 | Blanchisseuse
+  GET [29] 200 https://mybunchofkeys.com/property/block-8-palmiste-home-for-sale-tt3-25m/
+  kept: BOK-756475 | House | $3,250,000 | Hermitage La Romain Palmiste Phillipine
+  GET [30] 200 https://mybunchofkeys.com/property/boissiere-village-1-saddle-road-maraval/
+  kept: BOK-1068183 | House | $4,600,000 | Maraval
+  GET [31] 200 https://mybunchofkeys.com/property/brand-new-4-bedroom-house-gasparillo-2-990m/
+  kept: BOK-1057528 | House | $2,990,000 | Gasparillo
+  GET [32] 200 https://mybunchofkeys.com/property/buena-vista-home-for-sale/
+  kept: BOK-1050911 | House | $2,300,000 | Arima
+  GET [33] 200 https://mybunchofkeys.com/property/carapichaima-home-for-sale-tt2-3m/
+  kept: BOK-708677 | House | $2,300,000 | Carapichaima Couva Freeport
+  GET [34] 200 https://mybunchofkeys.com/property/carenage-beard-street-5-bedroom-fixer-upper/
+  kept: BOK-1062791 | House | $1,300,000 | Carenage
+  GET [35] 200 https://mybunchofkeys.com/property/carlos-street-woodbrook-2/
+  kept: BOK-1062467 | House | $7,500,000 | Port of Spain
+  GET [36] 200 https://mybunchofkeys.com/property/cascade-home-for-sale-4/
+  kept: BOK-413713 | House | $6,000,000 | Cascade , Cascade Port of Spain
+  GET [37] 200 https://mybunchofkeys.com/property/cascade-wellsprings/
+  kept: BOK-1032113 | House | $4,999,000 | Wellsprings, Cascade
+  GET [38] 200 https://mybunchofkeys.com/property/central-park-house-for-sale-6-beds-5-baths/
+  kept: BOK-1059631 | House | $3,200,000 | Central Park, Balmain Central Park Couva
+  GET [39] 200 https://mybunchofkeys.com/property/chaguanas-home-for-sale-tt2-25m/
+  kept: BOK-1024043 | House | $2,225,000 | Chaguanas Cunupia Endeavour Jerningham Junction
+  GET [40] 200 https://mybunchofkeys.com/property/champs-fleurs-house-for-sale/
+  kept: BOK-524217 | House | $2,700,000 | Champs Fleurs
+  GET [41] 200 https://mybunchofkeys.com/property/cherry-gardens/
+  kept: BOK-1066563 | House | $1,700,000 | Arima
+  GET [42] 200 https://mybunchofkeys.com/property/christina-gardens-home-on-16910-sq-ft-land/
+  kept: BOK-1058556 | House | $2,500,000 | N/A
+  GET [43] 200 https://mybunchofkeys.com/property/church-bay-gasparee/
+  kept: BOK-69812 | House | $4,500,000 | Gasparee Island
+  GET [44] 200 https://mybunchofkeys.com/property/commercial-property-for-sale-in-st-james/
+  kept: BOK-1067754 | House | $2,500,000 | 31 Ranjit Kumar Street, St. James, St. James
+  GET [45] 200 https://mybunchofkeys.com/property/container-home-land-for-sale-woodford-gardens-chaguanas-875k/
+  kept: BOK-1064006 | House | $875,000 | Chaguanas
+  GET [46] 200 https://mybunchofkeys.com/property/coral-gardens-diamond-vale-diego-martin/
+  kept: BOK-1067576 | House | $1,595,000 | Diamond Vale, Diego Martin, Diamond Vale Diego Martin
+  GET [47] 200 https://mybunchofkeys.com/property/crawford-gardens-gasparillo-home-for-sale-tt1-65m/
+  kept: BOK-932887 | House | $1,650,000 | Gasparillo Reform Williamsville
+  GET [48] 200 https://mybunchofkeys.com/property/cunupia-for-sale-rent-tt4-6m/
+  kept: BOK-1034928 | House | $4,600,000 | Chaguanas Cunupia
+  GET [49] 200 https://mybunchofkeys.com/property/cunupia-home-for-sale-2/
+  kept: BOK-936637 | House | $1,800,000 | Off Southern Main Road , Cunupia
+  GET [50] 200 https://mybunchofkeys.com/property/cunupia-treasure/
+  kept: BOK-1061370 | House | $6,100,000 | Endeavour
+  GET [51] 200 https://mybunchofkeys.com/property/diamond-vale-3/
+  kept: BOK-1062167 | House | $1,300,000 | Diamond Vale, Diamond Vale Diego Martin
+  GET [52] 200 https://mybunchofkeys.com/property/discover-lima-estates-prime-gated-community-in-central/
+  kept: BOK-956978 | House | $2,200,000 | Couva Freeport
+  GET [53] 200 https://mybunchofkeys.com/property/el-dorado-house-for-sale-2/
+  kept: BOK-1049556 | House | $1,850,000 | El Dorado
+  GET [54] 200 https://mybunchofkeys.com/property/el-dorado-tunapuna-ramlogan-drive/
+  kept: BOK-959764 | House | $1,975,000 | El Dorado Tunapuna
+  GET [55] 200 https://mybunchofkeys.com/property/elegant-family-estate-in-moka-maraval/
+  kept: BOK-1043501 | House | $6,800,000 | Moka
+  GET [56] 200 https://mybunchofkeys.com/property/errol-park-road-st-anns/
+  kept: BOK-1024021 | House | $499,000(USD) | Cascade St. Ann's
+  GET [57] 200 https://mybunchofkeys.com/property/evergreen-piarco-home-for-sale-tt3-25m/
+  kept: BOK-865563 | House | $3,250,000 | Kelly Village Piarco St. Helena
+  GET [58] 200 https://mybunchofkeys.com/property/executive-columbus-circle-house-for-rent/
+  kept: BOK-1068538 | House | $4,500 / Mth (USD) | Columbus Circle,
+  GET [59] 200 https://mybunchofkeys.com/property/executive-furnished-home-for-rent-signature-park-mausica-11000/
+  kept: BOK-1068540 | House | $11,000 / Mth | Mausica
+  GET [60] 200 https://mybunchofkeys.com/property/executive-home-for-sale-at-hillsboro-maraval/
+  kept: BOK-715836 | House | $5,900,000 | Hillsboro, Maraval, Hillsboro
+  GET [61] 200 https://mybunchofkeys.com/property/executive-modern-trincity-house-fairways-greens-gated-community/
+  kept: BOK-444784 | House | $5,800,000 | Trincity
+  GET [62] 200 https://mybunchofkeys.com/property/experience-resort-style-living-your-renovated-dream-home-in-trincity-awaits/
+  kept: BOK-915528 | House | $4,200,000 | Trincity
+  GET [63] 200 https://mybunchofkeys.com/property/exquisite-4-bedroom-residence-on-welcome-road-chaguanas/
+  kept: BOK-895467 | House | $3,600,000 | Chaguanas
+  GET [64] 200 https://mybunchofkeys.com/property/fairways-maraval-2/
+  kept: BOK-16246 | House | $10,500,000 | Fairways, Maraval, Fairways Maraval
+  GET [65] 200 https://mybunchofkeys.com/property/fairways-maraval-home-for-sale-tt3-5m/
+  kept: BOK-1014917 | House | $3,500,000 | Fairways Maraval
+  GET [66] 200 https://mybunchofkeys.com/property/family-beach-house-for-sale/
+  kept: BOK-1064704 | House | $1,500,000 | Augustusville, Cedros
+  GET [67] 200 https://mybunchofkeys.com/property/ff-house-for-sale-or-rent-at-savonetta-estate/
+  kept: BOK-768915 | House | $3,300,000 | Couva Point Lisas Savonetta
+  GET [68] 200 https://mybunchofkeys.com/property/five5-beds-three3-bath-home-for-sale-whiteland-williamsville/
+  kept: BOK-1058932 | House | $2,250,000 | Sankarlal Drive, Whiteland, Gasparillo, Williamsville
+  GET [69] 200 https://mybunchofkeys.com/property/fixer-upper-for-sale-ragbir-circular-tacarigua/
+  kept: BOK-1058096 | House | $1,300,000 | Ragbir Circular, Dinsley Village, Tacarigua, Tacarigua
+  GET [70] 200 https://mybunchofkeys.com/property/fixer-upper-in-san-juan/
+  kept: BOK-1007362 | House | $1,100,000 | San Juan
+  GET [71] 200 https://mybunchofkeys.com/property/for-rent-brookhaven-chaguanas-2-bedrooms-unfurnished-house/
+  kept: BOK-1067551 | House | $5,000 / Mth | Chaguanas
+  GET [72] 200 https://mybunchofkeys.com/property/for-sale-13-acre-estate-in-maracus-valley-st-joseph/
+  kept: BOK-1067245 | House | $3,700,000 | Sombradura Estate, Curepe Maracas Valley St. Joseph
+  GET [73] 200 https://mybunchofkeys.com/property/for-sale-2-storey-fixer-upper-house/
+  kept: BOK-1057495 | House | $1,200,000 | Beau Pres Road, Paramin, Maraval Paramin
+  GET [74] 200 https://mybunchofkeys.com/property/for-sale-3-bedroom-house-in-cane-farm-trincity/
+  kept: BOK-1059165 | House | $2,400,000 | Cane Farm, Arouca Trincity
+  GET [75] 200 https://mybunchofkeys.com/property/for-sale-5-acre-estate-in-maracas-valley/
+  kept: BOK-1058593 | House | $2,700,000 | Sombradura Estate, Maracas Valley St. Joseph
+  GET [76] 200 https://mybunchofkeys.com/property/for-sale-7-bedroom-house-in-santa-cruz/
+  kept: BOK-1061300 | House | $7,000,000 | Saddle Road, San Juan Santa Cruz
+  GET [77] 200 https://mybunchofkeys.com/property/for-sale-brand-new-3-bedroom-house/
+  kept: BOK-1058600 | House | $1,400,000 | Araf Drive Las Lomas No 3, Las Lomas St. Helena
+  GET [78] 200 https://mybunchofkeys.com/property/for-sale-caroni-savannah-road-chaguanas-2/
+  kept: BOK-1067523 | House | $1,700,000 | Chaguanas Charlieville
+  GET [79] 200 https://mybunchofkeys.com/property/for-sale-chaguanas-longdenville/
+  kept: BOK-1061608 | House | $1,650,000 | Chaguanas
+  GET [80] 200 https://mybunchofkeys.com/property/for-sale-commercial-property-eastern-main-road-arouca/
+  kept: BOK-1041158 | House | $3,350,000 | Arouca
+  GET [81] 200 https://mybunchofkeys.com/property/for-sale-eco-resort-in-cumuto/
+  kept: BOK-1058491 | House | $2,600,000 | Coryal, Cumuto
+  GET [82] 200 https://mybunchofkeys.com/property/for-sale-grand-lagoon-mayaro-apartment-building-and-house-investment-opportunity/
+  kept: BOK-470541 | House | $3,200,000 | Grand Lagoon, Mayaro, Guayaguayare Manzanilla Mayaro
+  GET [83] 200 https://mybunchofkeys.com/property/for-sale-hilbury-plantation-house-st-george-barbados/
+  kept: BOK-995252 | House | $1,497,500(USD) | N/A
+  GET [84] 200 https://mybunchofkeys.com/property/for-sale-hillsboro-maraval-3-75m/
+  kept: BOK-1067618 | House | $3,750,000 | Maraval
+  GET [85] 200 https://mybunchofkeys.com/property/for-sale-la-pastora-santa-cruz/
+  kept: BOK-1062943 | House | $4,800,000 | N/A
+  GET [86] 200 https://mybunchofkeys.com/property/for-sale-mixed-use-property-in-arouca/
+  kept: BOK-1058547 | House | $3,500,000 | Arima Old Road, Arouca
+  GET [87] 200 https://mybunchofkeys.com/property/for-sale-modern-3-bedroom-house-in-gated-community/
+  kept: BOK-1059731 | House | $2,200,000 | Daniel Estate, Mt Moriah Road, Chaguanas Chin Chin Cunupia
+  GET [88] 200 https://mybunchofkeys.com/property/for-sale-penn-trace-cunupia-prime-fixer-upper-opportunity-on-freehold-land/
+  kept: BOK-1025039 | House | $850,000 | Cunupia
+  GET [89] 200 https://mybunchofkeys.com/property/for-sale-prime-st-james-location-with-excellent-potential-lucknow-street-st-james/
+  kept: BOK-1023410 | House | $1,399,999 | St. James
+  GET [90] 200 https://mybunchofkeys.com/property/for-sale-rent-stand-alone-homes-the-villas-at-haleland-park-saddle-road-maraval-starting-at-ttd5-2m-ttd20k/
+  kept: BOK-1064605 | House | $5,200,000 | The Villas At Haleland Park, Saddle Road, Maraval, Haleland Park Maraval Moka
+  GET [91] 200 https://mybunchofkeys.com/property/for-sale-rent-townhouses-the-villas-at-haleland-park-saddle-road-maraval-starting-at-ttd4-3m-ttd20k/
+  kept: BOK-1064609 | House | $4,300,000 | The Villas At Haleland Park, Saddle Road, Maraval, Haleland Park Maraval Moka
+  GET [92] 200 https://mybunchofkeys.com/property/for-sale-residential-property-in-west-moorings/
+  kept: BOK-1057972 | House | $3,100,000 | Western Main Road, Cocorite Westmoorings
+  GET [93] 200 https://mybunchofkeys.com/property/for-sale-santa-cruz-gated-community/
+  kept: BOK-536473 | House | $3,200,000 | Santa Cruz
+  GET [94] 200 https://mybunchofkeys.com/property/for-sale-seaview-gardens-pt-cumana-3-bed-3-5-bath-single-family-home/
+  kept: BOK-322354 | House | $2,700,000 | Sea View Gardens, Point Cumana
+  GET [95] 200 https://mybunchofkeys.com/property/for-sale-seaview-terrace-pt-cumana-3-bed-3-5-bath-detached-home/
+  kept: BOK-57676 | House | $2,700,000 | Sea View Gardens, Point Cumana
+  GET [96] 200 https://mybunchofkeys.com/property/for-sale-split-level-3-bedroom-house-in-dabadie/
+  kept: BOK-1058609 | House | $3,000,000 | Santa Monica Gardens, Arima D'abadie Mausica
+  GET [97] 200 https://mybunchofkeys.com/property/for-sale-split-level-house-on-don-miguel-rd-el-socorro/
+  kept: BOK-1058364 | House | $3,700,000 | Don Miguel Road, El Socorro San Juan
+  GET [98] 200 https://mybunchofkeys.com/property/for-sale-st-augustine-villa-1-4m-ono/
+  kept: BOK-1053453 | House | $1,400,000 | St. Augustine
+  GET [99] 200 https://mybunchofkeys.com/property/for-sale-two-storey-home-lucana-drive-sangre-grande/
+  kept: BOK-1056687 | House | $2,800,000 | Lucana Drive, Sangre Grande, Sangre Grande
+  GET [100] 200 https://mybunchofkeys.com/property/for-sale-two-storey-home-ste-madeleine-san-fernando/
+  kept: BOK-1067377 | House | $322,730(USD) | San Fernando Ste. Madeleine
+  GET [101] 200 https://mybunchofkeys.com/property/for-sale-valsayn-north-2/
+  kept: BOK-1033949 | House | $4,100,000 | Valsayn
+  GET [102] 200 https://mybunchofkeys.com/property/for-sale-wellington-gardens-debe/
+  kept: BOK-1032012 | House | $900,000 | Debe
+  GET [103] 200 https://mybunchofkeys.com/property/for-salerent-westmoorings/
+  kept: BOK-1058044 | House | $5,000,000 | Westmoorings
+  GET [104] 200 https://mybunchofkeys.com/property/fyzabad-home-for-sale-tt-2-15m/
+  kept: BOK-628829 | House | $1,950,000 | Fyzabad Otaheite
+  GET [105] 200 https://mybunchofkeys.com/property/gulf-view-home-for-sale-tt7-25m/
+  kept: BOK-1024091 | House | $7,250,000 | Gulf View San Fernando
+  GET [106] 200 https://mybunchofkeys.com/property/gulf-view-home-for-sale-us634k/
+  kept: BOK-1021596 | House | $4,150,000 | Gulf View San Fernando
+  GET [107] 200 https://mybunchofkeys.com/property/haleland-park-family-home-for-sale/
+  kept: BOK-928783 | House | $7,000,000 | Mace Place, Haleland Park, Haleland Park Maraval
+  GET [108] 200 https://mybunchofkeys.com/property/heights-of-aripo-nature-retreat/
+  kept: BOK-842139 | House | $6,500,000 | Arima
+  GET [109] 200 https://mybunchofkeys.com/property/hillsboro-house-with-1-bed-annex-for-sale/
+  kept: BOK-1027111 | House | $3,800,000 | Maraval
+  GET [110] 200 https://mybunchofkeys.com/property/hillsboro-maraval-house/
+  kept: BOK-1027094 | House | $3,800,000 | Hillsboro Maraval
+  GET [111] 200 https://mybunchofkeys.com/property/home-at-allan-lucky-street-bel-air/
+  kept: BOK-1060644 | House | $2,800,000 | Bel Air
+  GET [112] 200 https://mybunchofkeys.com/property/home-for-sale-4-bedrooms-villas-of-les-boix-maraval-ttd3-5m/
+  kept: BOK-1062642 | House | $3,500,000 | Maraval Port of Spain
+  GET [113] 200 https://mybunchofkeys.com/property/home-for-sale-4bedrooms-3bathrooms-semi-furnished-fully-air-conditioned-freehold-land-crystal-heights-arima/
+  kept: BOK-1063887 | House | $1,900,000 | Crystal Drive, Arima Brazil San Raphael
+  GET [114] 200 https://mybunchofkeys.com/property/home-for-sale-blanchisseuse/
+  kept: BOK-777999 | House | $1,000,000 | Blanchisseuse
+  GET [115] 200 https://mybunchofkeys.com/property/home-for-sale-in-las-lomas-3-san-raphael/
+  kept: BOK-1012033 | House | $1,794,999 | Lot C, Las Lomas No 3, San Raphael, Trinidad, Las Lomas
+  GET [116] 200 https://mybunchofkeys.com/property/home-for-sale-kitchener-street-battoo-avenue-marabella/
+  kept: BOK-1045417 | House | $2,765,000 | Marabella, Marabella
+  GET [117] 200 https://mybunchofkeys.com/property/home-for-sale-wellington-gardens-debe/
+  kept: BOK-987132 | House | $900,000 | Debe, N/A
+  GET [118] 200 https://mybunchofkeys.com/property/home-for-sale-with-incomplete-interior-for-you-to-finish-to-your-taste-and-liking-4beds-3-5baths-study-front-and-back-patios-secured-parking-spacious-yard-for-gardening/
+  kept: BOK-1064080 | House | $1,600,000 | Arima Santa Rosa
+  GET [119] 200 https://mybunchofkeys.com/property/home-in-barataria-eastern-main-road-for-sale/
+  kept: BOK-1024885 | House | $4,300,000 | Barataria
+  GET [120] 200 https://mybunchofkeys.com/property/homes-for-sale-mandalay-gardens-arima/
+  kept: BOK-941850 | House | $2,700,000 | Arima
+  GET [121] 200 https://mybunchofkeys.com/property/homes-for-sale-sunkist-drive-phillipine/
+  kept: BOK-987084 | House | $2,200,000 | Sunkist Drive, Phillipine, N/A
+  GET [122] 200 https://mybunchofkeys.com/property/house-for-rent-cassia-drive-ext-petit-valleytt/
+  kept: BOK-646724 | House | $3,200,000 | Alyce Glen Diego Martin Petit Valley
+  GET [123] 200 https://mybunchofkeys.com/property/house-for-rent-susan-crescent-ocean-park-carenage-%f0%9f%8c%b4%e2%9c%a8/
+  kept: BOK-1045432 | House | $35,000 / Mth | OCEAN PARK, CARENAGE, Carenage
+  GET [124] 200 https://mybunchofkeys.com/property/house-for-sale-4/
+  kept: BOK-986722 | House | $3,700,000 | Gran Couva
+  GET [125] 200 https://mybunchofkeys.com/property/house-for-sale-alexander-road-vistabella-san-fernando-4-95mtt/
+  kept: BOK-903344 | House | $4,400,000 | San Fernando Vistabella
+  GET [126] 200 https://mybunchofkeys.com/property/house-for-sale-atlantic-shores-mayaro-2-8mtt/
+  kept: BOK-576107 | House | $2,500,000 | Mayaro
+  GET [127] 200 https://mybunchofkeys.com/property/house-for-sale-batchiya-trace-penal-2-4mtt/
+  kept: BOK-926346 | House | $2,400,000 | Penal
+  GET [128] 200 https://mybunchofkeys.com/property/house-for-sale-block-4-palmiste-3-725mtt/
+  kept: BOK-949085 | House | $3,550,000 | La Romain Palmiste San Fernando
+  GET [129] 200 https://mybunchofkeys.com/property/house-for-sale-brechin-castle-3-beds-2-baths/
+  kept: BOK-987913 | House | $4,400,000 | California Couva Point Lisas
+  GET [130] 200 https://mybunchofkeys.com/property/house-for-sale-champ-fleurs/
+  kept: BOK-1066331 | House | $2,400,000 | Champs Fleurs
+  GET [131] 200 https://mybunchofkeys.com/property/house-for-sale-charlieville-chaguanas-3-9mtt/
+  kept: BOK-967025 | House | $3,600,000 | Chaguanas Charlieville
+  GET [132] 200 https://mybunchofkeys.com/property/house-for-sale-de-verteuil-street-woodbrook-ttd6m/
+  kept: BOK-1061858 | House | $6,000,000 | Port of Spain Woodbrook
+  GET [133] 200 https://mybunchofkeys.com/property/house-for-sale-freeport-6-bedrooms/
+  kept: BOK-1065982 | House | $2,900,000 | Freeport
+  GET [134] 200 https://mybunchofkeys.com/property/house-for-sale-gulf-view-la-romaine-3-7mtt/
+  kept: BOK-1003048 | House | $3,995,000 | Bel Air Gulf View La Romain
+  GET [135] 200 https://mybunchofkeys.com/property/house-for-sale-haleland-park-maraval/
+  kept: BOK-1017365 | House | $6,000,000 | Haleland Park Hillsboro Maraval
+  GET [136] 200 https://mybunchofkeys.com/property/house-for-sale-happy-hill-vistabella-san-fernando-2mtt/
+  kept: BOK-1036065 | House | $1,800,000 | San Fernando Vistabella
+  GET [137] 200 https://mybunchofkeys.com/property/house-for-sale-highbury-park-cunupia-tt1-8mil/
+  kept: BOK-1064346 | House | $1,800,000 | Highbury Park, Cunupia, Cunupia
+  GET [138] 200 https://mybunchofkeys.com/property/house-for-sale-hillview-drive-fyzabad-ttd1-75m/
+  kept: BOK-1061645 | House | $1,750,000 | Fyzabad
+  GET [139] 200 https://mybunchofkeys.com/property/house-for-sale-in-arima-21/
+  kept: BOK-963482 | House | $2,200,000 | The Crossings, Off Tumpuna Road, Arima
+  GET [140] 200 https://mybunchofkeys.com/property/house-for-sale-in-arima-just-off-tumpuna-road/
+  kept: BOK-1059075 | House | $3,200,000 | Arima
+  GET [141] 200 https://mybunchofkeys.com/property/house-for-sale-in-blue-range-4/
+  kept: BOK-1068224 | House | $3,900,000 | Blue Range
+  GET [142] 200 https://mybunchofkeys.com/property/house-for-sale-in-couva-8/
+  kept: BOK-1022482 | House | $2,100,000 | Couva
+  GET [143] 200 https://mybunchofkeys.com/property/house-for-sale-in-freeport-12/
+  kept: BOK-1065189 | House | $2,900,000 | Freeport
+  GET [144] 200 https://mybunchofkeys.com/property/house-for-sale-in-freeport-9/
+  kept: BOK-846135 | House | $1,400,000 | Freeport
+  GET [145] 200 https://mybunchofkeys.com/property/house-for-sale-in-glencoe-7/
+  kept: BOK-1065095 | House | $6,100,000 | Glencoe
+  GET [146] 200 https://mybunchofkeys.com/property/house-for-sale-in-goodwood-park-2/
+  kept: BOK-1060871 | House | $11,000,000 | Goodwood Park
+  GET [147] 200 https://mybunchofkeys.com/property/house-for-sale-in-petit-valley-11/
+  kept: BOK-1061392 | House | $3,300,000 | Petit Valley
+  GET [148] 200 https://mybunchofkeys.com/property/house-for-sale-in-phillipine/
+  kept: BOK-961791 | House | $2,975,000 | Phillipine
+  GET [149] 200 https://mybunchofkeys.com/property/house-for-sale-in-sangre-grande-5/
+  kept: BOK-1030958 | House | $1,900,000 | Sangre Grande
+  GET [150] 200 https://mybunchofkeys.com/property/house-for-sale-in-santa-rosa-arima/
+  kept: BOK-1066086 | House | $2,800,000 | Arima Santa Rosa
+  GET [151] 200 https://mybunchofkeys.com/property/house-for-sale-in-st-joseph-10/
+  kept: BOK-1064214 | House | $2,000,000 | Maracas Valley St. Joseph
+  GET [152] 200 https://mybunchofkeys.com/property/house-for-sale-lakeview-park-longdenville/
+  kept: BOK-1066227 | House | $1,650,000 | Longdenville
+  GET [153] 200 https://mybunchofkeys.com/property/house-for-sale-santa-cruz-3/
+  kept: BOK-1060220 | House | $3,400,000 | Hololo Heights, Santa Cruz, Santa Cruz
+  GET [154] 200 https://mybunchofkeys.com/property/house-for-sale-sutton-street-san-fernando-ttd7m/
+  kept: BOK-1061520 | House | $7,000,000 | San Fernando
+  GET [155] 200 https://mybunchofkeys.com/property/house-on-freehold-land-for-sale/
+  kept: BOK-571401 | House | $1,800,000 | Toco
+  GET [156] 200 https://mybunchofkeys.com/property/ideal-home-for-sale-at-la-florissante-phase1-dabadie/
+  kept: BOK-964918 | House | $3,800,000 | Dehlia Crescent, La Florissante Phase 1, D'abadie
+  GET [157] 200 https://mybunchofkeys.com/property/income-generating-investment-property-tobago/
+  kept: BOK-1063002 | House | $3,200,000 | Darrel Spring, Scarborough
+  GET [158] 200 https://mybunchofkeys.com/property/income-generating-two-storey-home-aranguez/
+  kept: BOK-1067001 | House | $3,290,000 | Aranguez
+  GET [159] 200 https://mybunchofkeys.com/property/investment-beach-house-property/
+  kept: BOK-1064723 | House | $1,500,000 | Augustusville, Cedros
+  GET [160] 200 https://mybunchofkeys.com/property/land-for-sale-34400-sf-in-st-helena/
+  kept: BOK-1058506 | House | $2,500,000 | Ross Trace, Piarco St. Helena
+  GET [161] 200 https://mybunchofkeys.com/property/land-for-sale-half-acre-along-chin-chin-road-cunupia/
+  kept: BOK-1057513 | House | $1,900,000 | Chin Chin Cunupia
+  GET [162] 200 https://mybunchofkeys.com/property/large-family-home-for-sale/
+  kept: BOK-819084 | House | $4,500,000 | Glencoe
+  GET [163] 200 https://mybunchofkeys.com/property/location-location-location-this-property-is-situated-on-tragarete-road-in-the-bustling-area-of-woodbrook/
+  kept: BOK-788863 | House | $3,850,000 | Port of Spain Woodbrook
+  GET [164] 200 https://mybunchofkeys.com/property/longdenville-saras-gardens-homes-for-sale-tt1-75m/
+  kept: BOK-796015 | House | $1,725,000 | Chaguanas Chase Village Longdenville
+  GET [165] 200 https://mybunchofkeys.com/property/luxury-home-for-sale-eighteen-moka/
+  kept: BOK-955888 | House | $8,500,000 | 18 Moka, Moka
+  GET [166] 200 https://mybunchofkeys.com/property/luxury-home-for-sale-oropouche/
+  kept: BOK-1039276 | House | $2,700,000 | Palm Drive Oropouche, South Oropouche
+  GET [167] 200 https://mybunchofkeys.com/property/magnolia-drive-woodford-gardens-chaguanas-2-75m-negotiable/
+  kept: BOK-1001694 | House | $2,400,000 | Chaguanas
+  GET [168] 200 https://mybunchofkeys.com/property/maraval-andulica/
+  kept: BOK-1040877 | House | $3,900,000 | 
+  GET [169] 200 https://mybunchofkeys.com/property/maraval-gem-ideal-location-with-endless-potential/
+  kept: BOK-679376 | House | $1,800,000 | Maraval
+  GET [170] 200 https://mybunchofkeys.com/property/maraval-house-for-sale-2/
+  kept: BOK-1049206 | House | $2,200,000 | Maraval
+  GET [171] 200 https://mybunchofkeys.com/property/maraval-investment-property/
+  kept: BOK-995863 | House | $2,190,000 | Maraval
+  GET [172] 200 https://mybunchofkeys.com/property/maraval-port-of-spain-house-for-sale-4-75m/
+  kept: BOK-992742 | House | $8,750,000 | Fairways
+  GET [173] 200 https://mybunchofkeys.com/property/marys-hill-tobago-house/
+  kept: BOK-985451 | House | $800,000 | Mary's Hill
+  GET [174] 200 https://mybunchofkeys.com/property/mayaro-home-for-sale-tt2-5m/
+  kept: BOK-811016 | House | $2,500,000 | Mayaro
+  GET [175] 200 https://mybunchofkeys.com/property/mayo-road-mayo/
+  kept: BOK-1066941 | House | $2,500,000 | Williamsville
+  GET [176] 200 https://mybunchofkeys.com/property/modern-home-for-sale-paxvale-santa-cruz/
+  kept: BOK-1062095 | House | $3,500,000 | Dove Drive, Santa Cruz
+  GET [177] 200 https://mybunchofkeys.com/property/modern-luxury-home-gated-community-couva/
+  kept: BOK-1057145 | House | $3,500,000 | Olive Grove Boulevard, Couva, Trinidad and Tobago, Couva Freeport
+  GET [178] 200 https://mybunchofkeys.com/property/moka-luxury-homes-overlooking-golf-course/
+  kept: BOK-952184 | House | $4,700,000 | Maraval
+  GET [179] 200 https://mybunchofkeys.com/property/natural-beauty-and-charm-at-ajoupa-gardens/
+  kept: BOK-925030 | House | $4,900,000 | Chickland Village , Freeport
+  GET [180] 200 https://mybunchofkeys.com/property/new-homes-malabar-arima/
+  kept: BOK-1067788 | House | $2,000,000 | Arima
+  GET [181] 200 https://mybunchofkeys.com/property/newly-renovated-single-storey-executive-home-for-sale-in-north-west-moorings/
+  kept: BOK-588099 | House | $5,000,000 | Westmoorings
+  GET [182] 200 https://mybunchofkeys.com/property/north-west-property-for-sale-on-saddle-rd-port-of-spain-3-5m/
+  kept: BOK-961159 | House | $2,500,000 | Maraval Port of Spain
+  GET [183] 200 https://mybunchofkeys.com/property/ocean-front-villa-for-sale-in-gated-community-in-tobago/
+  kept: BOK-790170 | House | $8,300,000 | Bacolet
+  GET [184] 200 https://mybunchofkeys.com/property/ocean-view-home-in-lambeau-for-sale-tobago-property/
+  kept: BOK-988110 | House | $4,950,000 | Lambeau
+  GET [185] 200 https://mybunchofkeys.com/property/orange-grove-trincity-house/
+  kept: BOK-1043537 | House | $1,900,000 | Orange Grove Estates Tacarigua Trincity
+  GET [186] 200 https://mybunchofkeys.com/property/palmiste-gardens-la-romain-homes-for-sale-tt2-3m/
+  kept: BOK-1017189 | House | $2,275,000 | La Romain Palmiste San Fernando
+  GET [187] 200 https://mybunchofkeys.com/property/palmiste-home-for-sale-tt3-725/
+  kept: BOK-1024068 | House | $3,725,000 | Palmiste San Fernando
+  GET [188] 200 https://mybunchofkeys.com/property/pax-vale-new-4-bedroom-home/
+  kept: BOK-976300 | House | $2,995,000 | Santa Cruz
+  GET [189] 200 https://mybunchofkeys.com/property/pearl-gardens-diego-martin-3/
+  kept: BOK-1068264 | House | $2,800,000 | Diego Martin
+  GET [190] 200 https://mybunchofkeys.com/property/penal-4-bedroom-house-for-sale/
+  kept: BOK-1061474 | House | $1,800,000 | Penal
+  GET [191] 200 https://mybunchofkeys.com/property/penal-house-for-sale-5/
+  kept: BOK-1061449 | House | $1,800,000 | Lachoos Road Penal, Penal
+  GET [192] 200 https://mybunchofkeys.com/property/pinegrove-villas-fairways-2/
+  kept: BOK-1049515 | House | $6,500,000 | Maraval
+  GET [193] 200 https://mybunchofkeys.com/property/pinehurst-park-fairways-maraval/
+  kept: BOK-5580 | House | $10,000,000 | Pinehurst Park, Fairways, Maraval, Fairways Maraval Port of Spain
+  GET [194] 200 https://mybunchofkeys.com/property/pinewood-gardens-petit-valley-for-sale-2-5m/
+  kept: BOK-960299 | House | $2,500,000 | Diego Martin Petit Valley
+  GET [195] 200 https://mybunchofkeys.com/property/preysal-home-for-sale-tt2m/
+  kept: BOK-917367 | House | $2,000,000 | Couva Preysal
+  GET [196] 200 https://mybunchofkeys.com/property/prime-investment-property-in-great-location-archer-street-belmont-875000-00-or-usd-equivalent/
+  kept: BOK-1066786 | House | $875,000 | Archer Street, Belmont, Belmont
+  GET [197] 200 https://mybunchofkeys.com/property/prime-property-in-woodbrook-ideal-for-residential-or-commercial-use/
+  kept: BOK-899561 | House | $2,400,000 | Woodbrook
+  GET [198] 200 https://mybunchofkeys.com/property/property-for-sale-9/
+  kept: BOK-1062225 | House | $3,750,000 | Hillsboro Maraval
+  GET [199] 200 https://mybunchofkeys.com/property/property-for-sale-woodbrook-3m-ono/
+  kept: BOK-1019883 | House | $3,000,000 | Woodbrook
+  GET [200] 200 https://mybunchofkeys.com/property/property-for-sale-woodford-street-newtown-pos-ttd2-4m/
+  kept: BOK-1068246 | House | $2,400,000 | Newtown Port of Spain Woodbrook
+  GET [201] 200 https://mybunchofkeys.com/property/property-of-sale-in-longdenville/
+  kept: BOK-1064612 | House | $2,800,000 | Longdenville
+  GET [202] 200 https://mybunchofkeys.com/property/rabita-avenue-mayaro-1-15m/
+  kept: BOK-916254 | House | $1,150,000 | Mayaro
+  GET [203] 200 https://mybunchofkeys.com/property/residential-commercial-incomplete-building-arima/
+  kept: BOK-1064508 | House | $12,500,000 | Arima
+  GET [204] 200 https://mybunchofkeys.com/property/saints-gardens-avenue-malabar-main-road-arima-for-sale/
+  kept: BOK-1003428 | House | $2,000,000 | Arima
+  GET [205] 200 https://mybunchofkeys.com/property/samaan-grove-tobago-3-bedroom-single-storey-home-for-sale/
+  kept: BOK-1014918 | House | $3,850,000 | Samaan Grove
+  GET [206] 200 https://mybunchofkeys.com/property/san-fernando-property-for-sale/
+  kept: BOK-857247 | House | $4,500,000 | Leotaud Street , San Fernando
+  GET [207] 200 https://mybunchofkeys.com/property/santa-cruz-5-bedroom-3-bath-4-5m/
+  kept: BOK-823998 | House | $4,000,000 | Grace Gardens Santa Cruz , Santa Cruz
+  GET [208] 200 https://mybunchofkeys.com/property/santa-cruz-home-for-sale-5/
+  kept: BOK-1057709 | House | $2,300,000 | Sinanan Gardens , Santa Cruz
+  GET [209] 200 https://mybunchofkeys.com/property/santa-cruz-house-for-sale-4/
+  kept: BOK-861242 | House | $2,800,000 | Santa Cruz
+  GET [210] 200 https://mybunchofkeys.com/property/sara-gardens/
+  kept: BOK-1064813 | House | $1,650,000 | Chaguanas
+  GET [211] 200 https://mybunchofkeys.com/property/scenic-valley-view-house-for-sale-rent/
+  kept: BOK-952104 | House | $6,980,000 | valley view, st. joseph, Maracas Valley St. Joseph
+  GET [212] 200 https://mybunchofkeys.com/property/seepaul-boulevard-la-romaine-home-for-sale-3-15m/
+  kept: BOK-756417 | House | $3,650,000 | La Romain Palmiste San Fernando
+  GET [213] 200 https://mybunchofkeys.com/property/seepaul-boulevard-la-romaine-home-for-sale-3-5m/
+  kept: BOK-793281 | House | $3,950,000 | La Romain Palmiste San Fernando
+  GET [214] 200 https://mybunchofkeys.com/property/siewdass-road-freeport-2/
+  kept: BOK-1004832 | House | $450,000 | Freeport

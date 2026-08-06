@@ -1,6 +1,6 @@
 <%# locals: (property:) %>
 <% favorited = authenticated? && current_user.favorited?(property) %>
-<div id="<%= dom_id(property, :lightbox_favorite) %>">
+<div id="<%= dom_id(property, :lightbox_favorite) %>" class="property-lightbox-favorite">
   <% if authenticated? %>
     <% if favorited %>
       <%= button_to property_favorite_path(property),
@@ -9,7 +9,9 @@
             form: { class: "property-lightbox-icon-form" },
             params: { source: "lightbox" },
             aria: { label: "Remove from saved" } do %>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21s-7-4.6-9.5-9.2C.8 8.2 2.4 5 6 5c2 0 3.2 1.2 4 2.2C10.8 6.2 12 5 14 5c3.6 0 5.2 3.2 3.5 6.8C19 16.4 12 21 12 21z"/></svg>
+        <svg class="property-lightbox-icon-svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+        </svg>
       <% end %>
     <% else %>
       <%= button_to property_favorite_path(property),
@@ -18,7 +20,9 @@
             form: { class: "property-lightbox-icon-form" },
             params: { source: "lightbox" },
             aria: { label: "Save home" } do %>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 21s-7-4.6-9.5-9.2C.8 8.2 2.4 5 6 5c2 0 3.2 1.2 4 2.2C10.8 6.2 12 5 14 5c3.6 0 5.2 3.2 3.5 6.8C19 16.4 12 21 12 21z"/></svg>
+        <svg class="property-lightbox-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+        </svg>
       <% end %>
     <% end %>
   <% else %>
@@ -28,7 +32,9 @@
       data-action="property-lightbox#promptSignIn"
       aria-label="Sign in to save"
     >
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 21s-7-4.6-9.5-9.2C.8 8.2 2.4 5 6 5c2 0 3.2 1.2 4 2.2C10.8 6.2 12 5 14 5c3.6 0 5.2 3.2 3.5 6.8C19 16.4 12 21 12 21z"/></svg>
+      <svg class="property-lightbox-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+      </svg>
     </button>
   <% end %>
 </div>

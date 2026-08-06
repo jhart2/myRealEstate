@@ -57,6 +57,7 @@ class BokListingsSyncJobTest < ActiveSupport::TestCase
     begin
       summary = job.perform(days: 7, max_details: 10, delay: 4, skip_search_crawl: true)
       assert_equal json_path.to_s, summary[:json_path]
+      assert_equal false, summary[:staging_pushed]
     ensure
       BokListingsImporter.define_singleton_method(:import!, original)
     end
@@ -64,6 +65,39 @@ class BokListingsSyncJobTest < ActiveSupport::TestCase
     cache = JSON.parse(@out_dir.join("progress_cache.json").read)
     assert cache["completed"].key?("https://mybunchofkeys.com/property/known-home/")
     assert_equal "already_in_db", cache["completed"]["https://mybunchofkeys.com/property/known-home/"]["reason"]
+  end
+
+  test "pushes to staging when local import created records" do
+    @json_path.write("[]")
+    out_dir = @out_dir
+    json_path = @json_path
+
+    job = Class.new(BokListingsSyncJob) do
+      define_method(:out_dir) { out_dir }
+      define_method(:run_scraper!) { |**| json_path }
+    end.new
+
+    created_result = BokListingsImporter::Result.new(
+      created: 2, updated: 0, skipped: 0, removed: 0, errors: []
+    )
+    original_import = BokListingsImporter.method(:import!)
+    BokListingsImporter.define_singleton_method(:import!) { |*_args, **_kwargs| created_result }
+
+    original_enabled = StagingListingsPusher.method(:enabled?)
+    original_push = StagingListingsPusher.method(:push!)
+    pushed = []
+    StagingListingsPusher.define_singleton_method(:enabled?) { true }
+    StagingListingsPusher.define_singleton_method(:push!) { |path| pushed << path.to_s; true }
+
+    begin
+      summary = job.perform(days: 1, max_details: 1, delay: 4, skip_search_crawl: true)
+      assert_equal true, summary[:staging_pushed]
+      assert_equal [ json_path.to_s ], pushed
+    ensure
+      BokListingsImporter.define_singleton_method(:import!, original_import)
+      StagingListingsPusher.define_singleton_method(:enabled?, original_enabled)
+      StagingListingsPusher.define_singleton_method(:push!, original_push)
+    end
   end
 
   test "raises when scraper exits non-zero" do

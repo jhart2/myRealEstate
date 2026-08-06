@@ -25,11 +25,13 @@
       <p class="font-display text-lg font-semibold leading-tight text-ink"><%= property.display_price %></p>
       <p class="mt-1 truncate text-sm font-medium text-ink"><%= property.title %></p>
       <p class="mt-0.5 truncate text-xs text-ink-3"><%= property.full_address %></p>
-      <p class="mt-2 text-xs text-ink-2">
-        <% if property.beds.to_i > 0 %><span class="font-semibold text-ink"><%= property.beds %></span> bd · <% end %>
-        <span class="font-semibold text-ink"><%= property.baths %></span> ba
-        <% if property.sqft.present? %> · <span class="font-semibold text-ink"><%= number_with_delimiter(property.sqft) %></span> sqft<% end %>
-      </p>
+      <% if property_spec_present?(property.beds) || property_spec_present?(property.baths) || property_spec_present?(property.sqft) %>
+        <p class="mt-2 text-xs text-ink-2">
+          <% if property_spec_present?(property.beds) %><span class="font-semibold text-ink"><%= property.beds %></span> bd<% end %>
+          <% if property_spec_present?(property.baths) %><%= " · " if property_spec_present?(property.beds) %><span class="font-semibold text-ink"><%= property.baths %></span> ba<% end %>
+          <% if property_spec_present?(property.sqft) %><%= " · " if property_spec_present?(property.beds) || property_spec_present?(property.baths) %><span class="font-semibold text-ink"><%= number_with_delimiter(property.sqft) %></span> sqft<% end %>
+        </p>
+      <% end %>
       <% if property.feature_list.any? %>
         <div class="mt-2">
           <%= render "properties/feature_chips", property: property, limit: 2 %>

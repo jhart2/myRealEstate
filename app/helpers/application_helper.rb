@@ -108,6 +108,11 @@ module ApplicationHelper
     budget.present? && budget != "Any Price"
   end
 
+  # Beds/baths/sqft (and similar counts): nil, blank, and 0 mean "unknown" — hide in listing UX.
+  def property_spec_present?(value)
+    value.present? && value.to_i.positive?
+  end
+
   def search_beds_baths_chip_label(beds, baths = nil)
     parts = []
     parts << "#{beds}+ bd" if beds.present?

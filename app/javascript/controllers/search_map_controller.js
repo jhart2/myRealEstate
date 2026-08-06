@@ -585,7 +585,9 @@ export default class extends Controller {
     if (listing.beds > 0) {
       stats.push(`<span class="popup-stat"><strong>${listing.beds}</strong> bds</span>`)
     }
-    stats.push(`<span class="popup-stat"><strong>${listing.baths || 0}</strong> ba</span>`)
+    if (listing.baths > 0) {
+      stats.push(`<span class="popup-stat"><strong>${listing.baths}</strong> ba</span>`)
+    }
     if (listing.sqftLabel) {
       stats.push(`<span class="popup-stat"><strong>${listing.sqftLabel}</strong> sqft</span>`)
     }

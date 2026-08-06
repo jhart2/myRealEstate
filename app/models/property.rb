@@ -198,7 +198,7 @@ class Property < ApplicationRecord
       beds: beds.to_i,
       baths: baths.to_i,
       sqft: sqft,
-      sqftLabel: sqft.present? ? ActiveSupport::NumberHelper.number_to_delimited(sqft) : nil,
+      sqftLabel: sqft.to_i.positive? ? ActiveSupport::NumberHelper.number_to_delimited(sqft) : nil,
       address: full_address,
       tag: tag_label,
       statusLabel: listing_status_label,
@@ -450,12 +450,12 @@ class Property < ApplicationRecord
 
     def add_structured!(buckets, property)
       room_items = []
-      room_items << "Bedrooms: #{property.beds}" if property.beds.present?
-      room_items << "Bathrooms: #{property.baths}" if property.baths.present?
+      room_items << "Bedrooms: #{property.beds}" if property.beds.present? && property.beds.to_i.positive?
+      room_items << "Bathrooms: #{property.baths}" if property.baths.present? && property.baths.to_i.positive?
       buckets["Interior"]["Bedrooms & bathrooms"].concat(room_items) if room_items.any?
 
       lot_items = []
-      if property.sqft.present?
+      if property.sqft.present? && property.sqft.to_i.positive?
         lot_items << "Building size: #{ActiveSupport::NumberHelper.number_to_delimited(property.sqft)} sqft"
       end
       lot_items << "Lot size: #{property.acreage_label}" if property.acreage_label.present?

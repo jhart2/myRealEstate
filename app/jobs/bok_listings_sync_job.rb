@@ -5,10 +5,11 @@
 #   bin/rails bok:sync
 #
 # Env (optional):
-#   BOK_SYNC_DAYS         lookback days (default 7)
-#   BOK_SYNC_MAX_DETAILS  detail fetches per run (default 250)
-#   BOK_SYNC_DELAY        polite delay seconds (default 4)
-#   BOK_SYNC_SKIP_SEARCH  "1" to sitemap-only (default on for hourly)
+#   BOK_SYNC_DAYS          lookback days (default 7)
+#   BOK_SYNC_MAX_DETAILS   detail fetches per run (default 250)
+#   BOK_SYNC_DELAY         polite delay seconds (default 4)
+#   BOK_SYNC_SKIP_SEARCH   "1" to sitemap-only (default on for hourly)
+#   BOK_SYNC_PUSH_STAGING  "0" to skip staging DB push (default: push outside test)
 #
 class BokListingsSyncJob < ApplicationJob
   queue_as :default
@@ -36,13 +37,16 @@ class BokListingsSyncJob < ApplicationJob
       "from=#{json_path}"
     )
 
+    staging = push_to_staging_if_needed!(json_path, result)
+
     {
       json_path: json_path.to_s,
       created: result.created,
       updated: result.updated,
       skipped: result.skipped,
       removed: result.removed,
-      errors: result.errors
+      errors: result.errors,
+      staging_pushed: staging
     }
   end
 
@@ -143,6 +147,23 @@ class BokListingsSyncJob < ApplicationJob
   # Isolated for tests; wraps Kernel#system.
   def execute_scraper!(cmd)
     system(*cmd)
+  end
+
+  # Mirror created/updated/removed rows onto staging Postgres after local import.
+  def push_to_staging_if_needed!(json_path, result)
+    return false unless StagingListingsPusher.enabled?
+
+    changed = result.created.to_i + result.updated.to_i + result.removed.to_i
+    if changed.zero?
+      Rails.logger.info("[BokListingsSyncJob] no local changes; skipping staging push")
+      return false
+    end
+
+    StagingListingsPusher.push!(json_path)
+    Rails.logger.info("[BokListingsSyncJob] pushed feed to staging (local changes=#{changed})")
+    true
+  rescue StagingListingsPusher::PushError => e
+    raise SyncError, e.message
   end
 
   def integer_opt(value, env_key, default)

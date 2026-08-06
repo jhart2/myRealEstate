@@ -818,10 +818,13 @@ body {
   right: 0;
   top: calc(100% + 0.35rem);
   z-index: 70;
+  width: 100%;
+  max-width: 100%;
   max-height: min(22rem, 70vh);
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  box-sizing: border-box;
   border: 1px solid var(--color-border);
   border-radius: 0.5rem;
   background: #fff;
@@ -1329,7 +1332,30 @@ html.lightbox-open body {
   display: flex;
   align-items: center;
   gap: 0.4rem;
+  flex-shrink: 0;
   position: relative;
+  overflow: visible;
+}
+
+/* Never let favorite / share controls compress — a shrunk flex item D-clips the circle */
+.property-lightbox-media-actions > :not(.property-lightbox-share-note) {
+  flex: 0 0 auto;
+  min-width: 2.25rem;
+  overflow: visible;
+}
+
+/* Favorite Turbo target + form: lock 36×36 so flex shrink can't D-clip the circle */
+.property-lightbox-favorite {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  flex: 0 0 2.25rem;
+  width: 2.25rem;
+  height: 2.25rem;
+  min-width: 2.25rem;
+  min-height: 2.25rem;
+  max-width: 2.25rem;
   overflow: visible;
 }
 
@@ -1337,6 +1363,13 @@ html.lightbox-open body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  box-sizing: border-box;
+  flex: 0 0 2.25rem;
+  width: 2.25rem;
+  height: 2.25rem;
+  min-width: 2.25rem;
+  min-height: 2.25rem;
+  max-width: 2.25rem;
   margin: 0;
   padding: 0;
   border: 0;
@@ -1349,10 +1382,13 @@ html.lightbox-open body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  box-sizing: border-box;
   width: 2.25rem;
   height: 2.25rem;
   min-width: 2.25rem;
   min-height: 2.25rem;
+  max-width: 2.25rem;
+  flex: 0 0 2.25rem;
   flex-shrink: 0;
   aspect-ratio: 1 / 1;
   gap: 0;
@@ -1372,8 +1408,12 @@ html.lightbox-open body {
   transition: background-color 0.15s ease;
 }
 
-.property-lightbox-icon-btn svg {
+.property-lightbox-icon-btn svg,
+.property-lightbox-icon-svg {
   display: block;
+  box-sizing: border-box;
+  width: 1rem;
+  height: 1rem;
   flex-shrink: 0;
   overflow: visible;
 }
@@ -1458,8 +1498,15 @@ html.lightbox-open body {
 
 .property-lightbox-body {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 1.5rem;
   padding: 1.25rem 1.25rem 1.75rem;
+}
+
+.property-lightbox-main,
+.property-lightbox-aside {
+  min-width: 0;
+  max-width: 100%;
 }
 
 @media (min-width: 900px) {
@@ -1471,11 +1518,15 @@ html.lightbox-open body {
 
 /* —— Travel times —— */
 .travel-times {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
   margin-bottom: 0.25rem;
   border: 0;
   border-radius: 0;
   background: transparent;
   overflow: visible;
+  box-sizing: border-box;
 }
 
 .travel-times-header {
@@ -1495,10 +1546,15 @@ html.lightbox-open body {
   color: #2a2a33;
 }
 
-.travel-times-compose {
+.travel-times-compose,
+.travel-times-result {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
   padding: 0;
   background: transparent;
   border-radius: 0;
+  box-sizing: border-box;
 }
 
 .travel-times-field {
@@ -1506,10 +1562,14 @@ html.lightbox-open body {
   display: flex;
   align-items: center;
   gap: 0.55rem;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
   padding: 0.55rem 0.7rem;
   border-radius: 0.5rem;
   background: #fff;
   border: 1px solid rgba(42, 36, 32, 0.14);
+  box-sizing: border-box;
 }
 
 .travel-times-car {
@@ -1521,6 +1581,7 @@ html.lightbox-open body {
 .travel-times-input {
   flex: 1;
   min-width: 0;
+  width: 100%;
   border: 0;
   outline: none;
   background: transparent;
@@ -1537,6 +1598,7 @@ html.lightbox-open body {
   margin: 0.45rem 0 0;
   font-size: 0.78rem;
   color: #6a6460;
+  overflow-wrap: anywhere;
 }
 
 .travel-times-unavailable {
@@ -1546,23 +1608,22 @@ html.lightbox-open body {
   color: #6a6460;
   background: transparent;
   border-radius: 0;
-}
-
-.travel-times-result {
-  padding: 0;
-  background: transparent;
-  border-radius: 0;
+  overflow-wrap: anywhere;
 }
 
 .travel-times-card {
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
   padding: 0.85rem 0.9rem;
   border-radius: 0.5rem;
   background: var(--color-trinidad-soft);
   border: 1px solid color-mix(in srgb, var(--color-trinidad) 35%, transparent);
   box-shadow: 0 1px 2px rgba(42, 36, 32, 0.06);
+  box-sizing: border-box;
 }
 
 .travel-times-marker {
@@ -1581,7 +1642,8 @@ html.lightbox-open body {
 
 .travel-times-card-copy {
   min-width: 0;
-  flex: 1;
+  flex: 1 1 auto;
+  overflow: hidden;
 }
 
 .travel-times-card-to {
@@ -1595,15 +1657,20 @@ html.lightbox-open body {
 
 .travel-times-card-mode {
   margin: 0.3rem 0 0;
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: 0.35rem;
+  min-width: 0;
   font-size: 0.85rem;
   color: #2a2622;
 }
 
 .travel-times-card-mode strong {
   font-weight: 700;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .travel-times-edit {
@@ -1629,6 +1696,7 @@ html.lightbox-open body {
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
+  max-width: 100%;
   margin-top: 0.65rem;
   border: 0;
   background: transparent;
@@ -1646,6 +1714,7 @@ html.lightbox-open body {
   justify-content: center;
   width: 1.25rem;
   height: 1.25rem;
+  flex-shrink: 0;
   border-radius: 999px;
   background: var(--color-trinidad);
   color: #fff;
@@ -1655,6 +1724,39 @@ html.lightbox-open body {
 
 .travel-times-add:hover {
   color: var(--color-trinidad-dark);
+}
+
+@media (max-width: 640px) {
+  .travel-times-card {
+    gap: 0.55rem;
+    padding: 0.75rem 0.7rem;
+  }
+
+  .travel-times-edit {
+    gap: 0;
+    padding: 0.35rem;
+    margin-right: -0.15rem;
+  }
+
+  .travel-times-edit-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .travel-times-field {
+    padding: 0.5rem 0.65rem;
+  }
+
+  .travel-times-add {
+    flex-wrap: wrap;
+  }
 }
 
 .property-lightbox-overview {

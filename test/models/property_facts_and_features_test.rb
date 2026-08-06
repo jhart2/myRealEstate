@@ -49,4 +49,12 @@ class PropertyFactsAndFeaturesTest < ActiveSupport::TestCase
     assert_equal [ "Bedrooms & bathrooms" ], groups[0][:categories].map { |c| c[:name] }
     refute groups.flat_map { |g| g[:categories] }.any? { |c| c[:items].empty? }
   end
+
+  test "omits zero beds baths and sqft from structured facts" do
+    property = Property.new(beds: 0, baths: 0, sqft: 0, property_type: "Land", features: [ "Patio" ])
+    groups = property.facts_and_features_groups
+    items = groups.flat_map { |g| g[:categories] }.flat_map { |c| c[:items] }
+
+    refute items.any? { |item| item.start_with?("Bedrooms:", "Bathrooms:", "Building size:") }
+  end
 end
