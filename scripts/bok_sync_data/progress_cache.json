@@ -1171,6 +1171,11 @@
       "ok": true,
       "kept": true,
       "style": "Apartment/Townhouse"
+    },
+    "https://mybunchofkeys.com/property/westside-drive-glencoe/": {
+      "ok": true,
+      "kept": true,
+      "style": "Apartment/Townhouse"
     }
   },
   "listings": [
@@ -6357,7 +6362,51 @@
         "Water Pump"
       ],
       "scraped_at": "2026-08-06T23:04:02.950230+00:00"
+    },
+    {
+      "url": "https://mybunchofkeys.com/property/westside-drive-glencoe/",
+      "title": "Westside Drive Glencoe - My Bunch of Keys",
+      "price": "$3,500 / Mth",
+      "bok_id": "BOK-704657",
+      "location": "Carenage Glencoe",
+      "bedrooms": "1",
+      "bathrooms": "1",
+      "sqft": "",
+      "parking": "",
+      "agent": "Cindy Cupen-Ramirez",
+      "agent_agency": "House to Home Real Estate",
+      "agent_phone": "(868) 358-3344",
+      "agent_image": "https://mybunchofkeys.com/wp-content/uploads/2018/08/bok-avatar-f-320x320.png",
+      "image": "https://mybunchofkeys.com/wp-content/uploads/2024/02/ec311e06-fde2-403f-b3fd-99ca9775a243.jpeg",
+      "images": [
+        "https://mybunchofkeys.com/wp-content/uploads/2024/02/ec311e06-fde2-403f-b3fd-99ca9775a243.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2024/02/ec311e06-fde2-403f-b3fd-99ca9775a243-810x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2024/02/86589a55-9d05-4821-a6c8-e8fd8015816f-810x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2024/02/5f454d83-64eb-4fe1-b4b8-77314c979d81-810x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2024/11/IMG_3748-618x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2024/11/9c9a940c-47ab-4b83-ad3c-f5146319a336-810x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2024/11/feaf7983-3ac5-4ff2-8f6c-4c4d72b7cfc1-810x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2024/11/e9accd17-2e6d-4433-bb26-9be8156d5af9-810x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2024/11/IMG_3755-810x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2024/11/IMG_3754-810x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/02/9cd2de4f-e573-4c3c-8e1c-76e1c1a724cb-810x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/02/IMG_4982-1440x1080.jpeg",
+        "https://mybunchofkeys.com/wp-content/uploads/2025/02/F97C3DA0-B5BE-4D4F-8125-11F1CB33FC45-COLLAGE-1080x1080.jpeg"
+      ],
+      "date_published": "2026-08-06T10:00:25+00:00",
+      "lastmod": "2026-08-06T23:00:00+00:00",
+      "property_style": "Apartment/Townhouse",
+      "property_type": "For Rent",
+      "description": "Westside Drive, Glencoe This lovely 1-bedroom, 1-bathroom semi furnished apartment awaits you in a highly desirable neighbourhood, offering not just a place to live, but a lifestyle to cherish. Property Features: · Furnished, providing both style and comfort. · Secure compound with remote controlled entrance. · Elevated location offering breathtaking views of the ocean, perfect for enjoying stunning sunsets and serene mornings. · Charming outdoor patio for your entertainment, designed with your utmost comfort in mind. · Located in a desirable area known for its tranquillity. · Inclusive of all utilities for your convenience Location: Nestled in a sought-after neighbourhood, this apartment provides easy access to all amenities. Whether you’re craving a leisurely stroll or seeking trendy cafes and shopping, everything you desire is just moments away. Don’t miss this wonderful opportunity; contact us today to schedule a viewing. Monthly rental $3,500 About the Region Carenage Carenage is a town in the Republic of Trinidad and Tobago. It is located in northwestern Trinidad, and is administered by the Diego Martin Regional Corporation. Located close to Chaguaramas, it is more of a resid",
+      "features": [
+        "Fully Furnished",
+        "Utilities included",
+        "Fully Fenced",
+        "Kid Friendly",
+        "Laundry Area/Facility"
+      ],
+      "scraped_at": "2026-08-06T23:04:09.182623+00:00"
     }
   ],
-  "updated_at": "2026-08-06T23:04:02.951119+00:00"
+  "updated_at": "2026-08-06T23:04:09.183517+00:00"
 }
