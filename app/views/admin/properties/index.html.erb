@@ -1,75 +1,183 @@
 <% content_for :title, "Properties" %>
 
-<div class="mb-6 flex items-center justify-between">
-  <h1 class="font-display text-3xl font-light">Properties</h1>
-  <%= link_to "Add property", new_admin_property_path, class: "btn-primary" %>
+<div class="mb-6 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+  <div>
+    <h1 class="font-display text-3xl font-light tracking-tight text-ink md:text-4xl">Properties</h1>
+    <p class="mt-1.5 text-sm text-ink-3">Manage all your property listings.</p>
+  </div>
+  <%= link_to new_admin_property_path, class: "admin-btn-accent inline-flex items-center gap-1.5" do %>
+    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+    Add property
+  <% end %>
 </div>
+
+<div class="mb-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+  <%= form_with url: admin_properties_path, method: :get, class: "relative min-w-0 flex-1 max-w-xl" do %>
+    <%= hidden_field_tag :status, params[:status] if params[:status].present? %>
+    <%= hidden_field_tag :tag, params[:tag] if params[:tag].present? %>
+    <%= hidden_field_tag :sort, params[:sort] if params[:sort].present? %>
+    <label class="sr-only" for="admin-property-search">Search properties</label>
+    <input
+      id="admin-property-search"
+      type="search"
+      name="q"
+      value="<%= params[:q] %>"
+      placeholder="Search properties..."
+      class="field field-on-panel !py-2.5 pr-11"
+      autocomplete="off"
+    >
+    <button type="submit" class="absolute right-2.5 top-1/2 -translate-y-1/2 rounded-md p-1.5 text-ink-3 transition-colors hover:text-ink" aria-label="Search">
+      <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+    </button>
+  <% end %>
+
+  <div class="flex flex-wrap items-center gap-2">
+    <div class="relative" data-controller="dropdown">
+      <button type="button" class="admin-btn-secondary !px-3 !py-2 gap-1.5" data-dropdown-target="button" data-action="dropdown#toggle" aria-haspopup="menu" aria-expanded="false">
+        <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M4 5h16M7 12h10M10 19h4"/></svg>
+        Filter
+      </button>
+      <div class="absolute right-0 top-full z-30 mt-1 min-w-[12rem] overflow-hidden rounded-lg border border-border bg-panel py-1 shadow-[0_8px_24px_rgba(26,23,20,0.12)]" data-dropdown-target="menu" role="menu" hidden>
+        <p class="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-ink-3">Status</p>
+        <%= link_to "All statuses", admin_properties_path(admin_filter_query(status: nil, page: nil)), class: "block px-3 py-2 text-sm #{params[:status].blank? ? 'bg-panel-warm font-medium text-ink' : 'text-ink-2 hover:bg-panel-warm'}", role: "menuitem" %>
+        <% Property::STATUSES.each do |status| %>
+          <%= link_to status.titleize, admin_properties_path(admin_filter_query(status: status, page: nil)), class: "block px-3 py-2 text-sm #{params[:status] == status ? 'bg-panel-warm font-medium text-ink' : 'text-ink-2 hover:bg-panel-warm'}", role: "menuitem" %>
+        <% end %>
+        <div class="my-1 border-t border-border"></div>
+        <p class="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-ink-3">Listing type</p>
+        <%= link_to "All types", admin_properties_path(admin_filter_query(tag: nil, page: nil)), class: "block px-3 py-2 text-sm #{params[:tag].blank? ? 'bg-panel-warm font-medium text-ink' : 'text-ink-2 hover:bg-panel-warm'}", role: "menuitem" %>
+        <% Property::TAGS.each do |tag| %>
+          <%= link_to tag.titleize, admin_properties_path(admin_filter_query(tag: tag, page: nil)), class: "block px-3 py-2 text-sm #{params[:tag] == tag ? 'bg-panel-warm font-medium text-ink' : 'text-ink-2 hover:bg-panel-warm'}", role: "menuitem" %>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="relative" data-controller="dropdown">
+      <button type="button" class="admin-btn-secondary !px-3 !py-2 gap-1.5" data-dropdown-target="button" data-action="dropdown#toggle" aria-haspopup="menu" aria-expanded="false">
+        <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+        Sort
+      </button>
+      <div class="absolute right-0 top-full z-30 mt-1 min-w-[11rem] overflow-hidden rounded-lg border border-border bg-panel py-1 shadow-[0_8px_24px_rgba(26,23,20,0.12)]" data-dropdown-target="menu" role="menu" hidden>
+        <% [
+          [nil, "Newest first"],
+          ["oldest", "Oldest first"],
+          ["price_desc", "Price: high to low"],
+          ["price_asc", "Price: low to high"],
+          ["title", "Title A–Z"]
+        ].each do |value, label| %>
+          <%= link_to label, admin_properties_path(admin_filter_query(sort: value, page: nil)), class: "block px-3 py-2 text-sm #{(params[:sort].presence || nil) == value ? 'bg-panel-warm font-medium text-ink' : 'text-ink-2 hover:bg-panel-warm'}", role: "menuitem" %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% if params[:q].present? || params[:status].present? || params[:tag].present? %>
+  <div class="mb-4 flex flex-wrap items-center gap-2 text-xs">
+    <% if params[:q].present? %>
+      <span class="rounded-full bg-panel px-2.5 py-1 text-ink-2 ring-1 ring-border">Search: <%= params[:q] %></span>
+    <% end %>
+    <% if params[:status].present? %>
+      <span class="rounded-full bg-panel px-2.5 py-1 text-ink-2 ring-1 ring-border">Status: <%= params[:status].titleize %></span>
+    <% end %>
+    <% if params[:tag].present? %>
+      <span class="rounded-full bg-panel px-2.5 py-1 text-ink-2 ring-1 ring-border">Type: <%= params[:tag].titleize %></span>
+    <% end %>
+    <%= link_to "Clear", admin_properties_path, class: "font-medium text-trinidad hover:underline" %>
+  </div>
+<% end %>
 
 <div class="overflow-visible rounded-xl border border-border bg-panel">
   <table class="w-full text-left text-sm">
-    <thead class="border-b border-border bg-panel-warm text-xs uppercase tracking-wider text-ink-3">
+    <thead class="border-b border-border bg-panel-warm text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-3">
       <tr>
-        <th class="px-4 py-3">Title</th>
-        <th class="px-4 py-3">Type</th>
-        <th class="px-4 py-3">Price</th>
-        <th class="px-4 py-3">Status</th>
-        <th class="px-4 py-3"><span class="sr-only">Actions</span></th>
+        <th class="px-4 py-3.5">Title</th>
+        <th class="px-4 py-3.5">Type</th>
+        <th class="px-4 py-3.5">Price</th>
+        <th class="px-4 py-3.5">Status</th>
+        <th class="px-4 py-3.5 text-right">Actions</th>
       </tr>
     </thead>
     <tbody class="divide-y divide-border">
-      <% @properties.each do |property| %>
-        <tr>
-          <td class="px-4 py-3 font-medium">
-            <%= link_to property.title, property_path(property), class: "text-ink transition-colors hover:text-trinidad", target: "_blank", rel: "noopener" %>
-          </td>
-          <td class="px-4 py-3 text-ink-3"><%= property.tag_label %> · <%= property.property_type %></td>
-          <td class="px-4 py-3"><%= property.display_price %></td>
-          <td class="px-4 py-3">
-            <% led = case property.status
-               when "active" then "bg-emerald-500 shadow-[0_0_0_3px_rgba(16,185,129,0.2)]"
-               when "pending" then "bg-amber-400 shadow-[0_0_0_3px_rgba(251,191,36,0.25)]"
-               when "sold" then "bg-ink-3 shadow-[0_0_0_3px_rgba(138,127,120,0.2)]"
-               when "rented" then "bg-sky-500 shadow-[0_0_0_3px_rgba(14,165,233,0.2)]"
-               else "bg-ink-3"
-               end %>
-            <span class="inline-flex items-center gap-2">
-              <span class="inline-block h-2 w-2 shrink-0 rounded-full <%= led %>" aria-hidden="true"></span>
-              <span class="capitalize text-ink-2"><%= property.status %></span>
-            </span>
-          </td>
-          <td class="px-4 py-3 text-right">
-            <div class="relative inline-flex justify-end" data-controller="dropdown">
-              <button
-                type="button"
-                class="inline-flex h-8 w-8 items-center justify-center rounded-lg text-ink-3 transition-colors hover:bg-panel-warm hover:text-ink"
-                data-dropdown-target="button"
-                data-action="dropdown#toggle"
-                aria-haspopup="menu"
-                aria-expanded="false"
-                aria-label="Actions for <%= property.title %>"
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                  <circle cx="12" cy="5" r="1.75" />
-                  <circle cx="12" cy="12" r="1.75" />
-                  <circle cx="12" cy="19" r="1.75" />
-                </svg>
-              </button>
-              <div
-                class="absolute right-0 top-full z-30 mt-1 min-w-[9.5rem] overflow-hidden rounded-lg border border-border bg-panel py-1 shadow-[0_8px_24px_rgba(26,23,20,0.12)]"
-                data-dropdown-target="menu"
-                role="menu"
-                hidden
-              >
-                <%= link_to "Edit", edit_admin_property_path(property), class: "block px-3 py-2 text-left text-sm text-ink hover:bg-panel-warm", role: "menuitem", data: { action: "dropdown#close" } %>
-                <%= button_to "Delete", admin_property_path(property), method: :delete,
-                      class: "block w-full px-3 py-2 text-left text-sm text-trinidad hover:bg-trinidad-soft",
-                      form: { data: { turbo_confirm: "Delete this property?" }, class: "w-full" },
-                      role: "menuitem" %>
+      <% if @properties.any? %>
+        <% @properties.each do |property| %>
+          <tr class="hover:bg-panel-warm/60">
+            <td class="px-4 py-4 font-medium">
+              <%= link_to property.title, property_path(property), class: "text-ink transition-colors hover:text-trinidad", target: "_blank", rel: "noopener" %>
+            </td>
+            <td class="px-4 py-4 text-ink-3"><%= property.tag_label %> · <%= property.property_type %></td>
+            <td class="px-4 py-4 font-semibold text-ink"><%= property.display_price %></td>
+            <td class="px-4 py-4">
+              <span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium <%= admin_status_badge_class(property.status) %>">
+                <span class="inline-block h-1.5 w-1.5 shrink-0 rounded-full <%= admin_status_dot_class(property.status) %>" aria-hidden="true"></span>
+                <span class="capitalize"><%= property.status %></span>
+              </span>
+            </td>
+            <td class="px-4 py-4 text-right">
+              <div class="relative inline-flex justify-end" data-controller="dropdown">
+                <button
+                  type="button"
+                  class="inline-flex h-8 w-8 items-center justify-center rounded-lg text-ink-3 transition-colors hover:bg-panel-warm hover:text-ink"
+                  data-dropdown-target="button"
+                  data-action="dropdown#toggle"
+                  aria-haspopup="menu"
+                  aria-expanded="false"
+                  aria-label="Actions for <%= property.title %>"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <circle cx="12" cy="5" r="1.75" />
+                    <circle cx="12" cy="12" r="1.75" />
+                    <circle cx="12" cy="19" r="1.75" />
+                  </svg>
+                </button>
+                <div
+                  class="absolute right-0 top-full z-30 mt-1 min-w-[9.5rem] overflow-hidden rounded-lg border border-border bg-panel py-1 shadow-[0_8px_24px_rgba(26,23,20,0.12)]"
+                  data-dropdown-target="menu"
+                  role="menu"
+                  hidden
+                >
+                  <%= link_to "Edit", edit_admin_property_path(property), class: "block px-3 py-2 text-left text-sm text-ink hover:bg-panel-warm", role: "menuitem", data: { action: "dropdown#close" } %>
+                  <%= button_to "Delete", admin_property_path(property), method: :delete,
+                        class: "block w-full px-3 py-2 text-left text-sm text-trinidad hover:bg-trinidad-soft",
+                        form: { data: { turbo_confirm: "Delete this property?" }, class: "w-full" },
+                        role: "menuitem" %>
+                </div>
               </div>
-            </div>
-          </td>
+            </td>
+          </tr>
+        <% end %>
+      <% else %>
+        <tr>
+          <td colspan="5" class="px-4 py-12 text-center text-sm text-ink-3">No properties match your filters.</td>
         </tr>
       <% end %>
     </tbody>
   </table>
+
+  <% if @total_count.positive? %>
+    <div class="flex flex-col gap-3 border-t border-border px-4 py-3.5 sm:flex-row sm:items-center sm:justify-between">
+      <p class="text-sm text-ink-3">
+        Showing <%= @range_from %> to <%= @range_to %> of <%= number_with_delimiter(@total_count) %> <%= "property".pluralize(@total_count) %>.
+      </p>
+      <% if @total_pages > 1 %>
+        <nav class="flex items-center gap-1.5" aria-label="Pagination">
+          <%= link_to admin_properties_path(admin_filter_query.merge(page: @page - 1)),
+                class: "admin-page-btn #{'pointer-events-none opacity-40' if @page <= 1}",
+                aria: { label: "Previous page", disabled: @page <= 1 } do %>
+            <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+          <% end %>
+          <% admin_page_window(current: @page, total: @total_pages).each do |page_num| %>
+            <%= link_to page_num, admin_properties_path(admin_filter_query.merge(page: page_num)),
+                  class: "admin-page-btn #{'is-active' if page_num == @page}",
+                  aria: { current: (page_num == @page ? "page" : nil) } %>
+          <% end %>
+          <%= link_to admin_properties_path(admin_filter_query.merge(page: @page + 1)),
+                class: "admin-page-btn #{'pointer-events-none opacity-40' if @page >= @total_pages}",
+                aria: { label: "Next page", disabled: @page >= @total_pages } do %>
+            <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+          <% end %>
+        </nav>
+      <% end %>
+    </div>
+  <% end %>
 </div>

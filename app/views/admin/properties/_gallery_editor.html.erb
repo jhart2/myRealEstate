@@ -1,0 +1,43 @@
+<%# locals: (form:, property:) %>
+<% urls = property.gallery_image_urls %>
+<% cover = property[:image_url].presence || urls.first %>
+<div class="space-y-4" data-controller="gallery-editor">
+  <div>
+    <p class="text-sm font-medium text-ink">Listing photos</p>
+    <p class="mt-0.5 text-xs text-ink-3">Reorder, remove, or set the cover photo used on cards and search.</p>
+  </div>
+
+  <%= hidden_field_tag "property[gallery_sync]", "1" %>
+  <input type="hidden" name="property[image_url]" value="<%= cover %>" data-gallery-editor-target="coverField">
+
+  <div class="grid grid-cols-2 gap-3 sm:grid-cols-3" data-gallery-editor-target="list">
+    <% urls.each do |url| %>
+      <div
+        class="admin-gallery-item group relative overflow-hidden rounded-xl border border-border bg-panel-warm"
+        data-gallery-editor-target="item"
+        data-url="<%= url %>"
+        data-cover="<%= url == cover %>"
+      >
+        <input type="hidden" name="property[image_urls][]" value="<%= url %>" data-role="url-field">
+        <div class="aspect-[4/3] overflow-hidden">
+          <img src="<%= url %>" alt="" class="h-full w-full object-cover" loading="lazy">
+        </div>
+        <span data-role="cover-badge" class="absolute left-2 top-2 rounded-md bg-ink/85 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-ground <%= 'hidden' unless url == cover %>">Cover</span>
+        <div class="flex items-center gap-1 border-t border-border bg-panel p-1.5">
+          <button type="button" class="admin-gallery-btn" data-role="move-left" data-action="gallery-editor#moveLeft" title="Move left" aria-label="Move left">‹</button>
+          <button type="button" class="admin-gallery-btn" data-role="move-right" data-action="gallery-editor#moveRight" title="Move right" aria-label="Move right">›</button>
+          <button type="button" class="admin-gallery-btn flex-1 text-[11px]" data-role="set-cover" data-action="gallery-editor#setCover">Set cover</button>
+          <button type="button" class="admin-gallery-btn text-trinidad" data-action="gallery-editor#remove" title="Remove" aria-label="Remove">✕</button>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <p class="rounded-lg border border-dashed border-border bg-panel-warm px-3 py-6 text-center text-sm text-ink-3 <%= 'hidden' if urls.any? %>" data-gallery-editor-target="empty">
+    No photos yet. Upload a cover file below.
+  </p>
+
+  <div class="<%= 'border-t border-border pt-5' if urls.any? %>">
+    <%= render "shared/image_upload", form: form, label: "Upload cover file", hint: "JPEG, PNG, or WebP · max 10MB", aspect: "landscape" %>
+  </div>
+</div>

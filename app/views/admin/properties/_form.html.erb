@@ -1,114 +1,208 @@
-<% content_for :title, @property.persisted? ? "Edit Property" : "New Property" %>
+<% editing = @property.persisted? %>
+<% content_for :title, editing ? "Edit Property" : "New Property" %>
+<% content_for :admin_breadcrumb do %>
+  <%= link_to admin_properties_path, class: "inline-flex items-center gap-1.5 text-ink-2 transition-colors hover:text-ink" do %>
+    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+    Back to properties
+  <% end %>
+<% end %>
 
-<h1 class="font-display text-3xl font-light"><%= @property.persisted? ? "Edit property" : "New property" %></h1>
+<%= form_with model: [:admin, @property], multipart: true, class: "admin-property-form", id: "admin-property-form" do |f| %>
+  <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+    <div>
+      <h1 class="font-display text-3xl font-light tracking-tight text-ink md:text-4xl"><%= editing ? "Edit property" : "New property" %></h1>
+      <p class="mt-1.5 text-sm text-ink-3"><%= editing ? "Update and manage your property details." : "Add a listing to the TT Realty inventory." %></p>
+      <% if editing %>
+        <%= link_to property_path(@property), class: "mt-1.5 inline-block text-sm text-ink-3 underline decoration-ink-3/40 underline-offset-2 transition-colors hover:text-trinidad hover:decoration-trinidad", target: "_blank", rel: "noopener" do %>
+          <%= property_path(@property) %>
+        <% end %>
+      <% end %>
+    </div>
+    <div class="flex shrink-0 flex-wrap items-center gap-2">
+      <%= link_to "Cancel", admin_properties_path, class: "admin-btn-secondary" %>
+      <%= f.submit editing ? "Save changes" : "Create property", class: "admin-btn-accent cursor-pointer" %>
+    </div>
+  </div>
 
-<%= form_with model: [:admin, @property], multipart: true, class: "mt-8 max-w-2xl space-y-5" do |f| %>
   <% if @property.errors.any? %>
-    <div class="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700"><%= @property.errors.full_messages.to_sentence %></div>
+    <div class="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"><%= @property.errors.full_messages.to_sentence %></div>
   <% end %>
 
-  <div class="field-group">
-    <%= f.label :title, class: "field-label" %>
-    <%= f.text_field :title, placeholder: "Meridian House", class: "field", required: true %>
-  </div>
+  <div class="grid gap-6 xl:grid-cols-[minmax(0,1fr)_240px]">
+    <div class="space-y-5">
+      <section class="admin-card">
+        <header class="admin-card-header">
+          <span class="admin-card-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
+          </span>
+          <h2>Basic information</h2>
+        </header>
+        <div class="admin-card-body space-y-5">
+          <div class="field-group">
+            <%= f.label :title, class: "field-label" do %>Title <span class="text-trinidad">*</span><% end %>
+            <%= f.text_field :title, class: "field field-on-panel", required: true %>
+          </div>
+          <div class="grid gap-5 md:grid-cols-2">
+            <div class="field-group">
+              <%= f.label :tag, class: "field-label" do %>Listing type <span class="text-trinidad">*</span><% end %>
+              <%= f.select :tag, Property::TAGS.map { |t| [t.titleize, t] }, {}, class: "field field-on-panel field-select", required: true %>
+            </div>
+            <div class="field-group">
+              <%= f.label :property_type, class: "field-label" do %>Property type <span class="text-trinidad">*</span><% end %>
+              <%= f.select :property_type, Property::PROPERTY_TYPES, {}, class: "field field-on-panel field-select", required: true %>
+            </div>
+          </div>
+          <div class="grid gap-5 md:grid-cols-2">
+            <div class="field-group" data-controller="admin-status">
+              <%= f.label :status, class: "field-label" do %>Status <span class="text-trinidad">*</span><% end %>
+              <div class="admin-status-field">
+                <span class="inline-block h-2 w-2 shrink-0 rounded-full <%= admin_status_led_class(@property.status) %>" data-admin-status-target="led" aria-hidden="true"></span>
+                <%= f.select :status, Property::STATUSES.map { |s| [s.titleize, s] }, {},
+                      class: "admin-status-select",
+                      required: true,
+                      data: { admin_status_target: "select", action: "change->admin-status#sync" } %>
+              </div>
+            </div>
+            <div class="field-group">
+              <%= f.label :agent_id, "Assigned agent", class: "field-label" %>
+              <%= f.collection_select :agent_id, @agents, :id, :name, { include_blank: "No agent" }, class: "field field-on-panel field-select" %>
+            </div>
+          </div>
+        </div>
+      </section>
 
-  <div class="grid gap-5 md:grid-cols-2">
-    <div class="field-group">
-      <%= f.label :tag, "Listing type", class: "field-label" %>
-      <%= f.select :tag, Property::TAGS.map { |t| [t.titleize, t] }, {}, class: "field" %>
-    </div>
-    <div class="field-group">
-      <%= f.label :property_type, "Property type", class: "field-label" %>
-      <%= f.select :property_type, Property::PROPERTY_TYPES, {}, class: "field" %>
-    </div>
-  </div>
+      <section class="admin-card">
+        <header class="admin-card-header">
+          <span class="admin-card-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M12 21s7-4.5 7-11a7 7 0 1 0-14 0c0 6.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+          </span>
+          <h2>Location</h2>
+        </header>
+        <div class="admin-card-body space-y-5">
+          <div class="field-group">
+            <%= f.label :address, class: "field-label" do %>Street address <span class="text-trinidad">*</span><% end %>
+            <%= f.text_field :address, class: "field field-on-panel", required: true %>
+          </div>
+          <div class="grid gap-5 md:grid-cols-3">
+            <div class="field-group">
+              <%= f.label :city, class: "field-label" do %>City <span class="text-trinidad">*</span><% end %>
+              <%= f.text_field :city, class: "field field-on-panel", required: true %>
+            </div>
+            <div class="field-group">
+              <%= f.label :state, class: "field-label" do %>State / Region <span class="text-trinidad">*</span><% end %>
+              <%= f.text_field :state, class: "field field-on-panel", required: true %>
+            </div>
+            <div class="field-group">
+              <%= f.label :zip, "ZIP code", class: "field-label" %>
+              <%= f.text_field :zip, class: "field field-on-panel" %>
+            </div>
+          </div>
+        </div>
+      </section>
 
-  <div class="grid gap-5 md:grid-cols-2">
-    <div class="field-group">
-      <%= f.label :status, class: "field-label" %>
-      <%= f.select :status, Property::STATUSES.map { |s| [s.titleize, s] }, {}, class: "field" %>
-    </div>
-    <div class="field-group">
-      <%= f.label :agent_id, "Assigned agent", class: "field-label" %>
-      <%= f.collection_select :agent_id, @agents, :id, :name, { include_blank: "No agent" }, class: "field" %>
-    </div>
-  </div>
+      <section class="admin-card">
+        <header class="admin-card-header">
+          <span class="admin-card-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M3 21h18M5 21V8l7-5 7 5v13M9 21v-6h6v6"/></svg>
+          </span>
+          <h2>Property details</h2>
+        </header>
+        <div class="admin-card-body space-y-5">
+          <div class="grid gap-5 md:grid-cols-3">
+            <div class="field-group md:col-span-1">
+              <%= f.label :price_dollars, class: "field-label" do %>Price (TT$) <span class="text-trinidad">*</span><% end %>
+              <%= f.number_field :price_dollars, value: @property.price_dollars, step: :any, min: 0, class: "field field-on-panel", required: true %>
+              <% if @property.price_cents.present? %>
+                <p class="field-hint">$<%= number_with_delimiter(@property.price_cents.to_i / 100) %> = <%= number_with_delimiter(@property.price_cents) %> cents</p>
+              <% else %>
+                <p class="field-hint">Enter dollars; saved as cents on the listing.</p>
+              <% end %>
+            </div>
+            <div class="field-group">
+              <%= f.label :beds, "Bedrooms", class: "field-label" %>
+              <%= f.number_field :beds, class: "field field-on-panel" %>
+            </div>
+            <div class="field-group">
+              <%= f.label :baths, "Bathrooms", class: "field-label" %>
+              <%= f.number_field :baths, class: "field field-on-panel" %>
+            </div>
+          </div>
+          <div class="grid gap-5 md:grid-cols-3">
+            <div class="field-group">
+              <%= f.label :sqft, "Home square feet", class: "field-label" %>
+              <%= f.number_field :sqft, class: "field field-on-panel" %>
+            </div>
+            <div class="field-group">
+              <%= f.label :lot_sqft, "Lot square feet", class: "field-label" %>
+              <%= f.number_field :lot_sqft, class: "field field-on-panel" %>
+            </div>
+            <div class="field-group">
+              <%= f.label :acres, "Acres", class: "field-label" %>
+              <%= f.number_field :acres, step: :any, class: "field field-on-panel" %>
+              <% if @property.acres_derived_from_lot? %>
+                <p class="field-hint">Auto-calculated from lot size</p>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </section>
 
-  <div class="field-group">
-    <%= f.label :address, "Street address", class: "field-label" %>
-    <%= f.text_field :address, placeholder: "12 Clifton Rise", class: "field", required: true %>
-  </div>
+      <section class="admin-card">
+        <header class="admin-card-header">
+          <span class="admin-card-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/><circle cx="12" cy="12" r="2.5"/></svg>
+          </span>
+          <h2>Coordinates</h2>
+        </header>
+        <div class="admin-card-body space-y-4" data-controller="coord-picker">
+          <div class="grid gap-5 md:grid-cols-2">
+            <div class="field-group">
+              <%= f.label :latitude, class: "field-label" %>
+              <%= f.number_field :latitude, step: :any, class: "field field-on-panel",
+                    data: { coord_picker_target: "lat", action: "input->coord-picker#latChanged change->coord-picker#latChanged" } %>
+            </div>
+            <div class="field-group">
+              <%= f.label :longitude, class: "field-label" %>
+              <%= f.number_field :longitude, step: :any, class: "field field-on-panel",
+                    data: { coord_picker_target: "lng", action: "input->coord-picker#lngChanged change->coord-picker#lngChanged" } %>
+            </div>
+          </div>
+          <div>
+            <div class="admin-coord-map overflow-hidden rounded-xl border border-border" data-coord-picker-target="map"></div>
+            <p class="field-hint mt-2">Click the map or drag the pin to set coordinates.</p>
+          </div>
+        </div>
+      </section>
 
-  <div class="grid gap-5 md:grid-cols-3">
-    <div class="field-group">
-      <%= f.label :city, class: "field-label" %>
-      <%= f.text_field :city, placeholder: "Beverly Hills", class: "field", required: true %>
+      <section class="admin-card">
+        <header class="admin-card-header">
+          <span class="admin-card-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M4 16l4.5-4.5a2 2 0 0 1 2.8 0L16 16M14 14l1.5-1.5a2 2 0 0 1 2.8 0L20 15M6 20h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2z"/><circle cx="9" cy="8" r="1.5"/></svg>
+          </span>
+          <h2>Photos & description</h2>
+        </header>
+        <div class="admin-card-body space-y-5">
+          <%= render "gallery_editor", form: f, property: @property %>
+          <div class="field-group">
+            <%= f.label :description, class: "field-label" %>
+            <%= f.text_area :description, rows: 5, class: "field field-on-panel", placeholder: "Describe the property…" %>
+          </div>
+          <label class="flex items-center gap-2 text-sm font-medium text-ink">
+            <%= f.check_box :featured, class: "rounded border-border text-trinidad focus:ring-trinidad" %>
+            Featured listing
+          </label>
+        </div>
+      </section>
     </div>
-    <div class="field-group">
-      <%= f.label :state, class: "field-label" %>
-      <%= f.text_field :state, placeholder: "CA", class: "field", required: true %>
-    </div>
-    <div class="field-group">
-      <%= f.label :zip, "ZIP code", class: "field-label" %>
-      <%= f.text_field :zip, placeholder: "90210", class: "field" %>
-    </div>
-  </div>
 
-  <div class="grid gap-5 md:grid-cols-4">
-    <div class="field-group">
-      <%= f.label :price_cents, "Price (cents)", class: "field-label" %>
-      <%= f.number_field :price_cents, placeholder: "475000000", class: "field", required: true %>
-      <p class="field-hint">$4,750,000 = 475000000</p>
-    </div>
-    <div class="field-group">
-      <%= f.label :beds, "Bedrooms", class: "field-label" %>
-      <%= f.number_field :beds, placeholder: "5", class: "field" %>
-    </div>
-    <div class="field-group">
-      <%= f.label :baths, "Bathrooms", class: "field-label" %>
-      <%= f.number_field :baths, placeholder: "4", class: "field" %>
-    </div>
-    <div class="field-group">
-      <%= f.label :sqft, "Home square feet", class: "field-label" %>
-      <%= f.number_field :sqft, placeholder: "5820", class: "field" %>
-    </div>
-    <div class="field-group">
-      <%= f.label :lot_sqft, "Lot square feet", class: "field-label" %>
-      <%= f.number_field :lot_sqft, placeholder: "8000", class: "field" %>
-    </div>
-    <div class="field-group">
-      <%= f.label :acres, "Acres", class: "field-label" %>
-      <%= f.number_field :acres, step: :any, placeholder: "1.03", class: "field" %>
-      <p class="field-hint">Filled automatically when derived from listing text / lot size</p>
-    </div>
-  </div>
-
-  <div class="grid gap-5 md:grid-cols-2">
-    <div class="field-group">
-      <%= f.label :latitude, class: "field-label" %>
-      <%= f.number_field :latitude, step: :any, placeholder: "34.0901", class: "field" %>
-    </div>
-    <div class="field-group">
-      <%= f.label :longitude, class: "field-label" %>
-      <%= f.number_field :longitude, step: :any, placeholder: "-118.4065", class: "field" %>
-      <p class="field-hint">Used for map search pins</p>
-    </div>
-  </div>
-
-  <%= render "shared/image_upload", form: f, label: "Listing photo", aspect: "landscape" %>
-
-  <div class="field-group">
-    <%= f.label :description, class: "field-label" %>
-    <%= f.text_area :description, rows: 5, placeholder: "Describe the property…", class: "field" %>
-  </div>
-
-  <label class="flex items-center gap-2 text-sm font-medium text-ink">
-    <%= f.check_box :featured, class: "rounded border-border" %>
-    Featured listing
-  </label>
-
-  <div class="flex gap-3 pt-2">
-    <%= f.submit class: "btn-primary cursor-pointer" %>
-    <%= link_to "Cancel", admin_properties_path, class: "btn-ghost" %>
+    <aside class="xl:pt-0">
+      <div class="admin-help-card sticky top-6">
+        <div class="mb-2 flex items-center gap-2 text-sm font-semibold text-ink">
+          <span class="inline-flex h-5 w-5 items-center justify-center rounded-full bg-trinidad/10 text-[11px] font-bold text-trinidad" aria-hidden="true">i</span>
+          Need help?
+        </div>
+        <p class="text-sm leading-relaxed text-ink-3">Fill in all required fields marked <span class="text-trinidad">*</span> to save your property.</p>
+      </div>
+    </aside>
   </div>
 <% end %>

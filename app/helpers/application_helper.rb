@@ -138,4 +138,15 @@ module ApplicationHelper
       }.join("-")
     }.join(" ")
   end
+
+  def can_edit_listing?(property)
+    return false unless authenticated? && property.present?
+    return true if admin?
+
+    current_agent.present? && property.agent_id == current_agent.id
+  end
+
+  def listing_edit_path_for(property)
+    admin? ? edit_admin_property_path(property) : edit_portal_property_path(property)
+  end
 end

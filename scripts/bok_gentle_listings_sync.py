@@ -13,12 +13,16 @@ Design goals:
 
 Examples:
   python3 scripts/bok_gentle_listings_sync.py --days 30 --delay 4
-  python3 scripts/bok_gentle_listings_sync.py --days 30 --delay 5 --max-details 25
+  python3 scripts/bok_gentle_listings_sync.py --days 7 --delay 4 --max-details 250
   python3 scripts/bok_gentle_listings_sync.py --days 7 --skip-search-crawl
+
+Hourly batches (--max-details N) fetch newest unfinished URLs first; the
+progress cache skips completed ones so later runs reach further back until
+the window is covered.
 
 Then load into Rails:
   bin/rails bok:import
-  bin/rails "bok:import[scripts/bok_sync_data/houses_last_month_….json]"
+  bin/rails bok:sync
 """
 
 from __future__ import annotations
@@ -532,6 +536,18 @@ def save_cache(path: Path, cache: dict) -> None:
     path.write_text(json.dumps(cache, indent=2, ensure_ascii=False))
 
 
+def sort_candidates_newest_first(urls: Iterable[str], lastmod_by_url: dict[str, str]) -> list[str]:
+    """Prefer sitemap lastmod (newest first); undated URLs sort last, then by URL."""
+
+    def sort_key(url: str) -> tuple:
+        dt = parse_dt(lastmod_by_url.get(url))
+        # Invert timestamp so newer sorts first; missing dates go last.
+        stamp = -(dt.timestamp()) if dt else float("inf")
+        return (stamp, url)
+
+    return sorted(urls, key=sort_key)
+
+
 def write_outputs(listings: Iterable[Listing], out_dir: Path, stamp: str) -> None:
     out_dir.mkdir(parents=True, exist_ok=True)
     rows = [asdict(item) for item in listings]
@@ -609,7 +625,7 @@ def main() -> int:
             if line.strip() and not line.strip().startswith("#")
         ]
         recent = {url: "" for url in file_urls}
-        candidates = list(dict.fromkeys(file_urls))
+        candidates = sort_candidates_newest_first(dict.fromkeys(file_urls), recent)
         print(f"From urls-file: {len(candidates)} listing URLs", flush=True)
     elif args.from_cache:
         cached_rows = cache.get("listings", [])
@@ -618,20 +634,21 @@ def main() -> int:
             for row in cached_rows
             if row.get("url")
         }
-        candidates = sorted(recent.keys())
-        print(f"From cache: {len(candidates)} listing URLs", flush=True)
+        candidates = sort_candidates_newest_first(recent.keys(), recent)
+        print(f"From cache: {len(candidates)} listing URLs (newest first)", flush=True)
     else:
         recent = discover_recent_urls(client, cutoff)
 
         if args.skip_search_crawl:
-            candidates = sorted(recent.keys())
-            print(f"Candidates from sitemap only: {len(candidates)}", flush=True)
+            candidates = sort_candidates_newest_first(recent.keys(), recent)
+            print(f"Candidates from sitemap only: {len(candidates)} (newest first)", flush=True)
         else:
             house_urls = crawl_house_search(client, max_pages=args.max_search_pages)
-            candidates = sorted(set(recent) & house_urls)
+            intersection = set(recent) & house_urls
+            candidates = sort_candidates_newest_first(intersection, recent)
             print(
                 f"Intersection (recent ∩ house search): {len(candidates)} "
-                f"(recent={len(recent)}, house_search={len(house_urls)})",
+                f"(recent={len(recent)}, house_search={len(house_urls)}; newest first)",
                 flush=True,
             )
 

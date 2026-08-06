@@ -1,0 +1,13 @@
+[Unit]
+Description=Hourly BOK listings sync timer
+After=network-online.target
+
+[Timer]
+# Fires shortly after boot if a run was missed while powered off, then every hour.
+OnBootSec=5min
+OnUnitActiveSec=1h
+Persistent=true
+Unit=bok-listings-sync.service
+
+[Install]
+WantedBy=timers.target

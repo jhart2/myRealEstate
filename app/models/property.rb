@@ -29,6 +29,23 @@ class Property < ApplicationRecord
   before_validation :set_price_label
   before_validation :sync_lot_size_fields
 
+  def price_dollars
+    return if price_cents.blank?
+
+    (BigDecimal(price_cents.to_s) / 100).to_s("F").sub(/\.0+\z/, "").sub(/(\.\d*?)0+\z/, '\1')
+  end
+
+  def price_dollars=(value)
+    raw = value.to_s.gsub(/[,\s]/, "")
+    if raw.blank?
+      self.price_cents = nil
+    else
+      self.price_cents = (BigDecimal(raw) * 100).round
+    end
+  rescue ArgumentError
+    self.price_cents = nil
+  end
+
 
   def self.search(params = {})
     scope = active
@@ -297,6 +314,13 @@ class Property < ApplicationRecord
 
   def to_param
     slug
+  end
+
+  def acres_derived_from_lot?
+    return false if acres.blank? || lot_sqft.blank? || lot_sqft.to_i <= 0
+
+    derived = (BigDecimal(lot_sqft.to_s) / LotSizeExtractor::SQFT_PER_ACRE).round(4)
+    BigDecimal(acres.to_s).round(4) == derived
   end
 
   private

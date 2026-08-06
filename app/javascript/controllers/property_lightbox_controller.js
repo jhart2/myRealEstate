@@ -89,14 +89,35 @@ export default class extends Controller {
     const panel = event.currentTarget.closest("[data-property-lightbox-detail]")
     if (!panel) return
     const mode = event.currentTarget.dataset.media
+    this.#setMediaMode(panel, mode)
+  }
+
+  toggleMedia(event) {
+    event.preventDefault()
+    const panel = event.currentTarget.closest("[data-property-lightbox-detail]")
+    if (!panel) return
+    const mapPanel = panel.querySelector('[data-media-panel="map"]')
+    const showingMap = mapPanel && !mapPanel.classList.contains("hidden")
+    this.#setMediaMode(panel, showingMap ? "photos" : "map")
+  }
+
+  #setMediaMode(panel, mode) {
     panel.querySelectorAll("[data-media-panel]").forEach((el) => {
       el.classList.toggle("hidden", el.dataset.mediaPanel !== mode)
     })
-    panel.querySelectorAll("[data-media-tab]").forEach((el) => {
-      const active = el.dataset.media === mode
-      el.classList.toggle("is-active", active)
-      el.setAttribute("aria-selected", active ? "true" : "false")
-    })
+
+    const tab = panel.querySelector("[data-media-tab]")
+    if (tab) {
+      const mapIcon = tab.querySelector('[data-icon="map"]')
+      const photosIcon = tab.querySelector('[data-icon="photos"]')
+      const showingMap = mode === "map"
+      mapIcon?.classList.toggle("hidden", showingMap)
+      photosIcon?.classList.toggle("hidden", !showingMap)
+      tab.classList.toggle("is-active", showingMap)
+      tab.setAttribute("aria-selected", showingMap ? "true" : "false")
+      tab.setAttribute("aria-label", showingMap ? "Show photos" : "Show map")
+    }
+
     if (mode === "map") {
       window.setTimeout(() => this.initDetailMap(panel), 40)
     }
@@ -152,13 +173,21 @@ export default class extends Controller {
       maxZoom: 19
     }).addTo(map)
 
-    L.circleMarker([lat, lng], {
-      radius: 9,
-      color: "#fff",
-      weight: 2,
-      fillColor: "#c23b3b",
-      fillOpacity: 1
-    }).addTo(map)
+    const homeIcon = L.divIcon({
+      className: "listing-home-marker",
+      iconSize: [36, 44],
+      iconAnchor: [18, 42],
+      html: `
+        <span class="listing-home-marker-pin" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 10.5 12 3l9 7.5"/>
+            <path d="M5 10.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9.5"/>
+          </svg>
+        </span>
+      `
+    })
+
+    L.marker([lat, lng], { icon: homeIcon, interactive: false }).addTo(map)
 
     mapEl.dataset.ready = "1"
     mapEl._leaflet_map = map

@@ -1,0 +1,23 @@
+[Unit]
+Description=TT Realty BOK listings sync (scrape + import)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/home/javon/Desktop/Real Estate Website Builder
+Environment=RAILS_ENV=development
+Environment=BOK_SYNC_DAYS=7
+Environment=BOK_SYNC_MAX_DETAILS=250
+Environment=BOK_SYNC_DELAY=4
+Environment=BOK_SYNC_SKIP_SEARCH=1
+Environment=PATH=/home/javon/.local/share/mise/shims:/home/javon/.local/bin:/usr/local/bin:/usr/bin:/bin
+Environment=HOME=/home/javon
+# Quote the rails binary path (project dir has spaces).
+ExecStart=/home/javon/Desktop/Real\x20Estate\x20Website\x20Builder/bin/rails bok:sync
+Nice=10
+# Scraper is sequential with ~4s delay; 250 details can take ~30–40+ minutes
+TimeoutStartSec=3h
+
+[Install]
+WantedBy=default.target

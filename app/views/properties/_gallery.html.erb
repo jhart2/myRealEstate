@@ -95,9 +95,10 @@
       <div class="listing-gallery-mobile-chrome">
         <button
           type="button"
-          class="listing-gallery-all-photos"
+          class="listing-gallery-all-photos<%= " hidden" unless urls.size > 1 %>"
           data-action="listing-gallery#openAllPhotos"
           aria-label="All photos"
+          <%= "hidden" unless urls.size > 1 %>
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
             <rect x="3" y="3" width="7" height="7"/>

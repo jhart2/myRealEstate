@@ -18,26 +18,22 @@
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
           <path d="M15 18l-6-6 6-6"/>
         </svg>
-        <span>Back</span>
       </button>
 
       <div class="property-lightbox-media-actions">
         <% if authenticated? %>
           <% if current_user.favorited?(property) %>
-            <%= button_to property_favorite_path(property), method: :delete, class: "property-lightbox-icon-btn", form: { data: { turbo: false } } do %>
+            <%= button_to property_favorite_path(property), method: :delete, class: "property-lightbox-icon-btn", form: { class: "property-lightbox-icon-form", data: { turbo: false } }, aria: { label: "Remove from saved" } do %>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21s-7-4.6-9.5-9.2C.8 8.2 2.4 5 6 5c2 0 3.2 1.2 4 2.2C10.8 6.2 12 5 14 5c3.6 0 5.2 3.2 3.5 6.8C19 16.4 12 21 12 21z"/></svg>
-              Saved
             <% end %>
           <% else %>
-            <%= button_to property_favorite_path(property), method: :post, class: "property-lightbox-icon-btn", form: { data: { turbo: false } } do %>
+            <%= button_to property_favorite_path(property), method: :post, class: "property-lightbox-icon-btn", form: { class: "property-lightbox-icon-form", data: { turbo: false } }, aria: { label: "Save home" } do %>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 21s-7-4.6-9.5-9.2C.8 8.2 2.4 5 6 5c2 0 3.2 1.2 4 2.2C10.8 6.2 12 5 14 5c3.6 0 5.2 3.2 3.5 6.8C19 16.4 12 21 12 21z"/></svg>
-              Save
             <% end %>
           <% end %>
         <% else %>
-          <%= link_to new_session_path, class: "property-lightbox-icon-btn" do %>
+          <%= link_to new_session_path, class: "property-lightbox-icon-btn", aria: { label: "Sign in to save" } do %>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 21s-7-4.6-9.5-9.2C.8 8.2 2.4 5 6 5c2 0 3.2 1.2 4 2.2C10.8 6.2 12 5 14 5c3.6 0 5.2 3.2 3.5 6.8C19 16.4 12 21 12 21z"/></svg>
-            Save
           <% end %>
         <% end %>
 
@@ -47,13 +43,13 @@
           data-action="property-lightbox#share"
           data-share-url="<%= share_url %>"
           data-share-title="<%= property.title %>"
+          aria-label="Share listing"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
             <path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"/>
             <path d="M12 3v12"/>
             <path d="M8 7l4-4 4 4"/>
           </svg>
-          Share
         </button>
         <span class="property-lightbox-share-note hidden" data-share-note></span>
       </div>
@@ -82,8 +78,23 @@
 
     <% if has_photos && has_map %>
       <div class="property-lightbox-media-tabs" role="tablist" aria-label="Listing media">
-        <button type="button" role="tab" class="property-lightbox-media-tab<%= " is-active" if default_media == "photos" %>" data-media="photos" data-media-tab data-action="property-lightbox#showMedia" aria-selected="<%= default_media == "photos" %>">Photos</button>
-        <button type="button" role="tab" class="property-lightbox-media-tab<%= " is-active" if default_media == "map" %>" data-media="map" data-media-tab data-action="property-lightbox#showMedia" aria-selected="<%= default_media == "map" %>">Map</button>
+        <button
+          type="button"
+          role="tab"
+          class="property-lightbox-media-tab"
+          data-media-tab
+          data-action="property-lightbox#toggleMedia"
+          aria-selected="false"
+          aria-label="Show map"
+        >
+          <svg data-icon="map" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M12 2c-3.3 0-6 2.6-6 5.8 0 4.4 6 11.2 6 11.2s6-6.8 6-11.2C18 4.6 15.3 2 12 2zm0 8.2a2.4 2.4 0 1 1 0-4.8 2.4 2.4 0 0 1 0 4.8z"/>
+          </svg>
+          <svg class="hidden" data-icon="photos" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M4 7h3l1.5-2h7L17 7h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1z"/>
+            <circle cx="12" cy="13" r="3.25"/>
+          </svg>
+        </button>
       </div>
     <% end %>
   </div>
@@ -294,19 +305,27 @@
     </div>
 
     <aside class="property-lightbox-aside">
-      <div class="rounded-xl border border-border bg-panel p-5">
-        <h3 class="font-display text-lg font-semibold text-ink">Request a tour</h3>
-        <p class="mt-1 mb-4 text-sm text-ink-3">An advisor will respond within one business day.</p>
-
-        <%= form_with model: inquiry, url: inquiries_path, class: "space-y-3", data: { turbo: false } do |f| %>
-          <%= f.hidden_field :property_id %>
-          <%= f.hidden_field :agent_id, value: property.agent_id %>
-          <%= f.text_field :name, placeholder: "Full name", required: true, class: "field" %>
-          <%= f.email_field :email, placeholder: "Email", required: true, class: "field" %>
-          <%= f.telephone_field :phone, placeholder: "Phone (optional)", class: "field" %>
-          <%= f.text_area :message, placeholder: "I'm interested in this property…", rows: 3, required: true, class: "field" %>
-          <%= f.submit "Send inquiry", class: "btn-accent w-full cursor-pointer" %>
+      <div class="space-y-3">
+        <% if can_edit_listing?(property) %>
+          <%= link_to listing_edit_path_for(property), class: "btn-accent flex w-full items-center justify-center gap-1.5", data: { turbo: false } do %>
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+            Edit listing
+          <% end %>
         <% end %>
+        <div class="rounded-xl border border-border bg-panel p-5">
+          <h3 class="font-display text-lg font-semibold text-ink">Request a tour</h3>
+          <p class="mt-1 mb-4 text-sm text-ink-3">An advisor will respond within one business day.</p>
+
+          <%= form_with model: inquiry, url: inquiries_path, class: "space-y-3", data: { turbo: false } do |f| %>
+            <%= f.hidden_field :property_id %>
+            <%= f.hidden_field :agent_id, value: property.agent_id %>
+            <%= f.text_field :name, placeholder: "Full name", required: true, class: "field" %>
+            <%= f.email_field :email, placeholder: "Email", required: true, class: "field" %>
+            <%= f.telephone_field :phone, placeholder: "Phone (optional)", class: "field" %>
+            <%= f.text_area :message, placeholder: "I'm interested in this property…", rows: 3, required: true, class: "field" %>
+            <%= f.submit "Send inquiry", class: "btn-accent w-full cursor-pointer" %>
+          <% end %>
+        </div>
       </div>
     </aside>
   </div>
