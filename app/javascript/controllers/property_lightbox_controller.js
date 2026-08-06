@@ -93,7 +93,9 @@ export default class extends Controller {
       el.classList.toggle("hidden", el.dataset.mediaPanel !== mode)
     })
     panel.querySelectorAll("[data-media-tab]").forEach((el) => {
-      el.classList.toggle("is-active", el.dataset.media === mode)
+      const active = el.dataset.media === mode
+      el.classList.toggle("is-active", active)
+      el.setAttribute("aria-selected", active ? "true" : "false")
     })
     if (mode === "map") {
       window.setTimeout(() => this.initDetailMap(panel), 40)

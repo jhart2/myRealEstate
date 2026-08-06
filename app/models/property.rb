@@ -49,6 +49,8 @@ class Property < ApplicationRecord
         east: params[:east].to_f,
         west: params[:west].to_f
       )
+    elsif params[:region].present? && TrinidadRegion.find(params[:region])
+      scope = scope.in_region(params[:region])
     elsif params[:location].present?
       term = "%#{params[:location].strip}%"
       scope = scope.where("city LIKE ? OR state LIKE ? OR zip LIKE ? OR address LIKE ? OR title LIKE ?", term, term, term, term, term)
@@ -109,21 +111,47 @@ class Property < ApplicationRecord
     where(latitude: south..north, longitude: west..east)
   end
 
+  def self.in_region(key_or_slug)
+    region = TrinidadRegion.find(key_or_slug)
+    return none unless region
+
+    words = TrinidadRegion::KEYWORDS.fetch(region.key)
+    clauses = words.map { "LOWER(city) LIKE ?" }
+    where(clauses.join(" OR "), *words.map { |w| "%#{w}%" })
+  end
+
+  def self.homepage_region_rows(per_region: 12)
+    by_region = active
+      .includes(:agent, image_attachment: :blob)
+      .order(featured: :desc, views_count: :desc, created_at: :desc)
+      .group_by { |property| property.region.key }
+
+    TrinidadRegion::ALL.filter_map do |region|
+      listings = Array(by_region[region.key]).first(per_region)
+      next if listings.empty?
+
+      { region: region, properties: listings }
+    end
+  end
+
+  def region
+    @region ||= TrinidadRegion.classify(city: city, latitude: latitude, longitude: longitude)
+  end
+
+  def region_headline
+    type = property_type.presence || "Home"
+    "#{type} in #{short_place_name}"
+  end
+
+  def short_place_name
+    TrinidadRegion.place_label(city).presence || state.presence || "Trinidad"
+  end
   def mappable?
     latitude.present? && longitude.present?
   end
 
-  def map_price_label
-    dollars = price_cents.to_f / 100.0
-    if tag == "rent"
-      dollars >= 1_000 ? "$#{(dollars / 1_000).round(1)}K" : "$#{dollars.to_i}"
-    elsif dollars >= 1_000_000
-      "$#{(dollars / 1_000_000).round(1)}M"
-    elsif dollars >= 1_000
-      "$#{(dollars / 1_000).round(0)}K"
-    else
-      "$#{dollars.to_i}"
-    end
+  def map_price_label(currency: Current.currency)
+    MoneyDisplay.compact(price_cents, currency: currency, rent: tag == "rent")
   end
 
   def as_map_json
@@ -183,17 +211,29 @@ class Property < ApplicationRecord
     [ address, city, state, zip ].compact_blank.join(", ")
   end
 
-  def display_price
-    price_label.presence || format_price
+  def feature_list
+    Array(features).map { |f| f.to_s.strip }.reject(&:blank?).uniq
   end
 
+  def gallery_image_urls
+    urls = Array(image_urls).map { |u| u.to_s.strip }.reject(&:blank?)
+    primary = self[:image_url].presence
+    urls = [ primary ] if urls.empty? && primary
+    urls = ([ primary ] + urls).compact if primary && !urls.include?(primary)
+    urls.uniq
+  end
+
+  def display_price(currency: Current.currency)
+    MoneyDisplay.format(price_cents, currency: currency, rent: tag == "rent")
+  end
+
+  # Always formats in BASE_CURRENCY for persisted `price_label` snapshots.
   def format_price
-    dollars = price_cents / 100.0
-    if tag == "rent"
-      "$#{ActiveSupport::NumberHelper.number_to_delimited(dollars.to_i)} / mo"
-    else
-      "$#{ActiveSupport::NumberHelper.number_to_delimited(dollars.to_i)}"
-    end
+    MoneyDisplay.format(price_cents, currency: MoneyDisplay::BASE_CURRENCY, rent: tag == "rent")
+  end
+
+  def price_per_sqft_label(currency: Current.currency)
+    MoneyDisplay.per_sqft(price_cents, sqft, currency: currency)
   end
 
   # e.g. "1.03 Acres" — Zillow-style lot size label

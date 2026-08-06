@@ -30,6 +30,11 @@
         <span class="font-semibold text-ink"><%= property.baths %></span> ba
         <% if property.sqft.present? %> · <span class="font-semibold text-ink"><%= number_with_delimiter(property.sqft) %></span> sqft<% end %>
       </p>
+      <% if property.feature_list.any? %>
+        <div class="mt-2">
+          <%= render "properties/feature_chips", property: property, limit: 2 %>
+        </div>
+      <% end %>
     </div>
   <% end %>
 </article>

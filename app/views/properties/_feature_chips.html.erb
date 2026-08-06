@@ -1,0 +1,10 @@
+<%# locals: (property:, limit: nil) %>
+<% chips = property.feature_list %>
+<% chips = chips.first(limit) if limit.present? %>
+<% if chips.any? %>
+  <ul class="listing-feature-chips" aria-label="Property features">
+    <% chips.each do |feature| %>
+      <li class="listing-feature-chip"><%= feature %></li>
+    <% end %>
+  </ul>
+<% end %>

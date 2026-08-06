@@ -12,7 +12,7 @@ require "action_mailbox/engine"
 require "action_text/engine"
 require "action_view/railtie"
 require "action_cable/engine"
-# require "rails/test_unit/railtie"
+require "rails/test_unit/railtie"
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -38,5 +38,9 @@ module Estate
 
     # Don't generate system test files.
     config.generators.system_tests = nil
+
+    # Branded HTML error pages (404 / 422 / 500, etc.)
+    config.exceptions_app = ->(env) { ErrorsController.action(:show).call(env) }
   end
 end
+

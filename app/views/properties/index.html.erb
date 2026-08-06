@@ -88,6 +88,19 @@
 
         <button
           type="button"
+          class="search-filter-chip<%= " is-active" if current_currency != MoneyDisplay::DEFAULT_CURRENCY %>"
+          data-search-filters-target="chip"
+          data-panel="currency"
+          data-action="search-filters#toggle"
+          aria-expanded="false"
+          aria-label="Display currency"
+        >
+          <span data-search-filters-target="currencyLabel"><%= current_currency %></span>
+          <%= search_filter_chevron %>
+        </button>
+
+        <button
+          type="button"
           class="search-filter-chip<%= " is-active" if @beds.present? || @baths.present? %>"
           data-search-filters-target="chip"
           data-panel="beds"
@@ -247,6 +260,26 @@
           </fieldset>
 
           <button type="submit" class="search-filter-apply" data-action="search-filters#closeAll">Apply</button>
+        </div>
+
+        <div class="search-filter-panel search-filter-panel--currency hidden" data-search-filters-target="panel" data-panel="currency">
+          <p class="search-filter-panel-title">Display currency</p>
+          <p class="search-filter-currency-hint">Converts listing prices for display. Price filters still use stored list amounts.</p>
+          <div class="search-filter-options" role="radiogroup" aria-label="Display currency">
+            <% MoneyDisplay::CURRENCIES.each do |code| %>
+              <button
+                type="button"
+                class="search-filter-option search-filter-currency-option<%= " is-selected" if current_currency == code %>"
+                role="radio"
+                aria-checked="<%= current_currency == code %>"
+                data-action="search-filters#setCurrency"
+                data-currency="<%= code %>"
+              >
+                <span class="search-filter-currency-dot" aria-hidden="true"></span>
+                <span><%= code %></span>
+              </button>
+            <% end %>
+          </div>
         </div>
 
         <div class="search-filter-panel hidden" data-search-filters-target="panel" data-panel="beds">

@@ -1,8 +1,8 @@
 <% content_for :title, @property.title %>
 
 <section class="bg-ink">
-  <div class="aspect-[21/9] overflow-hidden bg-ink-2">
-    <img src="<%= @property.display_image_url %>" alt="<%= @property.title %>" class="h-full w-full object-cover opacity-90">
+  <div class="listing-show-gallery">
+    <%= render "properties/gallery", property: @property, variant: "show" %>
   </div>
 </section>
 
@@ -50,6 +50,15 @@
         </dl>
       </div>
 
+      <% if @property.feature_list.any? %>
+        <div class="mt-10">
+          <h2 class="font-display text-2xl font-semibold text-ink">Features</h2>
+          <div class="mt-4">
+            <%= render "properties/feature_chips", property: @property %>
+          </div>
+        </div>
+      <% end %>
+
       <div class="mt-10">
         <h2 class="font-display text-2xl font-semibold text-ink">About this property</h2>
         <p class="mt-4 whitespace-pre-line text-sm leading-relaxed text-ink-2"><%= @property.description %></p>
@@ -68,30 +77,33 @@
     </div>
 
     <aside class="lg:col-span-1">
-      <div class="sticky top-24 rounded-xl border border-border bg-panel p-6 shadow-[0_2px_12px_rgba(26,23,20,0.06)]">
-        <h3 class="font-display text-xl font-semibold text-ink">Request a tour</h3>
-        <p class="mt-1 mb-5 text-sm text-ink-3">An advisor will respond within one business day.</p>
+      <div class="sticky top-24 space-y-4">
+        <%= render "properties/listing_agent", agent: @property.agent %>
+        <div class="rounded-xl border border-border bg-panel p-6 shadow-[0_2px_12px_rgba(26,23,20,0.06)]">
+          <h3 class="font-display text-xl font-semibold text-ink">Request a tour</h3>
+          <p class="mt-1 mb-5 text-sm text-ink-3">An advisor will respond within one business day.</p>
 
-        <%= form_with model: @inquiry, url: inquiries_path, class: "space-y-3" do |f| %>
-          <%= f.hidden_field :property_id %>
-          <%= f.hidden_field :agent_id, value: @property.agent_id %>
-          <%= f.text_field :name, placeholder: "Full name", required: true, class: "field" %>
-          <%= f.email_field :email, placeholder: "Email", required: true, class: "field" %>
-          <%= f.telephone_field :phone, placeholder: "Phone (optional)", class: "field" %>
-          <%= f.text_area :message, placeholder: "I'm interested in this property…", rows: 4, required: true, class: "field" %>
-          <%= f.submit "Send inquiry", class: "btn-accent w-full cursor-pointer" %>
-        <% end %>
-
-        <div class="mt-4">
-          <% if authenticated? %>
-            <% if current_user.favorited?(@property) %>
-              <%= button_to "Remove from favorites", property_favorite_path(@property), method: :delete, class: "btn-outline w-full cursor-pointer !px-4 !py-2.5" %>
-            <% else %>
-              <%= button_to "Save to favorites", property_favorite_path(@property), method: :post, class: "btn-outline w-full cursor-pointer !px-4 !py-2.5" %>
-            <% end %>
-          <% else %>
-            <%= link_to "Sign in to save", new_session_path, class: "btn-outline w-full !px-4 !py-2.5" %>
+          <%= form_with model: @inquiry, url: inquiries_path, class: "space-y-3" do |f| %>
+            <%= f.hidden_field :property_id %>
+            <%= f.hidden_field :agent_id, value: @property.agent_id %>
+            <%= f.text_field :name, placeholder: "Full name", required: true, class: "field" %>
+            <%= f.email_field :email, placeholder: "Email", required: true, class: "field" %>
+            <%= f.telephone_field :phone, placeholder: "Phone (optional)", class: "field" %>
+            <%= f.text_area :message, placeholder: "I'm interested in this property…", rows: 4, required: true, class: "field" %>
+            <%= f.submit "Send inquiry", class: "btn-accent w-full cursor-pointer" %>
           <% end %>
+
+          <div class="mt-4">
+            <% if authenticated? %>
+              <% if current_user.favorited?(@property) %>
+                <%= button_to "Remove from favorites", property_favorite_path(@property), method: :delete, class: "btn-outline w-full cursor-pointer !px-4 !py-2.5" %>
+              <% else %>
+                <%= button_to "Save to favorites", property_favorite_path(@property), method: :post, class: "btn-outline w-full cursor-pointer !px-4 !py-2.5" %>
+              <% end %>
+            <% else %>
+              <%= link_to "Sign in to save", new_session_path, class: "btn-outline w-full !px-4 !py-2.5" %>
+            <% end %>
+          </div>
         </div>
       </div>
     </aside>

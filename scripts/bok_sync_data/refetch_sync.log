@@ -1,0 +1,65 @@
+Window: since 2026-07-07T19:18:49.946113+00:00 UTC
+Delay: 4.0s + up to 1.5s jitter (sequential)
+Loading sitemap index…
+  GET [1] 200 https://mybunchofkeys.com/sitemap_index.xml
+Loading property-sitemap26.xml…
+  GET [2] 200 https://mybunchofkeys.com/property-sitemap26.xml
+  dates 2026-08-05 → 2026-08-06; kept 113
+Loading property-sitemap25.xml…
+  GET [3] 200 https://mybunchofkeys.com/property-sitemap25.xml
+  dates 2026-07-23 → 2026-08-06; kept 1000
+Loading property-sitemap24.xml…
+  GET [4] 200 https://mybunchofkeys.com/property-sitemap24.xml
+  dates 2026-07-06 → 2026-08-01; kept 835
+  skip old shard property-sitemap23.xml (index lastmod 2026-06-14)
+  skip old shard property-sitemap22.xml (index lastmod 2026-06-11)
+  skip old shard property-sitemap21.xml (index lastmod 2026-05-28)
+  skip old shard property-sitemap20.xml (index lastmod 2026-03-22)
+  skip old shard property-sitemap19.xml (index lastmod 2026-01-27)
+  skip old shard property-sitemap18.xml (index lastmod 2026-01-11)
+  skip old shard property-sitemap17.xml (index lastmod 2025-11-24)
+  skip old shard property-sitemap16.xml (index lastmod 2025-09-09)
+  skip old shard property-sitemap15.xml (index lastmod 2025-08-27)
+  skip old shard property-sitemap14.xml (index lastmod 2025-07-29)
+  skip old shard property-sitemap13.xml (index lastmod 2025-05-25)
+  skip old shard property-sitemap12.xml (index lastmod 2025-05-16)
+  skip old shard property-sitemap11.xml (index lastmod 2025-04-24)
+  skip old shard property-sitemap10.xml (index lastmod 2024-11-11)
+  skip old shard property-sitemap9.xml (index lastmod 2024-11-08)
+  skip old shard property-sitemap8.xml (index lastmod 2024-07-19)
+  skip old shard property-sitemap7.xml (index lastmod 2023-11-14)
+  skip old shard property-sitemap6.xml (index lastmod 2023-07-13)
+  skip old shard property-sitemap5.xml (index lastmod 2023-05-06)
+  skip old shard property-sitemap4.xml (index lastmod 2022-12-06)
+  skip old shard property-sitemap3.xml (index lastmod 2022-11-18)
+  skip old shard property-sitemap2.xml (index lastmod 2022-04-29)
+Loading property-sitemap.xml…
+  GET [5] 200 https://mybunchofkeys.com/property-sitemap.xml
+  dates 2018-07-24 → 2020-07-26; kept 0
+  reached older-than-window shard; stopping sitemap walk.
+Recent sitemap URLs: 1948
+Crawling house + buy search pages…
+  GET [6] 200 https://mybunchofkeys.com/?_sft_property_style=house&_sft_property_type=buy&sfid=219
+  search page 1: 12 links, 12 new (total 12)
+  GET [7] 200 https://mybunchofkeys.com/?_sft_property_style=house&_sft_property_type=buy&sfid=219&sf_paged=2
+  search page 2: 12 links, 12 new (total 24)
+  GET [8] 200 https://mybunchofkeys.com/?_sft_property_style=house&_sft_property_type=buy&sfid=219&sf_paged=3
+  search page 3: 12 links, 12 new (total 36)
+  GET [9] 200 https://mybunchofkeys.com/?_sft_property_style=house&_sft_property_type=buy&sfid=219&sf_paged=4
+  search page 4: 12 links, 12 new (total 48)
+  GET [10] 200 https://mybunchofkeys.com/?_sft_property_style=house&_sft_property_type=buy&sfid=219&sf_paged=5
+  search page 5: 12 links, 12 new (total 60)
+  GET [11] 200 https://mybunchofkeys.com/?_sft_property_style=house&_sft_property_type=buy&sfid=219&sf_paged=6
+  search page 6: 12 links, 12 new (total 72)
+  GET [12] 200 https://mybunchofkeys.com/?_sft_property_style=house&_sft_property_type=buy&sfid=219&sf_paged=7
+  search page 7: 12 links, 12 new (total 84)
+  GET [13] 200 https://mybunchofkeys.com/?_sft_property_style=house&_sft_property_type=buy&sfid=219&sf_paged=8
+  search page 8: 12 links, 12 new (total 96)
+  GET [14] 200 https://mybunchofkeys.com/?_sft_property_style=house&_sft_property_type=buy&sfid=219&sf_paged=9
+  search page 9: 12 links, 12 new (total 108)
+  GET [15] 200 https://mybunchofkeys.com/?_sft_property_style=house&_sft_property_type=buy&sfid=219&sf_paged=10
+  search page 10: 12 links, 12 new (total 120)
+  GET [16] 200 https://mybunchofkeys.com/?_sft_property_style=house&_sft_property_type=buy&sfid=219&sf_paged=11
+  search page 11: 12 links, 12 new (total 132)
+  GET [17] 200 https://mybunchofkeys.com/?_sft_property_style=house&_sft_property_type=buy&sfid=219&sf_paged=12
+  search page 12: 12 links, 12 new (total 144)

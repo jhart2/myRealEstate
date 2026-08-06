@@ -1,0 +1,52 @@
+<%# locals: (region:, properties:) %>
+<section
+  class="region-carousel"
+  data-controller="carousel"
+  aria-label="Homes in <%= region.label %>"
+>
+  <div class="mb-4 flex items-center justify-between gap-4">
+    <div class="flex min-w-0 items-center gap-2">
+      <%= link_to properties_path(region: region.slug), class: "group flex min-w-0 items-center gap-2 text-ink" do %>
+        <h2 class="truncate text-xl font-semibold tracking-tight md:text-[22px]">
+          Homes in <%= region.label %>
+        </h2>
+        <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full transition-colors group-hover:bg-stone-light" aria-hidden="true">
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+        </span>
+      <% end %>
+    </div>
+
+    <div class="hidden items-center gap-2 sm:flex">
+      <button
+        type="button"
+        class="carousel-nav-btn"
+        data-carousel-target="prev"
+        data-action="carousel#prev"
+        aria-label="Previous <%= region.label %> homes"
+      >
+        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+      </button>
+      <button
+        type="button"
+        class="carousel-nav-btn"
+        data-carousel-target="next"
+        data-action="carousel#next"
+        aria-label="Next <%= region.label %> homes"
+      >
+        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div
+    class="region-carousel-track -mx-6 flex gap-4 overflow-x-auto px-6 pb-1 scroll-smooth md:-mx-0 md:px-0"
+    data-carousel-target="track"
+    tabindex="0"
+  >
+    <% properties.each do |property| %>
+      <div class="w-[42vw] max-w-[220px] shrink-0 sm:w-[200px] md:w-[calc((100%-3rem)/4)] lg:w-[calc((100%-4rem)/5)]">
+        <%= render "properties/carousel_card", property: property %>
+      </div>
+    <% end %>
+  </div>
+</section>

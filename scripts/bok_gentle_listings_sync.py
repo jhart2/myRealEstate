@@ -65,12 +65,17 @@ class Listing:
     sqft: str = ""
     parking: str = ""
     agent: str = ""
+    agent_agency: str = ""
+    agent_phone: str = ""
+    agent_image: str = ""
     image: str = ""
+    images: list[str] = field(default_factory=list)
     date_published: str = ""
     lastmod: str = ""
     property_style: str = ""
     property_type: str = ""
     description: str = ""
+    features: list[str] = field(default_factory=list)
     scraped_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
 
 
@@ -120,6 +125,7 @@ class GentleClient:
                     print(f"  backoff {backoff:.1f}s after HTTP {err.code} for {url}", flush=True)
                     time.sleep(backoff)
                     continue
+                print(f"  GET [{self.request_count}] {err.code} {url}", flush=True)
                 raise
             except urllib.error.URLError as err:
                 self._last_request_at = time.monotonic()
@@ -149,9 +155,153 @@ def strip_tags(html: str) -> str:
     return re.sub(r"\s+", " ", text).strip()
 
 
+def parse_features(html: str) -> list[str]:
+    """Extract amenity labels from BOK's div.column.features / span.feature chips."""
+    block = first_match(
+        r'<div class="column features[^"]*"[^>]*>(.*?)</div>\s*(?:<div class="clear"|$)',
+        html,
+        re.I | re.S,
+    )
+    if not block:
+        return []
+
+    features: list[str] = []
+    for match in re.finditer(
+        r'<span\b[^>]*\bclass="[^"]*\bfeature\b[^"]*"[^>]*>(.*?)</span>',
+        block,
+        flags=re.I | re.S,
+    ):
+        label = strip_tags(match.group(1))
+        if label and label not in features:
+            features.append(label)
+    return features
+
+
+def parse_gallery_images(html: str) -> list[str]:
+    """Full-size photo URLs from the listing gallery (`div.thumbs` → figure > a[href])."""
+    start = re.search(r'<div class="thumbs"[^>]*>', html, flags=re.I)
+    if not start:
+        return []
+    chunk = html[start.end() : start.end() + 120_000]
+    end = re.search(
+        r'</div>\s*(?:</div>\s*)?(?:<div class="|</div>\s*</div>\s*</div>)',
+        chunk,
+        flags=re.I,
+    )
+    block = chunk[: end.start()] if end else chunk
+
+    images: list[str] = []
+    for href in re.findall(
+        r"<a\s+href=['\"](https?://[^'\"]+\.(?:jpe?g|png|webp)[^'\"]*)['\"]",
+        block,
+        flags=re.I,
+    ):
+        url = unescape(href.strip())
+        if re.search(r"-320x320\.(?:jpe?g|png|webp)$", url, flags=re.I):
+            continue
+        if url not in images:
+            images.append(url)
+    return images
+
+
+def is_placeholder_image(url: str) -> bool:
+    u = url.lower()
+    return any(
+        token in u
+        for token in (
+            "/themes/",
+            "share.jpg",
+            "default.jpg",
+            "default-halfpage-hero",
+            "bok-icon.png",
+            "logo.png",
+        )
+    )
+
+
+def has_usable_images(listing: Listing) -> bool:
+    """True when gallery/hero has at least one non-placeholder photo URL."""
+    if any(url and not is_placeholder_image(url) for url in listing.images):
+        return True
+    return bool(listing.image) and not is_placeholder_image(listing.image)
+
+
+def parse_og_image(html: str) -> str:
+    """Best Open Graph image that isn't a site/theme placeholder."""
+    for match in re.finditer(
+        r'<meta[^>]+property=["\']og:image["\'][^>]*>',
+        html,
+        flags=re.I,
+    ):
+        tag = match.group(0)
+        content = re.search(r'content=["\']([^"\']+)["\']', tag, flags=re.I)
+        if not content:
+            continue
+        url = unescape(content.group(1).strip())
+        if url and not is_placeholder_image(url):
+            return url
+    return ""
+
+
 def first_match(pattern: str, text: str, flags: int = re.I) -> str:
     m = re.search(pattern, text, flags)
     return m.group(1).strip() if m else ""
+
+
+def parse_agent_block(html: str) -> tuple[str, str, str, str]:
+    """Pull listing agent name, agency, phone, and photo from #agent-data."""
+    block = first_match(
+        r'<div[^>]*\bid=["\']agent-data["\'][^>]*>(.*?)</div>\s*<div\b',
+        html,
+        re.I | re.S,
+    )
+    if not block:
+        block = first_match(
+            r'<div[^>]*\bid=["\']agent-data["\'][^>]*>(.*?)</div>',
+            html,
+            re.I | re.S,
+        )
+    scope = block or html
+
+    photo = first_match(
+        r'<a[^>]*class=["\'][^"\']*profile-pic[^"\']*["\'][^>]*>\s*<img[^>]+src=["\']([^"\']+)',
+        scope,
+        re.I | re.S,
+    )
+    if not photo:
+        photo = first_match(
+            r'<div[^>]*\bid=["\']agent-data["\'][^>]*>.*?src=["\']([^"\']+)["\']',
+            html,
+            re.I | re.S,
+        )
+
+    # Name is often wrapped in an author <a>; strip_tags handles that.
+    name_html = first_match(
+        r"Meet the Agent:</h5>\s*<h3[^>]*>(.*?)</h3>",
+        scope,
+        re.I | re.S,
+    )
+    if not name_html:
+        name_html = first_match(
+            r"Meet the Agent:</h5>\s*<h3[^>]*>\s*([^<]+)",
+            html,
+            re.I | re.S,
+        )
+    name = strip_tags(name_html)
+
+    agency = strip_tags(
+        first_match(r"Agency:\s*(?:<a\b[^>]*>)?([^<\n]+)", scope, re.I)
+    )
+    phone = strip_tags(
+        first_match(r"Phone:\s*(?:<a\b[^>]*>)?([^<\n]+)", scope, re.I)
+    )
+    if not phone:
+        tel = first_match(r'href=["\']tel:([^"\']+)', scope, re.I)
+        if tel:
+            digits = re.sub(r"\D", "", tel)
+            phone = f"({digits[-10:-7]}) {digits[-7:-4]}-{digits[-4:]}" if len(digits) >= 10 else tel
+
+    return name, agency, phone, photo
 
 
 def discover_recent_urls(client: GentleClient, cutoff: datetime) -> dict[str, str]:
@@ -324,10 +474,23 @@ def parse_listing(url: str, html: str, lastmod: str = "") -> Listing | None:
     parking = first_match(r"Parking:\s*([0-9.]+)", html)
     bok_id = first_match(r"(BOK-\s*[0-9]+)", html)
     bok_id = re.sub(r"\s+", "", bok_id)
-    agent = first_match(r"Meet the Agent:</h5>\s*<h3[^>]*>\s*([^<]+)", html)
+    agent, agent_agency, agent_phone, agent_image = parse_agent_block(html)
 
     about = first_match(r"About this Property(.*?)(?:Property\s*<span class=\"bunches\">Location|Mortgages Powered)", html, re.I | re.S)
     description = strip_tags(about)[:1200] if about else ""
+    features = parse_features(html)
+    images = parse_gallery_images(html)
+    if image and is_placeholder_image(image):
+        image = ""
+    if image and image not in images:
+        images = [image] + images
+    elif not image and images:
+        image = images[0]
+    if not images:
+        og = parse_og_image(html)
+        if og:
+            images = [og]
+            image = og
 
     if not title:
         title = unescape(first_match(r"<h1[^>]*>(.*?)</h1>", html, re.I | re.S))
@@ -343,13 +506,18 @@ def parse_listing(url: str, html: str, lastmod: str = "") -> Listing | None:
         bathrooms=bathrooms,
         sqft=strip_tags(sqft),
         parking=parking,
-        agent=strip_tags(agent),
+        agent=agent,
+        agent_agency=agent_agency,
+        agent_phone=agent_phone,
+        agent_image=agent_image,
         image=image,
+        images=images,
         date_published=date_published,
         lastmod=lastmod,
         property_style=style,
         property_type=ptype,
         description=description,
+        features=features,
     )
 
 
@@ -375,7 +543,13 @@ def write_outputs(listings: Iterable[Listing], out_dir: Path, stamp: str) -> Non
     with csv_path.open("w", newline="", encoding="utf-8") as fh:
         writer = csv.DictWriter(fh, fieldnames=fieldnames)
         writer.writeheader()
-        writer.writerows(rows)
+        for row in rows:
+            csv_row = dict(row)
+            for key in ("features", "images"):
+                val = csv_row.get(key)
+                if isinstance(val, list):
+                    csv_row[key] = "; ".join(val)
+            writer.writerow(csv_row)
 
     print(f"Wrote {len(rows)} listings →\n  {json_path}\n  {csv_path}", flush=True)
 
@@ -391,6 +565,22 @@ def main() -> int:
         "--skip-search-crawl",
         action="store_true",
         help="Only use sitemap candidates; still verify House on detail pages",
+    )
+    parser.add_argument(
+        "--refetch",
+        action="store_true",
+        help="Re-fetch detail pages even when already marked completed in the progress cache",
+    )
+    parser.add_argument(
+        "--from-cache",
+        action="store_true",
+        help="Skip discovery; re-fetch detail pages for URLs already in progress_cache listings",
+    )
+    parser.add_argument(
+        "--urls-file",
+        type=Path,
+        default=None,
+        help="Optional text file of listing URLs (one per line) to fetch as candidates",
     )
     parser.add_argument(
         "--out-dir",
@@ -412,42 +602,91 @@ def main() -> int:
     print(f"Window: since {cutoff.isoformat()} UTC", flush=True)
     print(f"Delay: {args.delay}s + up to {args.jitter}s jitter (sequential)", flush=True)
 
-    recent = discover_recent_urls(client, cutoff)
-
-    if args.skip_search_crawl:
+    if args.urls_file:
+        file_urls = [
+            line.strip()
+            for line in args.urls_file.read_text().splitlines()
+            if line.strip() and not line.strip().startswith("#")
+        ]
+        recent = {url: "" for url in file_urls}
+        candidates = list(dict.fromkeys(file_urls))
+        print(f"From urls-file: {len(candidates)} listing URLs", flush=True)
+    elif args.from_cache:
+        cached_rows = cache.get("listings", [])
+        recent = {
+            row["url"]: row.get("lastmod") or row.get("date_published") or ""
+            for row in cached_rows
+            if row.get("url")
+        }
         candidates = sorted(recent.keys())
-        print(f"Candidates from sitemap only: {len(candidates)}", flush=True)
+        print(f"From cache: {len(candidates)} listing URLs", flush=True)
     else:
-        house_urls = crawl_house_search(client, max_pages=args.max_search_pages)
-        candidates = sorted(set(recent) & house_urls)
-        print(
-            f"Intersection (recent ∩ house search): {len(candidates)} "
-            f"(recent={len(recent)}, house_search={len(house_urls)})",
-            flush=True,
-        )
-        # Also include recent URLs not yet seen in search crawl if search was capped early
-        # No — stick to intersection for “houses” accuracy.
+        recent = discover_recent_urls(client, cutoff)
+
+        if args.skip_search_crawl:
+            candidates = sorted(recent.keys())
+            print(f"Candidates from sitemap only: {len(candidates)}", flush=True)
+        else:
+            house_urls = crawl_house_search(client, max_pages=args.max_search_pages)
+            candidates = sorted(set(recent) & house_urls)
+            print(
+                f"Intersection (recent ∩ house search): {len(candidates)} "
+                f"(recent={len(recent)}, house_search={len(house_urls)})",
+                flush=True,
+            )
 
     listings: list[Listing] = []
-    # Keep previously completed listings still in window
-    for row in cache.get("listings", []):
-        dt = parse_dt(row.get("date_published") or row.get("lastmod"))
-        if dt and dt >= cutoff and (row.get("property_style") == "House" or not row.get("property_style")):
-            if row.get("url") in candidates or args.skip_search_crawl:
-                listings.append(Listing(**{k: row.get(k, "") for k in asdict(Listing(url="")).keys()}))
+    listing_fields = asdict(Listing(url="")).keys()
 
-    completed: dict = cache.get("completed", {})
+    def listing_from_row(row: dict) -> Listing:
+        list_fields = {"features", "images"}
+        data = {k: row.get(k, [] if k in list_fields else "") for k in listing_fields}
+        for key in list_fields:
+            if not isinstance(data.get(key), list):
+                raw = data.get(key) or []
+                if isinstance(raw, str) and raw.strip():
+                    data[key] = [part.strip() for part in raw.split(";") if part.strip()]
+                else:
+                    data[key] = []
+        data["url"] = row.get("url") or data.get("url") or ""
+        return Listing(**data)
+
+    # Keep previously completed listings still in window (skip on full refetch)
+    if not args.refetch:
+        candidate_set = set(candidates)
+        for row in cache.get("listings", []):
+            dt = parse_dt(row.get("date_published") or row.get("lastmod"))
+            if dt and dt >= cutoff and (row.get("property_style") == "House" or not row.get("property_style")):
+                # urls-file / from-cache resumes should retain prior enriched rows
+                if (
+                    args.urls_file
+                    or args.from_cache
+                    or args.skip_search_crawl
+                    or row.get("url") in candidate_set
+                ):
+                    cached = listing_from_row(row)
+                    if has_usable_images(cached):
+                        listings.append(cached)
+
+    completed: dict = {} if args.refetch else cache.get("completed", {})
+    if args.refetch:
+        print("Refetch mode: re-downloading every candidate detail page.", flush=True)
     fetched = 0
 
     try:
         for url in candidates:
-            if url in completed and completed[url].get("ok"):
+            if url in completed and completed[url].get("ok") and not args.refetch:
                 continue
             if args.max_details and fetched >= args.max_details:
                 print(f"Reached --max-details={args.max_details}; stopping detail phase.", flush=True)
                 break
 
-            html = client.get(url).decode("utf-8", errors="replace")
+            try:
+                html = client.get(url).decode("utf-8", errors="replace")
+            except urllib.error.HTTPError as err:
+                completed[url] = {"ok": False, "reason": f"http_{err.code}"}
+                print(f"  skip: HTTP {err.code} {url}", flush=True)
+                continue
             listing = parse_listing(url, html, lastmod=recent.get(url, ""))
             fetched += 1
 
@@ -477,6 +716,11 @@ def main() -> int:
                 if args.skip_search_crawl:
                     completed[url] = {"ok": True, "kept": False, "reason": "not_house"}
                     continue
+
+            if not has_usable_images(listing):
+                completed[url] = {"ok": True, "kept": False, "reason": "no_images"}
+                print(f"  skip: no usable images {url}", flush=True)
+                continue
 
             listings.append(listing)
             completed[url] = {"ok": True, "kept": True}

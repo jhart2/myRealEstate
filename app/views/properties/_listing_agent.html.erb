@@ -1,0 +1,33 @@
+<%# locals: (agent:, compact: false) %>
+<% return if agent.blank? %>
+<section class="listing-agent-card<%= " listing-agent-card--compact" if compact %>" aria-label="Listing agent">
+  <% if agent.display_image_url.present? %>
+    <img
+      src="<%= agent.display_image_url %>"
+      alt="<%= agent.name %>"
+      class="listing-agent-card-photo"
+      width="64"
+      height="64"
+      loading="lazy"
+    >
+  <% else %>
+    <div class="listing-agent-card-photo listing-agent-card-photo--placeholder" aria-hidden="true">
+      <%= agent.name.to_s.split.map { |p| p[0] }.first(2).join.upcase %>
+    </div>
+  <% end %>
+
+  <div class="listing-agent-card-body">
+    <p class="listing-agent-card-eyebrow">Listing agent</p>
+    <p class="listing-agent-card-name">
+      <%= link_to agent.name, agent_path(agent), class: "listing-agent-card-link", data: { turbo: false } %>
+    </p>
+    <% if agent.title.present? %>
+      <p class="listing-agent-card-agency"><%= agent.title %></p>
+    <% end %>
+    <% if agent.phone.present? %>
+      <p class="listing-agent-card-phone">
+        <%= link_to agent.phone, "tel:#{agent.phone.gsub(/[^\d+]/, '')}", class: "listing-agent-card-link" %>
+      </p>
+    <% end %>
+  </div>
+</section>

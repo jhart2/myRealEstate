@@ -2650,14 +2650,23 @@
     "bathrooms": "",
     "sqft": "",
     "parking": "",
-    "agent": "",
+    "agent": "Wendy Abraham",
     "image": "https://mybunchofkeys.com/wp-content/uploads/2026/04/742417657_18383690836202120_1121981294562586823_n.jpg",
     "date_published": "2026-07-21T07:44:10+00:00",
-    "lastmod": "2026-07-22T19:31:42+00:00",
+    "lastmod": "",
     "property_style": "House",
     "property_type": "For Sale",
     "description": "Bacolet Gardens, Tobago Five Bedroom Villa For Sale: $542K USD or £400K GBP (ono) Experience coastal living in this beautiful Mediterranean-style 5-bedroom villa, ideally located in the sought-after Bacolet area, just minutes from the beach. This well-appointed home offers breathtaking panoramic views of the Atlantic Ocean, with expansive glass doors that open onto a covered veranda overlooking a private pool—perfect for relaxing or entertaining. With a versatile layout and strong investment appeal, this property is ideal as a family home or vacation retreat. Property Features: Land size: 1,029 sqm Freehold property (not in a company name) 5 Bedrooms Main living area upstairs Downstairs bedroom and pool area Spacious open-plan living and dining Floor-to-ceiling glass doors with ocean views Covered veranda Private swimming pool Located approx. 3 minutes from the beach Panoramic Atlantic Ocean views Motivated seller – looking to sell within the year 📲 For more information or to schedule a viewing, contact: Wendy: 497-4863 Katherine: 784-3882 About the Region Bacolet Bacolet is a town and suburb in the city of Scarborough on the island of Tobago, Republic of Trinidad and Tobago. The t",
-    "scraped_at": "2026-08-06T14:46:59.480742+00:00"
+    "features": [
+      "Move in Ready",
+      "Recently Renovated",
+      "Private Pool",
+      "Patio"
+    ],
+    "scraped_at": "2026-08-06T19:14:15.274862+00:00",
+    "agent_agency": "1on1 Realty",
+    "agent_phone": "(868) 497-4863",
+    "agent_image": "https://mybunchofkeys.com/wp-content/uploads/2023/05/1on1realty-wendy-headshots-sep2021-10-e1685033836505-320x320.jpg"
   },
   {
     "url": "https://mybunchofkeys.com/property/156-anne-avenue-block-4-palmiste-san-fernando-for-sale-4m/",

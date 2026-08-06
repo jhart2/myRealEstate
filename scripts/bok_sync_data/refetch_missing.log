@@ -1,0 +1,36 @@
+Window: since 2026-07-07T19:38:16.316390+00:00 UTC
+Delay: 2.5s + up to 0.8s jitter (sequential)
+From urls-file: 34 listing URLs
+  GET [1] 404 https://mybunchofkeys.com/property/turquoise-drive-diamond-vale-diego-martin/
+  skip: HTTP 404 https://mybunchofkeys.com/property/turquoise-drive-diamond-vale-diego-martin/
+  GET [2] 200 https://mybunchofkeys.com/property/two-storey-home-2-lots-of-land-endeavour-gardens-chaguanas-4700000/
+  kept: BOK-1065112 | $4,700,000 | Endeavour
+  GET [3] 200 https://mybunchofkeys.com/property/union-hall-home-for-sale-tt2-9m/
+  kept: BOK-1064527 | $2,900,000 | Phillipine Retrench Village Union Hall
+  GET [4] 200 https://mybunchofkeys.com/property/vacation-home-for-sale/
+  kept: BOK-872690 | $2,500,000 | Blanchisseuse
+  GET [5] 200 https://mybunchofkeys.com/property/valsayn-house-for-sale-6-8m/
+  kept: BOK-990354 | $5,990,000 | Valsayn
+  GET [6] 200 https://mybunchofkeys.com/property/valsayn-north-4/
+  kept: BOK-1028286 | $8,000,000 | Prince Charles Ave Valsayn North,
+  GET [7] 200 https://mybunchofkeys.com/property/valsayn-north-house-for-sale-3/
+  kept: BOK-1020171 | $5,300,000 | Valsayn
+  GET [8] 200 https://mybunchofkeys.com/property/valsayn-north-house-for-sale-4/
+  kept: BOK-1026120 | $12,000,000 | Valsayn
+  GET [9] 200 https://mybunchofkeys.com/property/valsayn-south-3-bedroom-2-5-bath-2-storey/
+  kept: BOK-843028 | $7,750,000 | Valsayn
+  GET [10] 200 https://mybunchofkeys.com/property/valsayn-stand-alone-north-east-home-for-sale-6m/
+  kept: BOK-920142 | $6,000,000 | Valsayn
+  GET [11] 200 https://mybunchofkeys.com/property/villas-of-les-boix-morne-coco-road-maraval/
+  kept: BOK-1062643 | $3,500,000 | Maraval
+  GET [12] 200 https://mybunchofkeys.com/property/welcome-residences-cunupia/
+  kept: BOK-1065179 | $1,350,000 | Cunupia
+  GET [13] 200 https://mybunchofkeys.com/property/welcome-road-cunupia-home-for-sale-tt1-95m/
+  GET [14] 200 https://mybunchofkeys.com/property/welcome-road-cunupia-housing-development-tt-1-55m/
+  GET [15] 200 https://mybunchofkeys.com/property/westmoorings-home-for-sale/
+  kept: BOK-532850 | $5,800,000 | Bayshore Port of Spain Westmoorings
+  GET [16] 200 https://mybunchofkeys.com/property/williamsville-residential-commercial-property-for-sale-tt2-5m/
+Wrote 12 listings →
+  /home/javon/Desktop/Real Estate Website Builder/scripts/bok_sync_data/houses_last_month_20260806_153912.json
+  /home/javon/Desktop/Real Estate Website Builder/scripts/bok_sync_data/houses_last_month_20260806_153912.csv
+Done. Requests made: 16

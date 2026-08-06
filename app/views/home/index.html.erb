@@ -87,25 +87,15 @@
   </div>
 </section>
 
-<section class="mx-auto max-w-7xl px-6 py-24">
-  <div class="mb-12 flex flex-col justify-between gap-6 md:flex-row md:items-end">
-    <div>
-      <span class="section-eyebrow">Featured Properties</span>
-      <h2 class="font-display mt-2 text-4xl font-light text-ink md:text-5xl">Curated listings</h2>
-    </div>
-    <%= link_to "View all →", properties_path, class: "text-sm font-medium text-ink-2 hover:text-ink" %>
-  </div>
-
-  <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-    <% @properties.each do |property| %>
-      <%= render "properties/card", property: property %>
+<% if @region_rows.any? %>
+<section class="mx-auto max-w-7xl px-6 py-14 md:py-16">
+  <div class="flex flex-col gap-10 md:gap-12">
+    <% @region_rows.each do |row| %>
+      <%= render "home/region_row", region: row[:region], properties: row[:properties] %>
     <% end %>
   </div>
-
-  <div class="mt-12 text-center">
-    <%= link_to "View All Listings →", properties_path, class: "btn-outline" %>
-  </div>
 </section>
+<% end %>
 
 <section class="bg-ink py-24">
   <div class="mx-auto max-w-7xl px-6">
@@ -188,7 +178,14 @@
 <% end %>
 
 <section class="relative overflow-hidden bg-ink py-28">
-  <div class="absolute inset-0 opacity-20" style="background-image: radial-gradient(circle at 20% 50%, hsl(353 85% 44%) 0%, transparent 50%), radial-gradient(circle at 80% 20%, #8a7f78 0%, transparent 40%)"></div>
+  <div class="absolute inset-0">
+    <%= image_tag "tt-flag.jpg",
+          alt: "",
+          role: "presentation",
+          class: "h-full w-full object-cover object-center",
+          loading: "lazy" %>
+    <div class="absolute inset-0 bg-ink/75" aria-hidden="true"></div>
+  </div>
   <div class="relative z-10 mx-auto max-w-3xl px-6 text-center">
     <span class="section-eyebrow">Stay Ahead</span>
     <h2 class="font-display mt-3 mb-5 text-4xl font-light text-ground md:text-5xl">New listings, straight to your inbox.</h2>

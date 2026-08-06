@@ -14,6 +14,7 @@ Rails.application.routes.draw do
   resources :subscriptions, only: :create
   get "locations/autocomplete", to: "locations#autocomplete"
   get "travel/estimate", to: "travel#estimate"
+  resource :currency, only: :update
 
   get "about", to: "pages#about"
   get "contact", to: "pages#contact"
@@ -33,4 +34,15 @@ Rails.application.routes.draw do
   end
 
   get "up" => "rails/health#show", as: :rails_health_check
+
+  # Preview branded status pages: /errors/404, /errors/500, …
+  get "errors/:status_code", to: "errors#show", as: :error, constraints: { status_code: /\d{3}/ }
+
+  # Unmatched paths → branded 404 (avoids Rails debug "Routing Error" page in development)
+  match "*unmatched",
+        to: "errors#show",
+        via: :all,
+        defaults: { status_code: "404" },
+        constraints: ->(req) { !req.path.start_with?("/rails/") }
 end
+

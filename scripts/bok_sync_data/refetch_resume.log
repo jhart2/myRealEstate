@@ -1,0 +1,7 @@
+Window: since 2026-07-07T19:37:48.457966+00:00 UTC
+Delay: 2.5s + up to 0.8s jitter (sequential)
+From cache: 207 listing URLs
+Wrote 207 listings →
+  /home/javon/Desktop/Real Estate Website Builder/scripts/bok_sync_data/houses_last_month_20260806_153748.json
+  /home/javon/Desktop/Real Estate Website Builder/scripts/bok_sync_data/houses_last_month_20260806_153748.csv
+Done. Requests made: 0

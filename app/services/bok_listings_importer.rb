@@ -7,6 +7,16 @@ class BokListingsImporter
   SITE_SUFFIX = /\s*[-–—]\s*My Bunch of Keys\s*\z/i
   DEFAULT_COORDS = [ 10.6549, -61.5019 ].freeze # Port of Spain centroid fallback
 
+  # Theme/site chrome URLs that are not listing photos (mirrors bok_gentle_listings_sync.py).
+  PLACEHOLDER_IMAGE_TOKENS = %w[
+    /themes/
+    share.jpg
+    default.jpg
+    default-halfpage-hero
+    bok-icon.png
+    logo.png
+  ].freeze
+
   # Approximate community centroids for Trinidad map pins (not survey-grade).
   CITY_COORDS = {
     "maraval" => [ 10.7015, -61.5278 ],
@@ -52,7 +62,7 @@ class BokListingsImporter
     "diamond vale" => [ 10.7050, -61.5650 ]
   }.freeze
 
-  Result = Struct.new(:created, :updated, :skipped, :errors, keyword_init: true)
+  Result = Struct.new(:created, :updated, :skipped, :removed, :errors, keyword_init: true)
 
   def self.import!(path = nil, agent: nil)
     new(path, agent: agent).import!
@@ -67,14 +77,17 @@ class BokListingsImporter
     rows = JSON.parse(File.read(@path))
     raise ArgumentError, "Expected a JSON array in #{@path}" unless rows.is_a?(Array)
 
-    agent = @agent || import_agent
-    result = Result.new(created: 0, updated: 0, skipped: 0, errors: [])
+    feed_agent = @agent || import_feed_agent
+    result = Result.new(created: 0, updated: 0, skipped: 0, removed: 0, errors: [])
+    touched_agent_ids = Set.new([ feed_agent.id ])
 
     rows.each do |row|
+      agent = resolve_listing_agent(row, feed_agent)
+      touched_agent_ids << agent.id
       import_row(row, agent, result)
     end
 
-    Agent.reset_counters(agent.id, :properties)
+    touched_agent_ids.each { |id| Agent.reset_counters(id, :properties) }
     result
   end
 
@@ -83,14 +96,19 @@ class BokListingsImporter
   def resolve_path(path)
     return Pathname.new(path) if path.present?
 
+    packaged = Rails.root.join("db/data/bok_listings.json")
+    return packaged if packaged.exist?
+
     dir = Rails.root.join("scripts/bok_sync_data")
     latest = Dir.glob(dir.join("houses_last_month_*.json")).max_by { |f| File.mtime(f) }
-    raise ArgumentError, "No houses_last_month_*.json under #{dir}" unless latest
+    raise ArgumentError, "No db/data/bok_listings.json or houses_last_month_*.json under #{dir}" unless latest
 
     Pathname.new(latest)
   end
 
-  def import_agent
+  # Feed-level agent retained as fallback when a row has no listing agent,
+  # and as the explicit association when callers pass `agent:`.
+  def import_feed_agent
     Agent.find_or_create_by!(email: "import@mybunchofkeys.com") do |a|
       a.name = "My Bunch of Keys"
       a.title = "Listing Feed"
@@ -100,6 +118,47 @@ class BokListingsImporter
       a.show_on_homepage = false
       a.listings_count = 0
     end
+  end
+
+  def resolve_listing_agent(row, feed_agent)
+    name = row["agent"].to_s.strip
+    return feed_agent if name.blank?
+
+    phone = row["agent_phone"].to_s.strip
+    agency = row["agent_agency"].to_s.strip.presence || "Listing Agent"
+    image = row["agent_image"].to_s.strip.presence
+    email = import_email_for(name)
+
+    agent = Agent.find_by(email: email)
+    agent ||= Agent.find_by("LOWER(name) = ? AND phone = ?", name.downcase, phone) if phone.present?
+    agent ||= Agent.find_by("LOWER(name) = ?", name.downcase)
+
+    if agent
+      updates = {}
+      updates[:name] = name if agent.name != name
+      updates[:title] = agency if agent.title != agency
+      updates[:phone] = phone if phone.present? && agent.phone != phone
+      updates[:image_url] = image if image.present? && agent.image_url != image
+      agent.update!(updates) if updates.any?
+      agent
+    else
+      Agent.create!(
+        name: name,
+        title: agency,
+        email: email,
+        phone: phone,
+        image_url: image,
+        bio: "Imported listing agent from mybunchofkeys.com",
+        active: true,
+        show_on_homepage: false,
+        listings_count: 0
+      )
+    end
+  end
+
+  def import_email_for(name)
+    slug = name.to_s.parameterize.presence || "agent"
+    "#{slug}@import.mybunchofkeys.com"
   end
 
   def import_row(row, agent, result)
@@ -117,8 +176,15 @@ class BokListingsImporter
       return
     end
 
+    image_urls = resolve_image_urls(row)
     property = find_property(bok_id, source_url)
-    attrs = build_attrs(row, agent, price_cents)
+
+    if image_urls.empty?
+      handle_unusable_images!(property, bok_id || source_url, result)
+      return
+    end
+
+    attrs = build_attrs(row, agent, price_cents, image_urls)
 
     if property
       property.assign_attributes(attrs.except(:slug))
@@ -137,6 +203,23 @@ class BokListingsImporter
     result.skipped += 1
   end
 
+  # Feed rows with no real listing photos must not stay public.
+  # Existing rows are destroyed (statuses are sales lifecycle only — no draft/unpublished).
+  def handle_unusable_images!(property, label, result)
+    if property
+      property.destroy!
+      result.removed += 1
+      result.errors << "#{label}: no usable images (removed)"
+    else
+      result.skipped += 1
+      result.errors << "#{label}: no usable images"
+    end
+  end
+
+  def resolve_image_urls(row)
+    normalize_image_urls(row["images"].presence || row["image"])
+  end
+
   def find_property(bok_id, source_url)
     scope = Property.all
     by_bok = bok_id.present? ? scope.find_by(bok_id: bok_id) : nil
@@ -145,11 +228,12 @@ class BokListingsImporter
     source_url.present? ? scope.find_by(source_url: source_url) : nil
   end
 
-  def build_attrs(row, agent, price_cents)
+  def build_attrs(row, agent, price_cents, image_urls)
     city = (row["location"].presence || "Trinidad").to_s.strip
     lat, lng = coords_for(city)
     title = clean_title(row["title"], row["url"])
     address = address_from(title, city)
+    primary = normalize_image_urls(row["image"]).first || image_urls.first
 
     {
       agent: agent,
@@ -169,10 +253,12 @@ class BokListingsImporter
       baths: row["bathrooms"].to_s[/\d+/]&.to_i,
       sqft: parse_sqft(row["sqft"]),
       description: row["description"].to_s.strip.presence || title,
-      image_url: row["image"].presence,
+      image_url: primary,
       latitude: lat,
       longitude: lng,
-      featured: false
+      featured: false,
+      features: normalize_features(row["features"]),
+      image_urls: image_urls
     }.tap do |attrs|
       lot = LotSizeExtractor.call([ title, attrs[:description] ].join("\n"))
       if lot
@@ -238,5 +324,25 @@ class BokListingsImporter
 
   def unescape(text)
     CGI.unescapeHTML(text.to_s)
+  end
+
+  def normalize_features(raw)
+    Array(raw).flat_map { |item| item.is_a?(String) ? item.split(/\s*;\s*/) : item }
+      .map { |item| item.to_s.strip }
+      .reject(&:blank?)
+      .uniq
+  end
+
+  def normalize_image_urls(raw)
+    Array(raw).flat_map { |item| item.is_a?(String) ? item.split(/\s*;\s*/) : item }
+      .map { |item| item.to_s.strip }
+      .reject(&:blank?)
+      .reject { |url| placeholder_image?(url) }
+      .uniq
+  end
+
+  def placeholder_image?(url)
+    lower = url.to_s.downcase
+    PLACEHOLDER_IMAGE_TOKENS.any? { |token| lower.include?(token) }
   end
 end

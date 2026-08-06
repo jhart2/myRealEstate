@@ -1,5 +1,8 @@
 <%# locals: (property:, inquiry:) %>
 <% share_url = "#{request.base_url}#{property_path(property)}" %>
+<% has_photos = property.gallery_image_urls.any? %>
+<% has_map = property.mappable? %>
+<% default_media = has_photos ? "photos" : "map" %>
 <article
   class="property-lightbox-panel"
   data-property-lightbox-detail
@@ -56,31 +59,33 @@
       </div>
     </div>
 
-    <div data-media-panel="photos" class="property-lightbox-hero">
-      <% if property.display_image_url.present? %>
-        <img src="<%= property.display_image_url %>" alt="<%= property.title %>" class="h-full w-full object-cover">
-      <% else %>
-        <div class="flex h-full items-center justify-center bg-stone-light text-sm text-ink-3">No photo available</div>
-      <% end %>
-    </div>
+    <% if has_photos %>
+      <div data-media-panel="photos" class="property-lightbox-hero<%= " hidden" unless default_media == "photos" %>">
+        <%= render "properties/gallery", property: property, variant: "lightbox" %>
+      </div>
+    <% end %>
 
-    <div data-media-panel="map" class="property-lightbox-hero hidden">
-      <% if property.mappable? %>
+    <% if has_map %>
+      <div data-media-panel="map" class="property-lightbox-hero<%= " hidden" unless default_media == "map" %>">
         <div
           class="h-full w-full"
           data-detail-map
           data-lat="<%= property.latitude %>"
           data-lng="<%= property.longitude %>"
         ></div>
-      <% else %>
-        <div class="flex h-full items-center justify-center bg-stone-light text-sm text-ink-3">Map location unavailable</div>
-      <% end %>
-    </div>
+      </div>
+    <% elsif !has_photos %>
+      <div class="property-lightbox-hero">
+        <div class="flex h-full items-center justify-center bg-stone-light text-sm text-ink-3">No media available</div>
+      </div>
+    <% end %>
 
-    <div class="property-lightbox-media-tabs" role="tablist" aria-label="Listing media">
-      <button type="button" role="tab" class="property-lightbox-media-tab is-active" data-media="photos" data-media-tab data-action="property-lightbox#showMedia">Photos</button>
-      <button type="button" role="tab" class="property-lightbox-media-tab" data-media="map" data-media-tab data-action="property-lightbox#showMedia" <%= "disabled" unless property.mappable? %>>Map</button>
-    </div>
+    <% if has_photos && has_map %>
+      <div class="property-lightbox-media-tabs" role="tablist" aria-label="Listing media">
+        <button type="button" role="tab" class="property-lightbox-media-tab<%= " is-active" if default_media == "photos" %>" data-media="photos" data-media-tab data-action="property-lightbox#showMedia" aria-selected="<%= default_media == "photos" %>">Photos</button>
+        <button type="button" role="tab" class="property-lightbox-media-tab<%= " is-active" if default_media == "map" %>" data-media="map" data-media-tab data-action="property-lightbox#showMedia" aria-selected="<%= default_media == "map" %>">Map</button>
+      </div>
+    <% end %>
   </div>
 
   <div class="property-lightbox-body">
@@ -147,14 +152,14 @@
               <span><%= property.acreage_label %></span>
             </div>
           <% end %>
-          <% if property.sqft.present? && property.price_cents.to_i > 0 %>
+          <% if (per_sqft = property.price_per_sqft_label).present? %>
             <div class="property-lightbox-fact">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
                 <path d="M4 20V10l8-6 8 6v10"/>
                 <path d="M12 8v4"/>
                 <path d="M10.5 10h3"/>
               </svg>
-              <span>$<%= number_with_delimiter((property.price_cents / 100.0 / property.sqft).round) %> price/sqft</span>
+              <span><%= per_sqft %></span>
             </div>
           <% end %>
         </div>
@@ -187,12 +192,25 @@
         </dl>
       </div>
 
+      <% if property.feature_list.any? %>
+        <div class="mt-6">
+          <h2 class="font-display text-xl font-semibold text-ink">Features</h2>
+          <div class="mt-3">
+            <%= render "properties/feature_chips", property: property %>
+          </div>
+        </div>
+      <% end %>
+
       <% if property.description.present? %>
         <div class="mt-6">
           <h2 class="font-display text-xl font-semibold text-ink">About this home</h2>
           <p class="mt-3 whitespace-pre-line text-sm leading-relaxed text-ink-2"><%= truncate(property.description, length: 720) %></p>
         </div>
       <% end %>
+
+      <div class="mt-6">
+        <%= render "properties/listing_agent", agent: property.agent, compact: true %>
+      </div>
 
       <div class="mt-6">
         <%= link_to "View full listing", property_path(property), class: "btn-outline inline-flex !px-4 !py-2.5", data: { turbo: false } %>

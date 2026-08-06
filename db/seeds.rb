@@ -82,7 +82,7 @@ agents = agents_data.map do |attrs|
     password_confirmation: "password123",
     role: :agent
   )
-  Agent.create!(attrs.merge(active: true, show_on_homepage: true, listings_count: 0, user: user))
+  Agent.create!(attrs.merge(active: true, show_on_homepage: false, listings_count: 0, user: user))
 end
 
 properties = [

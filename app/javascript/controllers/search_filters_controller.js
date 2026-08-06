@@ -87,4 +87,34 @@ export default class extends Controller {
     this.syncClearBtn()
     this.locationInputTarget.focus()
   }
+
+  async setCurrency(event) {
+    event.preventDefault()
+    event.stopPropagation()
+    const currency = event.currentTarget.dataset.currency
+    if (!currency) return
+
+    const token = document.querySelector('meta[name="csrf-token"]')?.content
+    try {
+      await fetch("/currency", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
+          "X-CSRF-Token": token || "",
+          Accept: "application/json, text/html"
+        },
+        body: new URLSearchParams({ currency }),
+        credentials: "same-origin"
+      })
+    } catch (_) {
+      // Still reload — cookie may have been set on a partial response.
+    }
+
+    this.closeAll()
+    if (window.Turbo) {
+      window.Turbo.visit(window.location.href, { action: "replace" })
+    } else {
+      window.location.reload()
+    }
+  }
 }

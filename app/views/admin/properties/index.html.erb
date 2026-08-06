@@ -5,7 +5,7 @@
   <%= link_to "Add property", new_admin_property_path, class: "btn-primary" %>
 </div>
 
-<div class="overflow-hidden rounded-xl border border-border bg-panel">
+<div class="overflow-visible rounded-xl border border-border bg-panel">
   <table class="w-full text-left text-sm">
     <thead class="border-b border-border bg-panel-warm text-xs uppercase tracking-wider text-ink-3">
       <tr>
@@ -13,19 +13,60 @@
         <th class="px-4 py-3">Type</th>
         <th class="px-4 py-3">Price</th>
         <th class="px-4 py-3">Status</th>
-        <th class="px-4 py-3"></th>
+        <th class="px-4 py-3"><span class="sr-only">Actions</span></th>
       </tr>
     </thead>
     <tbody class="divide-y divide-border">
       <% @properties.each do |property| %>
         <tr>
-          <td class="px-4 py-3 font-medium"><%= property.title %></td>
+          <td class="px-4 py-3 font-medium">
+            <%= link_to property.title, property_path(property), class: "text-ink transition-colors hover:text-trinidad", target: "_blank", rel: "noopener" %>
+          </td>
           <td class="px-4 py-3 text-ink-3"><%= property.tag_label %> · <%= property.property_type %></td>
           <td class="px-4 py-3"><%= property.display_price %></td>
-          <td class="px-4 py-3"><%= property.status %></td>
+          <td class="px-4 py-3">
+            <% led = case property.status
+               when "active" then "bg-emerald-500 shadow-[0_0_0_3px_rgba(16,185,129,0.2)]"
+               when "pending" then "bg-amber-400 shadow-[0_0_0_3px_rgba(251,191,36,0.25)]"
+               when "sold" then "bg-ink-3 shadow-[0_0_0_3px_rgba(138,127,120,0.2)]"
+               when "rented" then "bg-sky-500 shadow-[0_0_0_3px_rgba(14,165,233,0.2)]"
+               else "bg-ink-3"
+               end %>
+            <span class="inline-flex items-center gap-2">
+              <span class="inline-block h-2 w-2 shrink-0 rounded-full <%= led %>" aria-hidden="true"></span>
+              <span class="capitalize text-ink-2"><%= property.status %></span>
+            </span>
+          </td>
           <td class="px-4 py-3 text-right">
-            <%= link_to "Edit", edit_admin_property_path(property), class: "text-trinidad hover:underline" %>
-            <%= button_to "Delete", admin_property_path(property), method: :delete, class: "ml-3 text-red-600 hover:underline", form: { data: { turbo_confirm: "Delete this property?" } } %>
+            <div class="relative inline-flex justify-end" data-controller="dropdown">
+              <button
+                type="button"
+                class="inline-flex h-8 w-8 items-center justify-center rounded-lg text-ink-3 transition-colors hover:bg-panel-warm hover:text-ink"
+                data-dropdown-target="button"
+                data-action="dropdown#toggle"
+                aria-haspopup="menu"
+                aria-expanded="false"
+                aria-label="Actions for <%= property.title %>"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <circle cx="12" cy="5" r="1.75" />
+                  <circle cx="12" cy="12" r="1.75" />
+                  <circle cx="12" cy="19" r="1.75" />
+                </svg>
+              </button>
+              <div
+                class="absolute right-0 top-full z-30 mt-1 min-w-[9.5rem] overflow-hidden rounded-lg border border-border bg-panel py-1 shadow-[0_8px_24px_rgba(26,23,20,0.12)]"
+                data-dropdown-target="menu"
+                role="menu"
+                hidden
+              >
+                <%= link_to "Edit", edit_admin_property_path(property), class: "block px-3 py-2 text-left text-sm text-ink hover:bg-panel-warm", role: "menuitem", data: { action: "dropdown#close" } %>
+                <%= button_to "Delete", admin_property_path(property), method: :delete,
+                      class: "block w-full px-3 py-2 text-left text-sm text-trinidad hover:bg-trinidad-soft",
+                      form: { data: { turbo_confirm: "Delete this property?" }, class: "w-full" },
+                      role: "menuitem" %>
+              </div>
+            </div>
           </td>
         </tr>
       <% end %>

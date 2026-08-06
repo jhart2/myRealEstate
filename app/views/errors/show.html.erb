@@ -1,0 +1,31 @@
+<% content_for :title, "#{@status_code} · #{@page[:title]}" %>
+
+<section class="error-status relative flex min-h-dvh flex-col overflow-hidden">
+  <div class="pointer-events-none absolute inset-0 error-status-atmosphere" aria-hidden="true"></div>
+
+  <header class="relative z-10 mx-auto flex w-full max-w-5xl items-center justify-between px-6 pt-8 md:pt-10">
+    <%= link_to root_path, class: "error-status-brand group flex items-center gap-2.5" do %>
+      <span class="font-display text-3xl font-semibold tracking-tight text-ground transition-colors group-hover:text-white md:text-4xl">TT</span>
+      <span class="mt-1 text-xs font-medium uppercase tracking-[0.28em] text-trinidad md:text-sm">Realty</span>
+    <% end %>
+    <p class="error-status-code font-display text-sm font-light tracking-[0.2em] text-ground/35 md:text-base"><%= @status_code %></p>
+  </header>
+
+  <div class="relative z-10 mx-auto flex w-full max-w-5xl flex-1 flex-col justify-center px-6 py-20 md:py-28">
+    <p class="error-status-eyebrow section-eyebrow !text-trinidad"><%= @page[:title] %></p>
+    <h1 class="error-status-headline font-display mt-5 max-w-3xl text-4xl font-light leading-[1.1] text-ground md:text-6xl lg:text-7xl">
+      <%= @page[:headline] %>
+    </h1>
+    <p class="error-status-body mt-6 max-w-lg text-base leading-relaxed text-ground/55 md:text-lg">
+      <%= @page[:body] %>
+    </p>
+    <div class="error-status-actions mt-10 flex flex-wrap items-center gap-3">
+      <%= link_to "Browse homes", properties_path(intent: "sale"), class: "btn-accent px-6 py-3" %>
+      <%= link_to "Back home", root_path, class: "inline-flex items-center justify-center rounded-lg border border-ground/25 px-6 py-3 text-sm font-medium text-ground/80 transition-colors hover:border-ground/50 hover:text-ground" %>
+    </div>
+  </div>
+
+  <footer class="relative z-10 mx-auto w-full max-w-5xl px-6 pb-10">
+    <p class="text-xs tracking-wide text-ground/30">© <%= Date.current.year %> TT Realty</p>
+  </footer>
+</section>

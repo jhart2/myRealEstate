@@ -3,9 +3,19 @@ class ApplicationController < ActionController::Base
 
   allow_browser versions: :modern
 
-  helper_method :admin?, :agent_user?, :current_agent
+  before_action :set_display_currency
+
+  helper_method :admin?, :agent_user?, :current_agent, :current_currency
 
   private
+
+  def set_display_currency
+    Current.currency = MoneyDisplay.normalize(cookies[:currency].presence || MoneyDisplay::DEFAULT_CURRENCY)
+  end
+
+  def current_currency
+    Current.currency.presence || MoneyDisplay::DEFAULT_CURRENCY
+  end
 
   def require_admin
     unless admin?
@@ -32,3 +42,4 @@ class ApplicationController < ActionController::Base
     @current_agent = current_user&.agent_profile
   end
 end
+
