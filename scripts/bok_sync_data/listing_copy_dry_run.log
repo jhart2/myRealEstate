@@ -1,0 +1,200 @@
+Dry-running ListingCopyCleaner on 8 listing(s)…
+========================================================================
+[1/8] BOK-1068183 — Boissière Village, #1 Saddle Road, Maraval
+URL: https://mybunchofkeys.com/property/boissiere-village-1-saddle-road-maraval/
+
+TITLE
+  before: Boissière Village, #1 Saddle Road, Maraval
+  after:  Fixer-Upper in Boissière Village
+
+ADDRESS
+  before: Boissière Village, Maraval, Trinidad
+  after:  Saddle Road, Boissière Village, Maraval, Trinidad
+
+SPECS
+  before: beds=5 baths=2 sqft=2915 type=House tag=sale
+  after:  beds=5 baths=2 sqft=2915 type=House tag=sale
+
+DESCRIPTION (before, first 220 chars)
+  ✨ FOR SALE: SADDLE ROAD, BOISSIÈRE VILLAGE ✨ “A prime fixer-upper with high-visibility!” Situated in a landmark position along Saddle Road in Boissière Village, this two-storey fixer-upper offers an exceptional blank ...
+DESCRIPTION (after, first 220 chars)
+  A prime fixer-upper with high visibility! Situated in a landmark position along Saddle Road in Boissière Village, this two-storey property offers an exceptional blank canvas for visionaries and investors. Set on 5,125...
+
+VERIFICATION: ok (confidence=1.0)
+usage: {"prompt_tokens" => 1169, "completion_tokens" => 366, "total_tokens" => 1535, "prompt_tokens_details" => {"cached_tokens" => 1024, "audio_tokens" => 0}, "completion_tokens_details" => {"reasoning_tokens" => 0, "audio_tokens" => 0, "accepted_prediction_tokens" => 0, "rejected_prediction_tokens" => 0}}
+
+========================================================================
+[2/8] BOK-524217 — HOUSE FOR SALE - CHAMPS FLEURS
+URL: https://mybunchofkeys.com/property/champs-fleurs-house-for-sale/
+
+TITLE
+  before: HOUSE FOR SALE - CHAMPS FLEURS
+  after:  Beautiful 2 Storey House in Champs Fleurs
+
+ADDRESS
+  before: HOUSE FOR SALE, Champs Fleurs, Trinidad
+  after:  Daniel Drive, Champs Fleurs, Champs Fleurs, Trinidad
+
+SPECS
+  before: beds=4 baths=2 sqft=6123 type=House tag=sale
+  after:  beds=4 baths=2 sqft=6084 type=House tag=sale
+
+DESCRIPTION (before, first 220 chars)
+  Daniel Drive, Champs Fleurs A beautiful 2 Storey detached house with breath-taking view of east, south and west – This property is situated on a cul-de-sac within a gated community. Upstairs has 4 bedrooms, 2 bathroom...
+DESCRIPTION (after, first 220 chars)
+  This stunning 2 storey detached house offers breathtaking views of the east, south, and west. Located on a cul-de-sac within a gated community, the upper level features 4 bedrooms and 2 bathrooms, including a master b...
+
+VERIFICATION: ok (confidence=1.0)
+usage: {"prompt_tokens" => 1008, "completion_tokens" => 369, "total_tokens" => 1377, "prompt_tokens_details" => {"cached_tokens" => 0, "audio_tokens" => 0}, "completion_tokens_details" => {"reasoning_tokens" => 0, "audio_tokens" => 0, "accepted_prediction_tokens" => 0, "rejected_prediction_tokens" => 0}}
+
+========================================================================
+[3/8] BOK-1065192 — 1 Bedroom Starter Home, Cunupia $925,000 Neg
+URL: https://mybunchofkeys.com/property/1-bedroom-starter-home-cunupia-925000-neg/
+
+TITLE
+  before: 1 Bedroom Starter Home, Cunupia $925,000 Neg
+  after:  Affordable 1 Bedroom Home in Cunupia
+
+ADDRESS
+  before: 1 Bedroom Starter Home, Cunupia, Trinidad
+  after:  Hin Kin Road, Cunupia, Cunupia, Trinidad
+
+SPECS
+  before: beds=1 baths=1 sqft=5000 type=House tag=sale
+  after:  beds=1 baths=1 sqft= type=House tag=sale
+
+DESCRIPTION (before, first 220 chars)
+  🏡🔥 AFFORDABLE HOME + 5,000 SQ. FT. OF LAND IN CUNUPIA – ONLY $925,000! 🔥🏡 💰 A Rare Opportunity for First-Time Homeowners & Investors! Why rent when you can own? Welcome to Hin Kin Road, Cunupia , where affordability m...
+DESCRIPTION (after, first 220 chars)
+  Welcome to Hin Kin Road, Cunupia, where affordability meets potential! This charming property sits on a generous 5,000 sq. ft. of freehold land and offers endless possibilities for expansion, renovation, or future dev...
+
+VERIFICATION: ok (confidence=1.0)
+usage: {"prompt_tokens" => 1287, "completion_tokens" => 497, "total_tokens" => 1784, "prompt_tokens_details" => {"cached_tokens" => 0, "audio_tokens" => 0}, "completion_tokens_details" => {"reasoning_tokens" => 0, "audio_tokens" => 0, "accepted_prediction_tokens" => 0, "rejected_prediction_tokens" => 0}}
+
+========================================================================
+[4/8] BOK-1052577 — Turn-Key Family Home in Shorelands
+URL: https://mybunchofkeys.com/property/1052577/
+
+TITLE
+  before: Turn-Key Family Home in Shorelands
+  after:  Beautifully Upgraded Family Home in Shorelands
+
+ADDRESS
+  before: Turn, Trinidad
+  after:  Shorelands, Trinidad, Trinidad
+
+SPECS
+  before: beds=3 baths=2 sqft=3125 type=House tag=sale
+  after:  beds=3 baths=2 sqft=3125 type=House tag=sale
+
+DESCRIPTION (before, first 220 chars)
+  ✨ Turn-Key Family Home in Shorelands ✨ This beautifully upgraded single-storey home is located in a family-friendly neighbourhood in the West. Featuring high ceilings, an abundance of natural light, spacious open-plan...
+DESCRIPTION (after, first 220 chars)
+  This beautifully upgraded single-storey home is located in a family-friendly neighbourhood in the West. Featuring high ceilings, an abundance of natural light, spacious open-plan living, and a flexible layout, it offe...
+
+VERIFICATION: ok (confidence=1.0)
+usage: {"prompt_tokens" => 921, "completion_tokens" => 416, "total_tokens" => 1337, "prompt_tokens_details" => {"cached_tokens" => 0, "audio_tokens" => 0}, "completion_tokens_details" => {"reasoning_tokens" => 0, "audio_tokens" => 0, "accepted_prediction_tokens" => 0, "rejected_prediction_tokens" => 0}}
+
+========================================================================
+[5/8] BOK-1057432 — FOR SALE: SPLIT LEVEL 5 BEDROOM HOUSE IN VALSAYN NORTH
+URL: https://mybunchofkeys.com/property/1057432/
+
+TITLE
+  before: FOR SALE: SPLIT LEVEL 5 BEDROOM HOUSE IN VALSAYN NORTH
+  after:  Split Level 5 Bedroom House in Valsayn North
+
+ADDRESS
+  before: FOR SALE: SPLIT LEVEL 5 BEDROOM HOUSE IN VALSAYN NORTH, Valsayn Avenue, Valsayn North, Valsayn, Trinidad
+  after:  Valsayn Avenue, Valsayn North, Valsayn, Trinidad
+
+SPECS
+  before: beds=5 baths=5 sqft=16000 type=House tag=sale
+  after:  beds=5 baths=5 sqft=8000 type=House tag=sale
+
+DESCRIPTION (before, first 220 chars)
+  Luxury Living at Its Finest Experience the perfect blend of elegance, comfort, and security in this impressive 8,000 sq. ft. residence. 📍Location: Valsayn Avenue, Valsayn North 💰Price: TT $10M (neg) or US$1.475M Prope...
+DESCRIPTION (after, first 220 chars)
+  Experience luxury living at its finest in this impressive 8,000 sq. ft. residence located on Valsayn Avenue, Valsayn North. This home features 5 generously sized bedrooms, each with built-in wardrobes, and an expansiv...
+
+VERIFICATION: mismatch (confidence=0.8)
+  - sqft: model=16000 description=8000 (Description states 8,000 sq. ft. but listing shows 16,000 sq. ft.)
+usage: {"prompt_tokens" => 1063, "completion_tokens" => 472, "total_tokens" => 1535, "prompt_tokens_details" => {"cached_tokens" => 0, "audio_tokens" => 0}, "completion_tokens_details" => {"reasoning_tokens" => 0, "audio_tokens" => 0, "accepted_prediction_tokens" => 0, "rejected_prediction_tokens" => 0}}
+
+========================================================================
+[6/8] BOK-920657 — 114-116 Saddle Road, Maraval (Monique's Guest House- close to Chaconia Inn) - For Sale
+URL: https://mybunchofkeys.com/property/114-226-saddle-road-maraval-moniques-guest-house-next-to-chaconia-inn-for-sale/
+
+TITLE
+  before: 114-116 Saddle Road, Maraval (Monique's Guest House- close to Chaconia Inn) - For Sale
+  after:  Monique's Guest House in Maraval
+
+ADDRESS
+  before: 114, Maraval, Trinidad
+  after:  114-116 Saddle Road, Maraval, Trinidad
+
+SPECS
+  before: beds=12 baths=12 sqft=6049 type=House tag=sale
+  after:  beds=12 baths=12 sqft=6049 type=House tag=sale
+
+DESCRIPTION (before, first 220 chars)
+  114-116 Saddle Road, Maraval (Monique’s Guest House- close to Chaconia Inn) For Sale: TTD$8M ono This property sits on a primary lot measuring 8,028 sq. ft., but is part of a larger holding comprising approximately 68...
+DESCRIPTION (after, first 220 chars)
+  This property sits on a primary lot measuring 8,028 sq. ft., but is part of a larger holding comprising approximately 68,000 sq. ft. across six lots. It presents an exceptional opportunity for redevelopment into a gue...
+
+VERIFICATION: ok (confidence=1.0)
+usage: {"prompt_tokens" => 1200, "completion_tokens" => 482, "total_tokens" => 1682, "prompt_tokens_details" => {"cached_tokens" => 0, "audio_tokens" => 0}, "completion_tokens_details" => {"reasoning_tokens" => 0, "audio_tokens" => 0, "accepted_prediction_tokens" => 0, "rejected_prediction_tokens" => 0}}
+
+========================================================================
+[7/8] BOK-320 — 120 Navin Circular, Elizabeth Gardens
+URL: https://mybunchofkeys.com/property/120-navin-circular-elizabeth-gardends/
+
+TITLE
+  before: 120 Navin Circular, Elizabeth Gardens
+  after:  Modern Family Home in Elizabeth Gardens
+
+ADDRESS
+  before: 120 Navin Circular, St. Joseph, Trinidad
+  after:  120 Navin Circular, St. Joseph, Trinidad
+
+SPECS
+  before: beds=4 baths=6 sqft=6000 type=House tag=sale
+  after:  beds=4 baths=6 sqft=4000 type=House tag=sale
+
+DESCRIPTION (before, first 220 chars)
+  More than a residence, this is a statement of modern living—where cutting-edge design meets the laid-back allure of Caribbean luxury. For those who demand both privacy and prestige; A modern home suitable for a large ...
+DESCRIPTION (after, first 220 chars)
+  More than a residence, this is a statement of modern living—where cutting-edge design meets the laid-back allure of Caribbean luxury. This modern home is suitable for a large family with a flair for entertainment. It ...
+
+VERIFICATION: mismatch (confidence=0.8)
+  - sqft: model=6000 description=4000 (Description states 4000 sqft of living space.)
+  - lot_sqft: model=6000 description=11500 (Description states 11,500 sqft lot size.)
+  - acres: model="0.1377" description=0.263 (Calculated from 11,500 sqft.)
+usage: {"prompt_tokens" => 1276, "completion_tokens" => 679, "total_tokens" => 1955, "prompt_tokens_details" => {"cached_tokens" => 0, "audio_tokens" => 0}, "completion_tokens_details" => {"reasoning_tokens" => 0, "audio_tokens" => 0, "accepted_prediction_tokens" => 0, "rejected_prediction_tokens" => 0}}
+
+========================================================================
+[8/8] BOK-978503 — 156 Anne Avenue, Block 4, Palmiste, San Fernando - Reduced: $3.75M
+URL: https://mybunchofkeys.com/property/156-anne-avenue-block-4-palmiste-san-fernando-for-sale-4m/
+
+TITLE
+  before: 156 Anne Avenue, Block 4, Palmiste, San Fernando - Reduced: $3.75M
+  after:  Charming 2-Storey House in Palmiste
+
+ADDRESS
+  before: 156 Anne Avenue, 156 Anne Street Block 4 , PALMISTE , Palmiste, Trinidad
+  after:  156 Anne Avenue, Block 4, Palmiste, Trinidad
+
+SPECS
+  before: beds=4 baths=3 sqft=7900 type=House tag=sale
+  after:  beds=4 baths=3 sqft=3500 type=House tag=sale
+
+DESCRIPTION (before, first 220 chars)
+  156 Anne Avenue, Block 4, Palmiste, San Fernando – For Sale :$4 million REDUCED: $3.75 Million House Size: 3,500 sq ft Land Size: 7,089 sq ft Age: Approx. 36 years old Leasehold: 999 years commencing 10 January 1980 F...
+DESCRIPTION (after, first 220 chars)
+  This charming, move-in ready 2-storey corner property is located in a beautiful residential area of Palmiste. The house features high ceilings and plenty of windows for natural lighting. It boasts a spacious remodeled...
+
+VERIFICATION: mismatch (confidence=0.9)
+  - sqft: model=7900 description=3500 (Description states house size as 3,500 sq ft.)
+  - lot_sqft: model=nil description=7089 (Description states land size as 7,089 sq ft.)
+usage: {"prompt_tokens" => 1070, "completion_tokens" => 554, "total_tokens" => 1624, "prompt_tokens_details" => {"cached_tokens" => 0, "audio_tokens" => 0}, "completion_tokens_details" => {"reasoning_tokens" => 0, "audio_tokens" => 0, "accepted_prediction_tokens" => 0, "rejected_prediction_tokens" => 0}}
+
+Dry-run complete (no DB writes).

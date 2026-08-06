@@ -34,6 +34,7 @@ class PropertiesController < ApplicationController
       east: params[:east],
       west: params[:west]
     ) unless @map_boundary
+    @price_histogram = Property.price_histogram(search_params)
     @hide_footer = true
   end
 

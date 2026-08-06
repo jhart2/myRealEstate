@@ -169,6 +169,10 @@
           </div>
         </div>
 
+        <%
+          price_hist = @price_histogram.presence || []
+          price_hist_max = [ price_hist.max.to_i, 1 ].max
+        %>
         <div
           class="search-filter-panel search-filter-panel--price hidden"
           data-search-filters-target="panel"
@@ -176,6 +180,8 @@
           data-controller="price-range"
           data-price-range-min-value="<%= @price_min.to_i %>"
           data-price-range-max-value="<%= @price_max.present? ? @price_max.to_i : -1 %>"
+          data-price-range-buckets-value="<%= Property::PRICE_HISTOGRAM_BUCKETS %>"
+          data-price-range-max-dollars-value="<%= Property::PRICE_HISTOGRAM_MAX_DOLLARS %>"
         >
           <fieldset class="price-range-fieldset">
             <legend class="search-filter-panel-title">Price Range</legend>
@@ -203,30 +209,49 @@
               Estimate uses 20% down, 30-year term, 5.5% interest (principal &amp; interest only).
             </p>
 
-            <div class="price-range-slider" aria-hidden="false">
-              <div class="price-range-rail">
-                <div class="price-range-fill" data-price-range-target="fill"></div>
+            <div class="price-range-chart">
+              <div
+                class="price-range-histogram"
+                data-price-range-target="histogram"
+                role="img"
+                aria-label="Listing count by price"
+              >
+                <% price_hist.each_with_index do |count, index| %>
+                  <% height = ((count.to_f / price_hist_max) * 100).round(1) %>
+                  <span
+                    class="price-range-bar<%= " is-in-range" if count.positive? %>"
+                    style="--bar-height: <%= [ height, count.positive? ? 6 : 0 ].max %>%"
+                    data-bucket-index="<%= index %>"
+                    title="<%= count %> <%= "listing".pluralize(count) %>"
+                  ></span>
+                <% end %>
               </div>
-              <input
-                type="range"
-                class="price-range-thumb price-range-thumb--min"
-                min="0"
-                max="52"
-                value="0"
-                aria-label="Minimum price"
-                data-price-range-target="minRange"
-                data-action="input->price-range#onMinSlide"
-              >
-              <input
-                type="range"
-                class="price-range-thumb price-range-thumb--max"
-                min="0"
-                max="52"
-                value="52"
-                aria-label="Maximum price"
-                data-price-range-target="maxRange"
-                data-action="input->price-range#onMaxSlide"
-              >
+
+              <div class="price-range-slider">
+                <div class="price-range-rail">
+                  <div class="price-range-fill" data-price-range-target="fill"></div>
+                </div>
+                <input
+                  type="range"
+                  class="price-range-thumb price-range-thumb--min"
+                  min="0"
+                  max="52"
+                  value="0"
+                  aria-label="Minimum price"
+                  data-price-range-target="minRange"
+                  data-action="input->price-range#onMinSlide"
+                >
+                <input
+                  type="range"
+                  class="price-range-thumb price-range-thumb--max"
+                  min="0"
+                  max="52"
+                  value="52"
+                  aria-label="Maximum price"
+                  data-price-range-target="maxRange"
+                  data-action="input->price-range#onMaxSlide"
+                >
+              </div>
             </div>
 
             <div class="price-range-bounds">
