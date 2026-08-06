@@ -48,6 +48,7 @@ class Property < ApplicationRecord
 
 
   def self.search(params = {})
+    params = normalize_search_params(params)
     scope = active
     scope = scope.where(tag: params[:intent]) if params[:intent].present? && TAGS.include?(params[:intent])
 
@@ -114,15 +115,31 @@ class Property < ApplicationRecord
       scope = scope.where(featured: true)
     end
 
-    scope = case params[:sort]
-    when "price_asc" then scope.order(price_cents: :asc)
-    when "price_desc" then scope.order(price_cents: :desc)
-    when "newest" then scope.order(created_at: :desc)
-    else scope.order(featured: :desc, created_at: :desc)
+    # Use reorder so a prior ORDER BY (joins/includes) cannot leave featured/recency
+    # ahead of the user's price sort.
+    scope = case params[:sort].to_s
+    when "price_asc" then scope.reorder(price_cents: :asc)
+    when "price_desc" then scope.reorder(price_cents: :desc)
+    when "newest" then scope.reorder(created_at: :desc)
+    else scope.reorder(featured: :desc, created_at: :desc)
     end
 
     scope
   end
+
+  def self.normalize_search_params(params)
+    hash =
+      case params
+      when ActionController::Parameters
+        params.to_h
+      when Hash
+        params
+      else
+        params.respond_to?(:to_h) ? params.to_h : {}
+      end
+    hash.with_indifferent_access
+  end
+  private_class_method :normalize_search_params
 
   def self.in_bounds(north:, south:, east:, west:)
     where(latitude: south..north, longitude: west..east)

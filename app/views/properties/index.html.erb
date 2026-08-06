@@ -339,7 +339,12 @@
             <section class="search-filter-section">
               <h3 class="search-filter-section-title">Sort</h3>
               <label class="sr-only" for="search_sort">Sort listings</label>
-              <select id="search_sort" name="sort" class="field">
+              <select
+                id="search_sort"
+                name="sort"
+                class="field"
+                data-action="change->search-filters#applyAndClose"
+              >
                 <option value="featured" <%= "selected" if @sort == "featured" %>>Homes for you</option>
                 <option value="price_asc" <%= "selected" if @sort == "price_asc" %>>Price (low to high)</option>
                 <option value="price_desc" <%= "selected" if @sort == "price_desc" %>>Price (high to low)</option>

@@ -409,6 +409,37 @@ def crawl_house_search(client: GentleClient, max_pages: int) -> set[str]:
     return urls
 
 
+def parse_description(html: str) -> str:
+    """Full listing copy from #description, plus optional About the Region."""
+    parts: list[str] = []
+
+    desc = first_match(r'<div id=["\']description["\']>(.*?)</div>', html, re.I | re.S)
+    if desc:
+        text = strip_tags(desc)
+        if text:
+            parts.append(text)
+
+    region = first_match(r'<div class=["\']region-desc["\']>(.*?)</div>', html, re.I | re.S)
+    if region:
+        region_text = strip_tags(region)
+        region_text = re.sub(r"View More\s+.+\s+Listings\s*$", "", region_text, flags=re.I).strip()
+        if region_text:
+            heading = first_match(r'<h3 class=["\']region-title["\']>(.*?)</h3>', html, re.I | re.S)
+            heading = strip_tags(heading) if heading else "About the Region"
+            parts.append(f"{heading}\n{region_text}")
+
+    if parts:
+        return "\n\n".join(parts)
+
+    # Legacy fallback when #description is missing
+    about = first_match(
+        r"About this Property(.*?)(?:Property\s*<span class=\"bunches\">Location|Mortgages Powered)",
+        html,
+        re.I | re.S,
+    )
+    return strip_tags(about) if about else ""
+
+
 def parse_listing(url: str, html: str, lastmod: str = "") -> Listing | None:
     # JSON-LD date + image
     date_published = ""
@@ -514,8 +545,7 @@ def parse_listing(url: str, html: str, lastmod: str = "") -> Listing | None:
     bok_id = re.sub(r"\s+", "", bok_id)
     agent, agent_agency, agent_phone, agent_image = parse_agent_block(html)
 
-    about = first_match(r"About this Property(.*?)(?:Property\s*<span class=\"bunches\">Location|Mortgages Powered)", html, re.I | re.S)
-    description = strip_tags(about)[:1200] if about else ""
+    description = parse_description(html)
     features = parse_features(html)
     images = parse_gallery_images(html)
     if image and is_placeholder_image(image):
