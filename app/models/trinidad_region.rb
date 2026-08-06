@@ -88,7 +88,6 @@ class TrinidadRegion
     small = %w[of the and]
     place.split.map.with_index { |w, i| (i.positive? && small.include?(w)) ? w : w.capitalize }.join(" ")
   end
-  private_class_method :titleize_place
 
   def self.classify_by_coords(lat, lng)
     return nil if lat.blank? || lng.blank?

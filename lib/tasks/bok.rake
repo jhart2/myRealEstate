@@ -103,6 +103,41 @@ namespace :bok do
     puts "BOK descriptions longer than 1200 chars: #{long}"
   end
 
+  desc "Dry-run (default) or apply BOK address/city N/A repairs. APPLY=1 to write."
+  task fix_locations: :environment do
+    apply = ENV["APPLY"].to_s.match?(/\A(1|true|yes)\z/i)
+    proposals = BokAddressResolver.dry_run
+    puts "#{proposals.size} properties would change"
+    proposals.each do |row|
+      puts
+      puts "#{row[:bok_id]}  #{row[:title]}"
+      puts "  before: #{row[:before][:full_address]}"
+      puts "  after:  #{row[:after][:full_address]}"
+      puts "  notes:  #{Array(row[:notes]).join("; ")}"
+    end
+
+    if apply
+      updated = 0
+      proposals.each do |row|
+        property = Property.find(row[:id])
+        property.update!(
+          address: row[:after][:address],
+          city: row[:after][:city],
+          state: row[:after][:state],
+          zip: row[:after][:zip],
+          latitude: row[:after][:latitude],
+          longitude: row[:after][:longitude]
+        )
+        updated += 1
+      end
+      puts
+      puts "Applied #{updated} updates."
+    else
+      puts
+      puts "Dry-run only. Re-run with APPLY=1 to write changes."
+    end
+  end
+
   desc "Seed demo users/agents then import packaged BOK listings (staging bootstrap)"
   task bootstrap: :environment do
     Rake::Task["db:seed"].invoke

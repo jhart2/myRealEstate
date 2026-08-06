@@ -229,10 +229,8 @@ class BokListingsImporter
   end
 
   def build_attrs(row, agent, price_cents, image_urls)
-    city = (row["location"].presence || "Trinidad").to_s.strip
-    lat, lng = coords_for(city)
     title = clean_title(row["title"], row["url"])
-    address = address_from(title, city)
+    place = BokAddressResolver.call(row.merge("title" => title))
     primary = normalize_image_urls(row["image"]).first || image_urls.first
 
     {
@@ -244,18 +242,18 @@ class BokListingsImporter
       tag: map_tag(row),
       property_type: map_property_type(row),
       status: "active",
-      address: address,
-      city: city,
-      state: "Trinidad",
-      zip: "",
+      address: place.address,
+      city: place.city,
+      state: place.state,
+      zip: place.zip,
       price_cents: price_cents,
       beds: row["bedrooms"].to_s[/\d+/]&.to_i,
       baths: row["bathrooms"].to_s[/\d+/]&.to_i,
       sqft: parse_sqft(row["sqft"]),
       description: row["description"].to_s.strip.presence || title,
       image_url: primary,
-      latitude: lat,
-      longitude: lng,
+      latitude: place.latitude,
+      longitude: place.longitude,
       featured: false,
       features: normalize_features(row["features"]),
       image_urls: image_urls
@@ -325,11 +323,7 @@ class BokListingsImporter
   end
 
   def address_from(title, city)
-    # Prefer the lead clause of the listing title, then fall back to city.
-    lead = title.split(/\s*[-–,|]\s*/, 2).first.to_s.strip
-    return lead if lead.present? && lead.downcase != city.downcase
-
-    city
+    BokAddressResolver.call("title" => title, "location" => city).address
   end
 
   def slug_for(row)

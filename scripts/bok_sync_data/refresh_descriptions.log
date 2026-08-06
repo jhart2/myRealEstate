@@ -432,3 +432,80 @@ Refetch mode: re-downloading every candidate detail page.
   kept: BOK-793281 | House | $3,950,000 | La Romain Palmiste San Fernando
   GET [214] 200 https://mybunchofkeys.com/property/siewdass-road-freeport-2/
   kept: BOK-1004832 | House | $450,000 | Freeport
+  GET [215] 200 https://mybunchofkeys.com/property/signal-hill-tobago/
+  kept: BOK-699760 | House | $3,700,000 | Signal Hill
+  GET [216] 200 https://mybunchofkeys.com/property/single-story-house-for-sale-in-tacarigua-4-1m-neg/
+  kept: BOK-1035686 | House | $3,800,000 | Tacarigua
+  GET [217] 200 https://mybunchofkeys.com/property/siparia-6-bedrooms-residential-commercial-property-for-sale-1250000/
+  kept: BOK-859680 | House | $1,250,000 | Thick Village, Siparia , Siparia
+  GET [218] 200 https://mybunchofkeys.com/property/siparia-home-commercial-building-for-sale-rent-tt6m-tt25k/
+  kept: BOK-1030036 | House | $6,000,000 | Siparia
+  GET [219] 200 https://mybunchofkeys.com/property/spacious-home-near-the-airport/
+  kept: BOK-808909 | House | $2,899,000 | Caroni Chaguanas Cunupia Kelly Village
+  GET [220] 200 https://mybunchofkeys.com/property/spacious-two-story-home-for-sale-in-a-developing-neighbourhood-in-cunupia/
+  kept: BOK-911903 | House | $1,500,000 | Cunupia
+  GET [221] 200 https://mybunchofkeys.com/property/st-clair-the-diplomatic-quarter-port-of-spain-commissioned-in-1904-overlooking-the-queens-park-savannah/
+  kept: BOK-921573 | House | $21,000,000 | St. Clair
+  GET [222] 200 https://mybunchofkeys.com/property/st-helena-home-for-sale-tt2-2m/
+  kept: BOK-734786 | House | $1,950,000 | Chin Chin Kelly Village Las Lomas St. Helena
+  GET [223] 200 https://mybunchofkeys.com/property/st-joseph-property-for-sale-2/
+  kept: BOK-1062554 | House | $1,500,000 | Albert Street, St. Joseph, St. Joseph
+  GET [224] 200 https://mybunchofkeys.com/property/standalone-house-fixer-upper-for-sale-petit-valley/
+  kept: BOK-1062931 | House | $2,650,000 | Petit Valley
+  GET [225] 200 https://mybunchofkeys.com/property/tableland-agriculture-land-for-sale-tt1-6m/
+  kept: BOK-826006 | House | $1,600,000 | Tableland
+  GET [226] 200 https://mybunchofkeys.com/property/the-carlsen-villas-at-sara-gardens-phase-ii/
+  kept: BOK-1065283 | House | $1,650,000 | Chaguanas
+  GET [227] 200 https://mybunchofkeys.com/property/the-carlsen-villas-phase-ii-chaguanas-price-starting-at-1-725m-2/
+  kept: BOK-970200 | House | $1,725,000 | Chaguanas
+  GET [228] 200 https://mybunchofkeys.com/property/the-reserve-munroe-road/
+  kept: BOK-1065302 | House | $3,400,000 | Chaguanas
+  GET [229] 200 https://mybunchofkeys.com/property/tobago-plantations-villa-for-sale-5-beds-5-baths-ffe/
+  kept: BOK-959941 | House | $1,250,000(USD) | Tobago Plantations
+  GET [230] 200 https://mybunchofkeys.com/property/tragarete-rd/
+  kept: BOK-564459 | Commercial | $9,000,000 | Newtown
+  GET [231] 200 https://mybunchofkeys.com/property/trincity-cane-farm-gardens/
+  kept: BOK-1048436 | House | $2,070,000 | 
+  GET [232] 200 https://mybunchofkeys.com/property/turnkey-4-bedroom-modern-homestead-on-10000-sq-ft-freehold-land/
+  kept: BOK-1057267 | House | $1,795,000 | Las Lomas
+  GET [233] 404 https://mybunchofkeys.com/property/turquoise-drive-diamond-vale-diego-martin/
+  skip: HTTP 404 https://mybunchofkeys.com/property/turquoise-drive-diamond-vale-diego-martin/
+  GET [234] 200 https://mybunchofkeys.com/property/two-storey-home-2-lots-of-land-endeavour-gardens-chaguanas-4700000/
+  kept: BOK-1065112 | House | $4,700,000 | Endeavour
+  GET [235] 200 https://mybunchofkeys.com/property/union-hall-home-for-sale-tt2-9m/
+  kept: BOK-1064527 | House | $2,900,000 | Phillipine Retrench Village Union Hall
+  GET [236] 200 https://mybunchofkeys.com/property/vacation-home-for-sale/
+  kept: BOK-872690 | House | $2,500,000 | Blanchisseuse
+  GET [237] 200 https://mybunchofkeys.com/property/valsayn-house-for-sale-6-8m/
+  kept: BOK-990354 | House | $5,990,000 | Valsayn
+  GET [238] 200 https://mybunchofkeys.com/property/valsayn-north-4/
+  kept: BOK-1028286 | House | $8,000,000 | Prince Charles Ave Valsayn North,
+  GET [239] 200 https://mybunchofkeys.com/property/valsayn-north-house-for-sale-3/
+  kept: BOK-1020171 | House | $5,300,000 | Valsayn
+  GET [240] 200 https://mybunchofkeys.com/property/valsayn-north-house-for-sale-4/
+  kept: BOK-1026120 | House | $12,000,000 | Valsayn
+  GET [241] 200 https://mybunchofkeys.com/property/valsayn-south-3-bedroom-2-5-bath-2-storey/
+  kept: BOK-843028 | House | $7,750,000 | Valsayn
+  GET [242] 200 https://mybunchofkeys.com/property/valsayn-stand-alone-north-east-home-for-sale-6m/
+  kept: BOK-920142 | House | $6,000,000 | Valsayn
+  GET [243] 200 https://mybunchofkeys.com/property/villas-of-les-boix-morne-coco-road-maraval/
+  kept: BOK-1062643 | House | $3,500,000 | Maraval
+  GET [244] 200 https://mybunchofkeys.com/property/welcome-residences-cunupia/
+  kept: BOK-1065179 | House | $1,350,000 | Cunupia
+  GET [245] 200 https://mybunchofkeys.com/property/welcome-road-cunupia-home-for-sale-tt1-95m/
+  kept: BOK-968605 | House | $1,850,000 | Chaguanas Cunupia
+  GET [246] 200 https://mybunchofkeys.com/property/welcome-road-cunupia-housing-development-tt-1-55m/
+  kept: BOK-617062 | House | $1,400,000 | Cunupia
+  GET [247] 200 https://mybunchofkeys.com/property/westmoorings-home-for-sale/
+  kept: BOK-532850 | House | $5,800,000 | Bayshore Port of Spain Westmoorings
+  GET [248] 200 https://mybunchofkeys.com/property/williamsville-residential-commercial-property-for-sale-tt2-5m/
+  kept: BOK-807491 | House | $2,500,000 | Gasparillo Piparo Reform Williamsville
+Wrote 247 listings →
+  /home/javon/Desktop/Real Estate Website Builder/scripts/bok_sync_data/houses_last_month_20260806_194223.json
+  /home/javon/Desktop/Real Estate Website Builder/scripts/bok_sync_data/houses_last_month_20260806_194223.csv
+Done. Requests made: 248
+JSON: /home/javon/Desktop/Real Estate Website Builder/scripts/bok_sync_data/houses_last_month_20260806_194223.json
+Updated descriptions: 237
+Unchanged: 10
+Rows without matching property: 0
+BOK descriptions longer than 1200 chars: 183

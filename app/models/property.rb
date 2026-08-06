@@ -242,7 +242,7 @@ class Property < ApplicationRecord
   end
 
   def full_address
-    [ address, city, state, zip ].compact_blank.join(", ")
+    BokAddressResolver.format_address(address: address, city: city, state: state, zip: zip)
   end
 
   def feature_list
