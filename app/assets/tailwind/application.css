@@ -2468,6 +2468,10 @@ html.lightbox-open body {
 .listing-show-media-panel {
   height: 100%;
   width: 100%;
+  /* Contain Leaflet pane z-indexes (200–1000) so the media tab stays visible */
+  position: relative;
+  z-index: 0;
+  isolation: isolate;
 }
 
 .listing-show-media-panel.hidden {
@@ -2499,11 +2503,13 @@ html.lightbox-open body {
 }
 
 .listing-show-media-tabs {
-  z-index: 5;
+  position: absolute;
+  z-index: 20;
   left: 0.9rem;
   right: auto;
   bottom: 0.9rem;
   transform: none;
+  pointer-events: auto;
 }
 
 .listing-show-media:has(.listing-gallery-viewer:not(.hidden)) .listing-show-media-tabs {
