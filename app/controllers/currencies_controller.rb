@@ -12,7 +12,7 @@ class CurrenciesController < ApplicationController
 
     respond_to do |format|
       format.html { redirect_back fallback_location: properties_path }
-      format.json { head :no_content }
+      format.json { render json: { currency: code } }
     end
   end
 end

@@ -197,6 +197,8 @@ class Property < ApplicationRecord
       id: id,
       slug: slug,
       title: title,
+      priceCents: price_cents.to_i,
+      rent: tag == "rent",
       price: display_price,
       priceLabel: map_price_label,
       beds: beds.to_i,

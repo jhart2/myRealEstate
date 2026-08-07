@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
+import MoneyDisplay from "money_display"
 
 const LEAFLET_CSS = "/vendor/leaflet/leaflet.css"
 const LEAFLET_JS = "/vendor/leaflet/leaflet.js"
@@ -69,6 +70,9 @@ export default class extends Controller {
     this._destroyed = false
     this._programmaticFrame = false
 
+    this.onCurrencyChanged = this.onCurrencyChanged.bind(this)
+    document.addEventListener("currency:changed", this.onCurrencyChanged)
+
     this.showSpinner()
 
     if (this.isMobile()) {
@@ -110,11 +114,34 @@ export default class extends Controller {
 
   disconnect() {
     this._destroyed = true
+    document.removeEventListener("currency:changed", this.onCurrencyChanged)
     if (this._resizeObserver) {
       this._resizeObserver.disconnect()
       this._resizeObserver = null
     }
     this.teardownMap()
+  }
+
+  onCurrencyChanged(event) {
+    const currency = event.detail?.currency
+    if (!currency) return
+
+    const ratesCtrl = this.application.getControllerForElementAndIdentifier(document.body, "currency")
+    if (ratesCtrl?.ratesValue) MoneyDisplay.configure(ratesCtrl.ratesValue)
+
+    const activeId = this.activeId
+    const listings = this.listingsValue.map((listing) => {
+      const cents = listing.priceCents
+      if (cents == null) return listing
+      return {
+        ...listing,
+        price: MoneyDisplay.format(cents, { currency, rent: !!listing.rent }),
+        priceLabel: MoneyDisplay.compact(cents, { currency, rent: !!listing.rent })
+      }
+    })
+    this.listingsValue = listings
+    this.renderMarkers()
+    if (activeId) this.activateListing(activeId, { scroll: false, openPopup: false })
   }
 
   isMobile() {

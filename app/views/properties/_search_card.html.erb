@@ -22,7 +22,7 @@
     </div>
 
     <div class="min-w-0 flex-1 py-0.5">
-      <p class="font-display text-lg font-semibold leading-tight text-ink"><%= property.display_price %></p>
+      <p class="font-display text-lg font-semibold leading-tight text-ink"><%= property_money(property) %></p>
       <p class="mt-1 truncate text-sm font-medium text-ink"><%= property.title %></p>
       <p class="mt-0.5 truncate text-xs text-ink-3"><%= property.full_address %></p>
       <% if property_spec_present?(property.beds) || property_spec_present?(property.baths) || property_spec_present?(property.sqft) %>

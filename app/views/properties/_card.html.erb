@@ -34,7 +34,7 @@
           <p class="text-xs font-medium uppercase tracking-wide text-ink-3"><%= property.property_type %></p>
           <h3 class="font-display mt-0.5 text-xl font-semibold text-ink"><%= property.title %></h3>
         </div>
-        <p class="font-display shrink-0 text-lg font-semibold text-ink"><%= property.display_price %></p>
+        <p class="font-display shrink-0 text-lg font-semibold text-ink"><%= property_money(property) %></p>
       </div>
       <p class="mb-4 text-sm text-ink-3"><%= property.full_address %></p>
       <% if property.feature_list.any? %>

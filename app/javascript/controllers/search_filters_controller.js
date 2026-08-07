@@ -2,7 +2,7 @@ import { Controller } from "@hotwired/stimulus"
 
 // Zillow-style exposed filter chips → dropdown panels.
 export default class extends Controller {
-  static targets = ["panel", "chip", "locationInput", "clearBtn"]
+  static targets = ["panel", "chip", "locationInput", "clearBtn", "currencyLabel"]
 
   connect() {
     this.onDocClick = this.onDocClick.bind(this)
@@ -94,27 +94,52 @@ export default class extends Controller {
     const currency = event.currentTarget.dataset.currency
     if (!currency) return
 
-    const token = document.querySelector('meta[name="csrf-token"]')?.content
-    try {
-      await fetch("/currency", {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
-          "X-CSRF-Token": token || "",
-          Accept: "application/json, text/html"
-        },
-        body: new URLSearchParams({ currency }),
-        credentials: "same-origin"
-      })
-    } catch (_) {
-      // Still reload — cookie may have been set on a partial response.
+    const currencyCtrl = this.application.getControllerForElementAndIdentifier(
+      document.body,
+      "currency"
+    )
+    if (currencyCtrl) {
+      await currencyCtrl.setCurrency(currency)
+    } else {
+      const token = document.querySelector('meta[name="csrf-token"]')?.content
+      try {
+        await fetch("/currency", {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
+            "X-CSRF-Token": token || "",
+            Accept: "application/json"
+          },
+          body: new URLSearchParams({ currency }),
+          credentials: "same-origin"
+        })
+      } catch (_) { /* ignore */ }
+      document.dispatchEvent(new CustomEvent("currency:changed", {
+        detail: { currency },
+        bubbles: true
+      }))
     }
 
+    this.syncCurrencyUi(currency)
     this.closeAll()
-    if (window.Turbo) {
-      window.Turbo.visit(window.location.href, { action: "replace" })
-    } else {
-      window.location.reload()
+  }
+
+  syncCurrencyUi(currency) {
+    if (this.hasCurrencyLabelTarget) {
+      this.currencyLabelTarget.textContent = currency
     }
+
+    this.chipTargets.forEach((chip) => {
+      if (chip.dataset.panel !== "currency") return
+      chip.setAttribute("aria-label", `Display currency ${currency}`)
+      const defaultCode = document.body.dataset.currencyDefaultCodeValue || "TTD"
+      chip.classList.toggle("is-active", currency !== defaultCode)
+    })
+
+    this.element.querySelectorAll('[data-panel="currency"] [data-currency]').forEach((btn) => {
+      const selected = btn.dataset.currency === currency
+      btn.classList.toggle("is-selected", selected)
+      btn.setAttribute("aria-checked", selected ? "true" : "false")
+    })
   }
 }

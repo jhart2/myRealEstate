@@ -14,7 +14,13 @@
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
-  <body class="min-h-screen bg-ground text-ink antialiased <%= 'overflow-hidden' if content_for?(:hide_footer) || @hide_footer %>">
+  <body
+    class="min-h-screen bg-ground text-ink antialiased <%= 'overflow-hidden' if content_for?(:hide_footer) || @hide_footer %>"
+    data-controller="currency"
+    data-currency-code-value="<%= current_currency %>"
+    data-currency-default-code-value="<%= MoneyDisplay::DEFAULT_CURRENCY %>"
+    data-currency-rates-value="<%= ERB::Util.html_escape(MoneyDisplay.rates_payload.to_json) %>"
+  >
     <%= render "shared/flash" %>
     <%= render "shared/navbar" %>
     <main class="<%= 'h-[calc(100dvh-4rem)]' if content_for?(:hide_footer) || @hide_footer %>">

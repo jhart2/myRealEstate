@@ -21,4 +21,13 @@ class MoneyDisplayTest < ActiveSupport::TestCase
   test "base currency defaults to TTD" do
     assert_equal "TTD", MoneyDisplay::BASE_CURRENCY
   end
+
+  test "rates_payload exposes client FX table" do
+    payload = MoneyDisplay.rates_payload
+    assert_equal "TTD", payload[:base]
+    assert_equal "TTD", payload[:default]
+    assert_equal "6.75", payload[:ratesToTtd]["USD"]
+    assert_equal "5.0", payload[:ratesToTtd]["CAD"]
+    assert_equal "1.0", payload[:ratesToTtd]["TTD"]
+  end
 end

@@ -2,8 +2,8 @@
 # Safe rematches never run inside the OpenAI call — they are separate dry steps:
 #
 #   ListingCopyApplier.call(property)                    # OpenAI: apply or flag
-#   ListingCopyApplier.daisy_chain_safe_flags!           # dry: size → half-bath → combo → type
-#   ListingCopyApplier.reprocess_policy!(policy: "safe_type_rematch")  # one dry link
+#   ListingCopyApplier.daisy_chain_safe_flags!           # dry daisy chain
+#   ListingCopyApplier.reprocess_policy!(policy: "…")    # one dry link
 #
 class ListingCopyApplier
   class Error < StandardError; end
@@ -16,7 +16,9 @@ class ListingCopyApplier
     safe_size_rematch
     safe_half_bath_rematch
     safe_size_and_half_bath_rematch
+    safe_size_and_nil_fill_specs_rematch
     safe_type_rematch
+    safe_sparse_copy_rematch
   ].freeze
 
   Result = Struct.new(
@@ -80,8 +82,16 @@ class ListingCopyApplier
     reprocess_policy!(scope, policy: "safe_size_and_half_bath_rematch")
   end
 
+  def self.reprocess_safe_nil_fill_specs_flags!(scope = Property.copy_needs_review)
+    reprocess_policy!(scope, policy: "safe_size_and_nil_fill_specs_rematch")
+  end
+
   def self.reprocess_safe_type_flags!(scope = Property.copy_needs_review)
     reprocess_policy!(scope, policy: "safe_type_rematch")
+  end
+
+  def self.reprocess_safe_sparse_flags!(scope = Property.copy_needs_review)
+    reprocess_policy!(scope, policy: "safe_sparse_copy_rematch")
   end
 
   def self.reprocess_policy!(scope = Property.copy_needs_review, policy:)
@@ -110,9 +120,86 @@ class ListingCopyApplier
     when "safe_size_rematch" then safe_size_rematch_from_notes?(notes, property)
     when "safe_half_bath_rematch" then safe_half_bath_rematch_from_notes?(notes, property)
     when "safe_size_and_half_bath_rematch" then safe_size_and_half_bath_rematch_from_notes?(notes, property)
+    when "safe_size_and_nil_fill_specs_rematch" then safe_size_and_nil_fill_specs_from_notes?(notes, property)
     when "safe_type_rematch" then safe_type_rematch_from_notes?(notes, property)
+    when "safe_sparse_copy_rematch" then safe_sparse_copy_rematch_from_notes?(notes, property)
     else false
     end
+  end
+
+  # Classic/material size rematch + only nil→N beds/baths with literal title/desc
+  # evidence. Caps fills at 7 to skip multi-unit aggregates (8+ beds).
+  def self.safe_size_and_nil_fill_specs_from_notes?(notes, property)
+    return false if blocked_review_notes?(notes)
+
+    mismatches = Array(notes["mismatches"])
+    size_mms = mismatches.select { |m| SIZE_FIELDS.include?(m["field"].to_s) }
+    bed_mms = mismatches.select { |m| m["field"].to_s == "beds" }
+    bath_mms = mismatches.select { |m| m["field"].to_s == "baths" }
+    return false if size_mms.empty?
+    return false if bed_mms.empty? && bath_mms.empty?
+    return false unless mismatches.size == size_mms.size + bed_mms.size + bath_mms.size
+    return false unless size_mms.any? { |m| material_size_change?(m) }
+
+    preview = notes["cleaned_preview"].is_a?(Hash) ? notes["cleaned_preview"] : {}
+    return false unless size_rematch_supported?(
+      input_sqft: property.sqft,
+      input_title: property.title,
+      input_description: property.description,
+      cleaned: preview,
+      mismatches: size_mms
+    )
+
+    blob = "#{property.title}\n#{property.description}"
+    return false unless bed_mms.all? { |m| nil_fill_beds_supported?(m, blob) }
+    return false unless bath_mms.all? { |m| nil_fill_baths_supported?(m, blob) }
+
+    true
+  end
+
+  def self.nil_model?(value)
+    value.nil? || value.to_s.strip.empty? || value.to_s == "nil"
+  end
+
+  def self.nil_fill_beds_supported?(mismatch, blob)
+    return false unless nil_model?(mismatch["model"])
+
+    after = coerce_size(mismatch["from_description"])
+    return false unless after && after == after.to_i && after.between?(1, 7)
+
+    blob.match?(/\b#{after.to_i}(?:-|\s+)(?:bed(?:room)?s?|br)\b/i)
+  end
+
+  def self.nil_fill_baths_supported?(mismatch, blob)
+    return false unless nil_model?(mismatch["model"])
+
+    after = coerce_size(mismatch["from_description"])
+    return false unless after && after.between?(1, 7)
+
+    after_s = after.to_s.sub(/\.0\z/, "")
+    blob.match?(/\b#{Regexp.escape(after_s)}(?:-|\s+)(?:full\s+)?(?:baths?|bathrooms?|ba)\b/i)
+  end
+
+  # Sparse blurb only, no field mismatches: apply SEO title + cleaned description,
+  # keep imported features / specs (preview often wipes amenities to []).
+  def self.safe_sparse_copy_rematch_from_notes?(notes, property)
+    return false if Array(notes["notes"]).any? { |n| n.to_s.match?(/hallucin/i) }
+    return false unless Array(notes["notes"]).any? { |n| n.to_s.match?(/sparse source/i) }
+    return false unless Array(notes["mismatches"]).empty?
+
+    preview = notes["cleaned_preview"].is_a?(Hash) ? notes["cleaned_preview"] : {}
+    return false if preview["title"].to_s.strip.blank?
+    return false if preview["description"].to_s.strip.blank?
+    return false unless preview_specs_match_property?(preview, property)
+
+    true
+  end
+
+  def self.preview_specs_match_property?(preview, property)
+    coerce_size(preview["beds"]) == coerce_size(property.beds) &&
+      coerce_size(preview["baths"]) == coerce_size(property.baths) &&
+      coerce_size(preview["sqft"]) == coerce_size(property.sqft) &&
+      preview["property_type"].to_s.presence == property.property_type.to_s.presence
   end
 
   def self.normalize_proposed_type(value)
@@ -273,6 +360,25 @@ class ListingCopyApplier
 
   def self.apply_preview_to_property!(property, preview, notes, policy:)
     preview = preview.deep_dup
+
+    if policy == "safe_sparse_copy_rematch"
+      property.update!(
+        title: preview["title"].presence || property.title,
+        description: preview["description"].presence || property.description,
+        copy_needs_review: false,
+        copy_review_notes: {
+          "status" => "ok",
+          "confidence" => notes["confidence"],
+          "applied_at" => Time.current.utc.iso8601,
+          "policy" => policy,
+          "prior_mismatches" => Array(notes["mismatches"]),
+          "notes" => Array(notes["notes"]),
+          "kept_features" => true
+        }
+      )
+      return
+    end
+
     if policy == "safe_type_rematch"
       type_m = Array(notes["mismatches"]).find { |m| m["field"].to_s == "property_type" }
       normalized = normalize_proposed_type(type_m&.dig("from_description").presence || preview["property_type"])

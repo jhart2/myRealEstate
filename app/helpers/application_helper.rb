@@ -156,4 +156,40 @@ module ApplicationHelper
   def listing_edit_path_for(property)
     admin? ? edit_admin_property_path(property) : edit_portal_property_path(property)
   end
+
+  # Wraps a money label so Stimulus currency controller can reformat in place.
+  def money_amount(cents, format: :full, rent: false, sqft: nil, currency: current_currency, **html_options)
+    format_name = format.to_sym
+    text =
+      case format_name
+      when :compact
+        MoneyDisplay.compact(cents, currency: currency, rent: rent)
+      when :per_sqft
+        MoneyDisplay.per_sqft(cents, sqft, currency: currency)
+      else
+        MoneyDisplay.format(cents, currency: currency, rent: rent)
+      end
+    return if text.blank?
+
+    data = (html_options.delete(:data) || {}).stringify_keys
+    data = data.merge(
+      "money" => true,
+      "money-cents" => cents.to_i,
+      "money-format" => format_name.to_s,
+      "money-rent" => rent ? "true" : "false"
+    )
+    data["money-sqft"] = sqft.to_i if format_name == :per_sqft && sqft.present?
+
+    tag.span(text, **html_options, data: data)
+  end
+
+  def property_money(property, format: :full, **html_options)
+    money_amount(
+      property.price_cents,
+      format: format,
+      rent: property.tag == "rent",
+      sqft: (format.to_sym == :per_sqft ? property.sqft : nil),
+      **html_options
+    )
+  end
 end

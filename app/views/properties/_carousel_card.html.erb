@@ -35,7 +35,7 @@
   <%= link_to property_path(property), class: "block min-w-0" do %>
     <h3 class="truncate text-[15px] font-semibold leading-snug text-ink"><%= property.region_headline %></h3>
     <p class="mt-0.5 truncate text-[13px] leading-snug text-ink-3">
-      <%= property.display_price %>
+      <%= property_money(property) %>
       <% if property_spec_present?(property.beds) %>
         <span aria-hidden="true"> · </span><%= property.beds %> bed<%= property.beds == 1 ? "" : "s" %>
       <% end %>

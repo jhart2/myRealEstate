@@ -93,7 +93,7 @@ class MoneyDisplay
       {
         base: BASE_CURRENCY,
         default: DEFAULT_CURRENCY,
-        ratesToTtd: CURRENCIES.index_with { |code| rate_to_ttd(code).to_s },
+        ratesToTtd: CURRENCIES.index_with { |code| rate_to_ttd(code).to_s("F") },
         asOf: table["as_of"],
         source: table["source"] || "fallback"
       }
@@ -101,7 +101,7 @@ class MoneyDisplay
       {
         base: BASE_CURRENCY,
         default: DEFAULT_CURRENCY,
-        ratesToTtd: FALLBACK_RATES_TO_TTD.transform_values(&:to_s),
+        ratesToTtd: FALLBACK_RATES_TO_TTD.transform_values { |v| v.to_s("F") },
         source: "fallback"
       }
     end

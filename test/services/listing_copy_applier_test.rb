@@ -567,6 +567,9 @@ class ListingCopyApplierTest < ActiveSupport::TestCase
     property = build_property(
       title: "COMMERCIAL Building for Sale - Mucurapo",
       property_type: "House",
+      beds: 0,
+      baths: 2,
+      sqft: 5000,
       copy_needs_review: true,
       copy_review_notes: {
         "status" => "mismatch",
@@ -598,5 +601,168 @@ class ListingCopyApplierTest < ActiveSupport::TestCase
     refute property.copy_needs_review
     assert_equal "Commercial", property.property_type
     assert_equal "safe_type_rematch", property.copy_review_notes["policy"]
+  end
+
+  test "dry sparse link applies title+description and keeps features" do
+    property = build_property(
+      title: "LUXURY HOME FOR SALE - eighteen Moka",
+      description: "About the Region Moka … long region blurb.",
+      beds: 2,
+      baths: 3,
+      sqft: nil,
+      features: [ "Pool", "Garage", "AC" ],
+      copy_needs_review: true,
+      copy_review_notes: {
+        "status" => "needs_review",
+        "confidence" => 0.8,
+        "mismatches" => [],
+        "notes" => [ "Sparse source description — factual blurb only; amenities cleared" ],
+        "cleaned_preview" => {
+          "title" => "Brand New Luxury Home in Moka, Trinidad",
+          "address" => "Moka",
+          "city" => "Maraval",
+          "state" => "Trinidad",
+          "description" => "Brand new luxury home in Moka.",
+          "beds" => 2,
+          "baths" => 3,
+          "sqft" => nil,
+          "property_type" => "House",
+          "tag" => "sale",
+          "features" => []
+        }
+      }
+    )
+
+    stats = ListingCopyApplier.reprocess_safe_sparse_flags!(Property.where(id: property.id))
+    property.reload
+
+    assert_equal 1, stats[:applied]
+    refute property.copy_needs_review
+    assert_equal "Brand New Luxury Home in Moka, Trinidad", property.title
+    assert_equal "Brand new luxury home in Moka.", property.description
+    assert_equal [ "Pool", "Garage", "AC" ], property.features
+    assert_equal "safe_sparse_copy_rematch", property.copy_review_notes["policy"]
+    assert property.copy_review_notes["kept_features"]
+  end
+
+  test "sparse link skips when field mismatches exist" do
+    property = build_property(
+      title: "Aquaview Lot",
+      sqft: 21_125,
+      property_type: "Land",
+      beds: nil,
+      baths: nil,
+      copy_needs_review: true,
+      copy_review_notes: {
+        "status" => "needs_review",
+        "mismatches" => [
+          { "field" => "sqft", "model" => 21_125, "from_description" => nil, "note" => "lot" }
+        ],
+        "notes" => [ "Sparse source description — factual blurb only; amenities cleared" ],
+        "cleaned_preview" => {
+          "title" => "Prime Lot in Carenage",
+          "description" => "Residential lot.",
+          "beds" => nil,
+          "baths" => nil,
+          "sqft" => nil,
+          "lot_sqft" => 21_125,
+          "property_type" => "Land",
+          "tag" => "sale",
+          "features" => []
+        }
+      }
+    )
+
+    stats = ListingCopyApplier.reprocess_safe_sparse_flags!(Property.where(id: property.id))
+    property.reload
+
+    assert_equal 0, stats[:applied]
+    assert property.copy_needs_review
+  end
+
+  test "dry nil-fill specs link applies land size + literal empty beds/baths" do
+    property = build_property(
+      title: "FOR SALE: BRAND NEW 3 BEDROOM HOUSE",
+      description: "Brand-new home on 5,000 sq. ft. of land. 3 bedrooms and 2 full bathrooms.",
+      beds: nil,
+      baths: nil,
+      sqft: 5001,
+      lot_sqft: 5000,
+      copy_needs_review: true,
+      copy_review_notes: {
+        "status" => "mismatch",
+        "confidence" => 0.9,
+        "mismatches" => [
+          { "field" => "beds", "model" => nil, "from_description" => 3, "note" => "stated" },
+          { "field" => "baths", "model" => nil, "from_description" => 2, "note" => "stated" },
+          { "field" => "sqft", "model" => 5001, "from_description" => nil, "note" => "lot misclassified as building" }
+        ],
+        "notes" => [],
+        "cleaned_preview" => {
+          "title" => "Brand New 3-Bedroom House in Las Lomas",
+          "address" => "Araf Drive",
+          "city" => "Las Lomas",
+          "state" => "Trinidad",
+          "description" => "Brand-new home on 5,000 sq. ft. of land with 3 bedrooms and 2 full bathrooms.",
+          "beds" => 3,
+          "baths" => 2,
+          "sqft" => nil,
+          "lot_sqft" => 5000,
+          "property_type" => "House",
+          "tag" => "sale",
+          "features" => []
+        }
+      }
+    )
+
+    stats = ListingCopyApplier.reprocess_safe_nil_fill_specs_flags!(Property.where(id: property.id))
+    property.reload
+
+    assert_equal 1, stats[:applied]
+    refute property.copy_needs_review
+    assert_equal 3, property.beds
+    assert_equal 2, property.baths
+    assert_nil property.sqft
+    assert_equal 5000, property.lot_sqft
+    assert_equal "safe_size_and_nil_fill_specs_rematch", property.copy_review_notes["policy"]
+  end
+
+  test "nil-fill specs skips multi-unit bed aggregates without literal single-home evidence" do
+    property = build_property(
+      title: "FULLY OCCUPIED APARTMENT BUILDING Freeport",
+      description: "5 one-bedroom and 5 three-bedroom units on 8,000 sq ft of land.",
+      beds: nil,
+      baths: nil,
+      sqft: 8000,
+      lot_sqft: 8000,
+      property_type: "Townhouse",
+      copy_needs_review: true,
+      copy_review_notes: {
+        "status" => "mismatch",
+        "mismatches" => [
+          { "field" => "beds", "model" => nil, "from_description" => 15, "note" => "sum of units" },
+          { "field" => "baths", "model" => nil, "from_description" => 12, "note" => "sum" },
+          { "field" => "sqft", "model" => 8000, "from_description" => nil, "note" => "lot" }
+        ],
+        "notes" => [],
+        "cleaned_preview" => {
+          "title" => "Income Building Freeport",
+          "description" => "Fully occupied building.",
+          "beds" => 15,
+          "baths" => 12,
+          "sqft" => nil,
+          "lot_sqft" => 8000,
+          "property_type" => "Townhouse",
+          "tag" => "sale",
+          "features" => []
+        }
+      }
+    )
+
+    stats = ListingCopyApplier.reprocess_safe_nil_fill_specs_flags!(Property.where(id: property.id))
+    property.reload
+
+    assert_equal 0, stats[:applied]
+    assert property.copy_needs_review
   end
 end

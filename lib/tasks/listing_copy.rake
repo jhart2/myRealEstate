@@ -171,7 +171,7 @@ namespace :listing_copy do
     puts "Done. applied=#{applied} skipped_flagged=#{skipped} errors=#{errors} write=#{apply}"
   end
 
-  desc "Dry daisy chain of safe rematches (no OpenAI): size → half-bath → combo → type"
+  desc "Dry daisy chain of safe rematches (no OpenAI): size → half-bath → combo → type → sparse"
   task daisy: :environment do
     $stdout.sync = true
     scope = Property.copy_needs_review
@@ -221,6 +221,17 @@ namespace :listing_copy do
     puts "Queue remaining: #{Property.copy_needs_review.count}"
   end
 
+  desc "Dry link: size rematch + nil→N beds/baths with literal evidence (no OpenAI)"
+  task apply_safe_nil_fill_specs: :environment do
+    $stdout.sync = true
+    scope = Property.copy_needs_review
+    scope = scope.where(bok_id: ENV["BOK_ID"]) if ENV["BOK_ID"].present?
+    puts "Dry size+nil-fill specs on #{scope.count} flagged listing(s)…"
+    stats = ListingCopyApplier.reprocess_safe_nil_fill_specs_flags!(scope)
+    puts "Done. applied=#{stats[:applied]} skipped=#{stats[:skipped]}"
+    puts "Queue remaining: #{Property.copy_needs_review.count}"
+  end
+
   desc "Dry link: title-strong property type rematches only (no OpenAI)"
   task apply_safe_types: :environment do
     $stdout.sync = true
@@ -228,6 +239,17 @@ namespace :listing_copy do
     scope = scope.where(bok_id: ENV["BOK_ID"]) if ENV["BOK_ID"].present?
     puts "Dry title-strong type rematch on #{scope.count} flagged listing(s)…"
     stats = ListingCopyApplier.reprocess_safe_type_flags!(scope)
+    puts "Done. applied=#{stats[:applied]} skipped=#{stats[:skipped]}"
+    puts "Queue remaining: #{Property.copy_needs_review.count}"
+  end
+
+  desc "Dry link: sparse SEO title+description (keep features; no OpenAI)"
+  task apply_safe_sparse: :environment do
+    $stdout.sync = true
+    scope = Property.copy_needs_review
+    scope = scope.where(bok_id: ENV["BOK_ID"]) if ENV["BOK_ID"].present?
+    puts "Dry sparse title+description on #{scope.count} flagged listing(s)…"
+    stats = ListingCopyApplier.reprocess_safe_sparse_flags!(scope)
     puts "Done. applied=#{stats[:applied]} skipped=#{stats[:skipped]}"
     puts "Queue remaining: #{Property.copy_needs_review.count}"
   end
