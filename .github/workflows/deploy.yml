@@ -1,0 +1,131 @@
+# Deploy latest main → Cloud Run (staging today).
+#
+# Target (only GCP env that exists):
+#   Project:  tt-realty-staging
+#   Service:  tt-realty-staging
+#   Region:   us-east1
+#   Image:    us-east1-docker.pkg.dev/tt-realty-staging/tt-realty/web:staging
+#   Port:     8080 + ENTRYPOINT /rails/bin/docker-entrypoint
+#
+# There is no production GCP project yet (no tt-realty / tt-realty-prod).
+# When prod exists, fork this job or add a second environment matrix.
+#
+# --- GitHub secrets (Workload Identity Federation — preferred) ---
+#   GCP_WORKLOAD_IDENTITY_PROVIDER
+#     projects/PROJECT_NUMBER/locations/global/workloadIdentityPools/POOL/providers/PROVIDER
+#   GCP_SERVICE_ACCOUNT
+#     github-deploy@tt-realty-staging.iam.gserviceaccount.com
+#
+# --- Or fallback: service account JSON key ---
+#   GCP_SA_KEY  — full JSON for a deploy SA (replace the auth step below
+#                 with credentials_json: ${{ secrets.GCP_SA_KEY }} and drop
+#                 permissions.id-token)
+#
+# Deploy SA needs roughly:
+#   roles/cloudbuild.builds.editor
+#   roles/run.admin
+#   roles/iam.serviceAccountUser
+#   roles/artifactregistry.writer
+#   roles/storage.admin          (Cloud Build source staging bucket)
+# Cloud Build default SA also needs Artifact Registry Writer + (if building
+# from source) Storage Object Admin on the project bucket.
+
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-main
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  PROJECT_ID: tt-realty-staging
+  REGION: us-east1
+  SERVICE: tt-realty-staging
+  REPOSITORY: tt-realty
+  IMAGE_NAME: web
+  CLOUDSQL_INSTANCE: tt-realty-staging:us-east1:tt-realty-stg-db
+  APP_HOST: tt-realty-staging-xxigpjr7na-ue.a.run.app
+
+jobs:
+  deploy:
+    name: Build & deploy Cloud Run
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Authenticate to Google Cloud (WIF)
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          # Prefer Workload Identity Federation. Set these secrets in the repo.
+          # Fallback: swap this step for credentials_json: ${{ secrets.GCP_SA_KEY }}
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+      - name: Set up gcloud
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ env.PROJECT_ID }}
+
+      - name: Resolve image tags
+        id: image
+        run: |
+          SHORT_SHA="${GITHUB_SHA::12}"
+          REGISTRY="${REGION}-docker.pkg.dev/${PROJECT_ID}/${REPOSITORY}/${IMAGE_NAME}"
+          echo "staging_tag=${REGISTRY}:staging" >> "$GITHUB_OUTPUT"
+          echo "sha_tag=${REGISTRY}:${SHORT_SHA}" >> "$GITHUB_OUTPUT"
+
+      - name: Build and push image (Cloud Build)
+        run: |
+          # Build/push immutable SHA tag (matches prior manual: gcloud builds submit).
+          gcloud builds submit \
+            --config=cloudbuild.yaml \
+            --substitutions="_IMAGE=${{ steps.image.outputs.sha_tag }}" \
+            --project="${PROJECT_ID}" \
+            --timeout=2400s
+
+          # Keep the moving :staging tag pointed at this build (service default image).
+          gcloud artifacts docker tags add \
+            "${{ steps.image.outputs.sha_tag }}" \
+            "${{ steps.image.outputs.staging_tag }}" \
+            --quiet
+
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run deploy "${SERVICE}" \
+            --image="${{ steps.image.outputs.sha_tag }}" \
+            --region="${REGION}" \
+            --platform=managed \
+            --allow-unauthenticated \
+            --port=8080 \
+            --command=/rails/bin/docker-entrypoint \
+            --args=./bin/rails,server,-b,0.0.0.0,-p,8080 \
+            --memory=1Gi \
+            --cpu=1 \
+            --min-instances=0 \
+            --max-instances=2 \
+            --cpu-boost \
+            --timeout=300 \
+            --add-cloudsql-instances="${CLOUDSQL_INSTANCE}" \
+            --update-secrets="RAILS_MASTER_KEY=rails-master-key:latest,DATABASE_URL=database-url:latest" \
+            --set-env-vars="RAILS_ENV=production,RAILS_LOG_LEVEL=info,APP_HOST=${APP_HOST}" \
+            --project="${PROJECT_ID}" \
+            --quiet
+
+      - name: Print service URL
+        run: |
+          URL="$(gcloud run services describe "${SERVICE}" \
+            --region="${REGION}" \
+            --project="${PROJECT_ID}" \
+            --format='value(status.url)')"
+          echo "Deployed ${{ steps.image.outputs.sha_tag }} → ${URL}"

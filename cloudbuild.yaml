@@ -1,0 +1,27 @@
+# Cloud Build: build & push the Rails web image for Artifact Registry.
+# Invoked by `.github/workflows/deploy.yml` via `gcloud builds submit`.
+#
+# Default image matches the working staging deploy:
+#   us-east1-docker.pkg.dev/tt-realty-staging/tt-realty/web:staging
+#
+# Override with --substitutions=_IMAGE=...
+
+substitutions:
+  _IMAGE: us-east1-docker.pkg.dev/tt-realty-staging/tt-realty/web:staging
+
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - -t
+      - ${_IMAGE}
+      - .
+
+images:
+  - ${_IMAGE}
+
+timeout: 2400s
+
+options:
+  machineType: E2_HIGHCPU_8
+  logging: CLOUD_LOGGING_ONLY
