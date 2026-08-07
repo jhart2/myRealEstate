@@ -6,7 +6,7 @@
           <span class="font-display text-xl font-semibold text-ground">TT</span>
           <span class="mt-0.5 text-xs font-medium uppercase tracking-[0.2em] text-trinidad">Realty</span>
         </div>
-        <p class="mb-5 text-sm leading-relaxed text-ground/45">
+        <p class="mb-5 text-sm leading-relaxed text-ground/60">
           Premium property listings and expert real estate advisory across North America.
         </p>
       </div>
@@ -17,17 +17,17 @@
         { heading: "Account", links: [["Sign In", new_session_path], ["Create Account", new_registration_path], ["Saved Homes", favorites_path]] }
       ].each do |col| %>
         <div>
-          <p class="mb-5 text-xs font-semibold uppercase tracking-[0.18em] text-ground/35"><%= col[:heading] %></p>
+          <p class="mb-5 text-xs font-semibold uppercase tracking-[0.18em] text-ground/55"><%= col[:heading] %></p>
           <ul class="flex flex-col gap-3">
             <% col[:links].each do |label, path| %>
-              <li><%= link_to label, path, class: "text-sm text-ground/55 transition-colors hover:text-ground" %></li>
+              <li><%= link_to label, path, class: "text-sm text-ground/65 transition-colors hover:text-ground" %></li>
             <% end %>
           </ul>
         </div>
       <% end %>
     </div>
 
-    <div class="flex flex-col items-center justify-between gap-4 border-t border-white/5 pt-8 text-xs text-ground/30 md:flex-row">
+    <div class="flex flex-col items-center justify-between gap-4 border-t border-white/5 pt-8 text-xs text-ground/55 md:flex-row">
       <p>© <%= Date.current.year %> TT Realty Inc. All rights reserved.</p>
       <div class="flex gap-6">
         <span>Privacy Policy</span>
