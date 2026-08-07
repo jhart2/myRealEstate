@@ -18,7 +18,8 @@ class BokLocationToolkit
     \b(
       mart|supermarket|plaza|mall|hotel|guest\s*house|church|bible|
       scout|auto\s*supplies|bureau|authority|park\b|blind\s+welfare|
-      open\s+bible|mini\s*mart|gas\s*station|unipet|pennywise
+      open\s+bible|mini\s*mart|gas\s*station|unipet|pennywise|
+      taxi\s*stand|maxi\s*(?:and\s+)?taxi|bus\s*stop|taxi\b
     )\b
   /ix
 

@@ -159,8 +159,8 @@
         <div class="search-filter-panel hidden" data-search-filters-target="panel" data-panel="intent">
           <p class="search-filter-panel-title">Listing type</p>
           <div class="search-filter-options">
-            <% checked_intent = %w[sale rent new].include?(@intent.to_s) ? @intent : "sale" %>
-            <% [["sale", "For sale"], ["rent", "For rent"], ["new", "New listings"]].each do |value, label| %>
+            <% checked_intent = %w[sale rent new all].include?(@intent.to_s) ? @intent.to_s : "all" %>
+            <% [["all", "All"], ["sale", "For sale"], ["rent", "For rent"], ["new", "New listings"]].each do |value, label| %>
               <label class="search-filter-option">
                 <input type="radio" name="intent" value="<%= value %>" <%= "checked" if checked_intent == value %> data-action="change->search-filters#applyAndClose">
                 <span><%= label %></span>

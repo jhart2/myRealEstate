@@ -468,7 +468,7 @@ class PropertyCoordReconciler
       longitude: pick[:lng],
       source: "photon",
       osm_type: pick[:type].to_s,
-      confidence: photon_confidence(pick[:type], name_match: street_name_match?(pick[:name], address))
+      confidence: photon_confidence(pick[:type], name_match: street_name_match?(pick[:name], address, city: city))
     }
   rescue PhotonGeocoder::Error => e
     notes << "photon_error=#{e.message}"
@@ -484,43 +484,82 @@ class PropertyCoordReconciler
 
     if street_required
       pool = ranked.select do |h|
-        PHOTON_STREET_TYPES.include?(h[:type].to_s) && street_name_match?(h[:name], address)
+        PHOTON_STREET_TYPES.include?(h[:type].to_s) && street_name_match?(h[:name], address, city: city)
       end
     else
-      pool = ranked
+      pool = ranked.select { |h| BokLocationToolkit.place_like_photon?(h) }
+      pool = ranked if pool.empty?
     end
     return nil if pool.empty?
 
-    pool.min_by { |h| [ street_name_match?(h[:name], address) ? 0 : 1, photon_rank(h[:type]) ] }
+    city_only = city_only_address?(address, city)
+    pool.min_by do |h|
+      [
+        if city_only
+          place_bias_rank(h[:type])
+        else
+          street_name_match?(h[:name], address, city: city) ? 0 : 1
+        end,
+        distance_to_known_city(h[:lat], h[:lng], city, location_raw),
+        photon_rank(h[:type])
+      ]
+    end
   end
 
+  # When we know CITY_COORDS for the listing city (or Location tags), geography wins.
+  # Label-only "Mayaro" matches must not green-light a Sangre Grande taxi POI.
   def near_city?(lat, lng, city, hit_city: nil, hit_label: nil, location_raw: nil)
     city_name = city.to_s.strip
     return true if city_name.blank?
 
-    if city_token_match?(hit_city, city_name) || city_token_match?(hit_label, city_name)
-      return true
+    known = known_locality_centroids(city_name, location_raw)
+    if known.any?
+      return known.any? { |coords| within_city_radius?(lat, lng, coords) }
     end
 
-    Array(BokLocationToolkit.tags(location_raw)).each do |tag|
-      next if tag.blank?
-      return true if city_token_match?(hit_city, tag) || city_token_match?(hit_label, tag)
+    # Unknown community: require the hit to mention the city / Location tag.
+    return true if city_token_match?(hit_city, city_name) || city_token_match?(hit_label, city_name)
 
-      tag_coords = city_centroid(tag)
-      next unless tag_coords
-
-      if (lat.to_f - tag_coords[0]).abs <= MAX_CITY_DISTANCE_DEG &&
-         (lng.to_f - tag_coords[1]).abs <= MAX_CITY_DISTANCE_DEG
-        return true
-      end
+    Array(BokLocationToolkit.tags(location_raw)).any? do |tag|
+      tag.present? && (city_token_match?(hit_city, tag) || city_token_match?(hit_label, tag))
     end
+  end
 
-    coords = city_centroid(city_name)
-    # Unknown community: require the hit to mention the city (handled above).
-    return false unless coords
+  def known_locality_centroids(city_name, location_raw)
+    names = [ city_name ] + Array(BokLocationToolkit.tags(location_raw))
+    names.map { |n| city_centroid(n) }.compact.uniq
+  end
 
+  def within_city_radius?(lat, lng, coords)
     (lat.to_f - coords[0]).abs <= MAX_CITY_DISTANCE_DEG &&
       (lng.to_f - coords[1]).abs <= MAX_CITY_DISTANCE_DEG
+  end
+
+  def distance_to_known_city(lat, lng, city, location_raw)
+    known = known_locality_centroids(city, location_raw)
+    return 0.0 if known.empty?
+
+    known.map { |c| Math.hypot(lat.to_f - c[0], lng.to_f - c[1]) }.min
+  end
+
+  # Bare city / community address: don't treat city token as a street name match.
+  def city_only_address?(address, city)
+    return true if address.to_s.strip.blank?
+    return true unless @street_geocoder.street_worthy?(address, city)
+
+    a = normalize_street_token(address)
+    c = normalize_street_token(city)
+    a.present? && c.present? && (a == c || c.include?(a) || a.include?(c))
+  end
+
+  def place_bias_rank(type)
+    case type.to_s
+    when "city", "town", "village", "hamlet", "locality", "district", "suburb", "neighbourhood", "neighborhood"
+      0
+    when "street" then 1
+    when "house" then 3
+    else 2
+    end
   end
 
   def city_centroid(city)
@@ -543,7 +582,9 @@ class PropertyCoordReconciler
     ntoks.all? { |t| t.length > 2 && hay.split.include?(t) }
   end
 
-  def street_name_match?(hit_name, address)
+  def street_name_match?(hit_name, address, city: nil)
+    return false if city_only_address?(address, city)
+
     needle = normalize_street_token(address)
     hay = normalize_street_token(hit_name)
     return false if needle.blank? || hay.blank?

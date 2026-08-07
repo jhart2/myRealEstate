@@ -59,7 +59,7 @@ module ApplicationHelper
     when "sale" then "For sale"
     when "rent" then "For rent"
     when "new" then "New listings"
-    else "For sale"
+    else "All"
     end
   end
 
