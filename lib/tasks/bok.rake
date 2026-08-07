@@ -147,4 +147,3 @@ namespace :bok do
     puts "Bootstrap complete. Properties: #{Property.count}, Agents: #{Agent.count}"
   end
 end
-

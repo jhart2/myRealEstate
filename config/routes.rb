@@ -46,4 +46,3 @@ Rails.application.routes.draw do
         defaults: { status_code: "404" },
         constraints: ->(req) { !req.path.start_with?("/rails/") }
 end
-

@@ -369,7 +369,7 @@ class Property < ApplicationRecord
 
   def days_on_estate
     # Inclusive calendar days (listed today → 1 day on TT)
-    [(Time.zone.today - created_at.to_date).to_i + 1, 1].max
+    [ (Time.zone.today - created_at.to_date).to_i + 1, 1 ].max
   end
 
   def days_on_estate_label

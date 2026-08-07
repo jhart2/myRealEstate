@@ -46,7 +46,7 @@ class PropertiesController < ApplicationController
 
     if turbo_frame_request? && turbo_frame_request_id == "property_lightbox"
       render partial: "properties/lightbox_frame", layout: false
-      return
+      nil
     end
   end
 
@@ -63,14 +63,14 @@ class PropertiesController < ApplicationController
 
   def budget_to_price_bounds(budget)
     case budget.to_s
-    when "Under $500K" then [0, 500_000]
-    when "$500K – $1M" then [500_000, 1_000_000]
-    when "$1M – $3M" then [1_000_000, 3_000_000]
-    when "$3M – $7M" then [3_000_000, 7_000_000]
-    when "$7M+" then [7_000_000, nil]
-    when "Under $3K / mo" then [0, 600_000]
-    when "$3K – $6K / mo" then [600_000, 1_200_000]
-    when "$6K+ / mo" then [1_200_000, nil]
+    when "Under $500K" then [ 0, 500_000 ]
+    when "$500K – $1M" then [ 500_000, 1_000_000 ]
+    when "$1M – $3M" then [ 1_000_000, 3_000_000 ]
+    when "$3M – $7M" then [ 3_000_000, 7_000_000 ]
+    when "$7M+" then [ 7_000_000, nil ]
+    when "Under $3K / mo" then [ 0, 600_000 ]
+    when "$3K – $6K / mo" then [ 600_000, 1_200_000 ]
+    when "$6K+ / mo" then [ 1_200_000, nil ]
     end
   end
 end

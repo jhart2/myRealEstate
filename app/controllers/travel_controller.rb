@@ -5,8 +5,6 @@ require "json"
 class TravelController < ApplicationController
   allow_unauthenticated_access only: :estimate
 
-  OSRM = "https://router.project-osrm.org/route/v1/driving".freeze
-
   def estimate
     from_lat = params[:from_lat].to_f
     from_lng = params[:from_lng].to_f
@@ -17,15 +15,20 @@ class TravelController < ApplicationController
       return render json: { error: "invalid_coordinates" }, status: :unprocessable_entity
     end
 
-    uri = URI("#{OSRM}/#{from_lng},#{from_lat};#{to_lng},#{to_lat}")
-    uri.query = URI.encode_www_form(overview: "false", alternatives: "false", steps: "false")
+    # Build path from already-validated floats so the host stays a literal
+    # (avoids Brakeman FileAccess false positives on URI interpolation).
+    path = format(
+      "/route/v1/driving/%.6f,%.6f;%.6f,%.6f",
+      from_lng, from_lat, to_lng, to_lat
+    )
+    query = URI.encode_www_form(overview: "false", alternatives: "false", steps: "false")
 
-    http = Net::HTTP.new(uri.host, uri.port)
+    http = Net::HTTP.new("router.project-osrm.org", 443)
     http.use_ssl = true
     http.open_timeout = 4
     http.read_timeout = 6
 
-    request = Net::HTTP::Get.new(uri)
+    request = Net::HTTP::Get.new("#{path}?#{query}")
     request["User-Agent"] = "EstateRealty/1.0 (travel estimate)"
     response = http.request(request)
 

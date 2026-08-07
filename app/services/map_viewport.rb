@@ -6,7 +6,7 @@ class MapViewport
   end
 
   def self.from_params(location:, north:, south:, east:, west:)
-    values = [north, south, east, west].map { |v| v.presence }
+    values = [ north, south, east, west ].map { |v| v.presence }
     return nil unless values.all?
 
     south_f, west_f, north_f, east_f = [

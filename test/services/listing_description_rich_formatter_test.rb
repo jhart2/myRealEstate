@@ -271,7 +271,7 @@ class ListingDescriptionRichFormatterTest < ActiveSupport::TestCase
         ],
         "tone_notes" => ""
       },
-      html: '<div><h2>Property Features</h2><ul><li><strong>Pool</strong></li></ul><script>alert(1)</script></div>'
+      html: "<div><h2>Property Features</h2><ul><li><strong>Pool</strong></li></ul><script>alert(1)</script></div>"
     )
 
     outcome = ListingDescriptionRichFormatter.call(property, client: client, apply: true)

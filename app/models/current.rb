@@ -3,4 +3,3 @@ class Current < ActiveSupport::CurrentAttributes
   attribute :currency
   delegate :user, to: :session, allow_nil: true
 end
-

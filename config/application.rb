@@ -43,4 +43,3 @@ module Estate
     config.exceptions_app = ->(env) { ErrorsController.action(:show).call(env) }
   end
 end
-

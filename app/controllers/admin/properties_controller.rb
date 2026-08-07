@@ -90,7 +90,7 @@ module Admin
       urls = Array(raw[:image_urls]).map { |u| u.to_s.strip }.reject(&:blank?).uniq
       cover = raw[:image_url].to_s.strip.presence
       cover = urls.first if cover.blank? || (urls.any? && !urls.include?(cover))
-      urls = ([cover] + urls).compact.uniq if cover
+      urls = ([ cover ] + urls).compact.uniq if cover
       property.image_urls = urls
       property.image_url = cover
       # Prefer URL cover over a previously uploaded ActiveStorage file unless uploading a new file.

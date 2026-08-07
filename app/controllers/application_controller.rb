@@ -42,4 +42,3 @@ class ApplicationController < ActionController::Base
     @current_agent = current_user&.agent_profile
   end
 end
-

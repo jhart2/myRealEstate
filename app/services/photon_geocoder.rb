@@ -121,8 +121,8 @@ class PhotonGeocoder
     if extent.is_a?(Array) && extent.size >= 4
       west, north, east, south = extent.map(&:to_f)
       # Normalize in case a provider swaps corners
-      south, north = [south, north].minmax
-      west, east = [west, east].minmax
+      south, north = [ south, north ].minmax
+      west, east = [ west, east ].minmax
       pad_lat = [ (north - south) * 0.08, 0.004 ].max
       pad_lng = [ (east - west) * 0.08, 0.004 ].max
       return {

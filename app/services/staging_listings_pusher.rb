@@ -11,8 +11,14 @@
 #   STAGING_CLOUDSQL_CONNECTION default tt-realty-staging:us-east1:tt-realty-stg-db
 #   STAGING_SQL_PROXY_PORT      default 5433
 #
+require "open3"
+
 class StagingListingsPusher
   class PushError < StandardError; end
+
+  GCLOUD_BIN = "#{Dir.home}/.local/share/google-cloud-sdk/bin".freeze
+  MISE_BIN = "#{Dir.home}/.local/share/mise/shims".freeze
+  LOCAL_BIN = "#{Dir.home}/.local/bin".freeze
 
   def self.enabled?
     return false if Rails.env.test?
@@ -32,28 +38,22 @@ class StagingListingsPusher
   end
 
   def push!
-    raise PushError, "JSON not found: #{@json_path}" unless @json_path.exist?
-    raise PushError, "Missing push script at #{script_path}" unless script_path.exist?
+    json = safe_json_path!
+    script = script_path
+    raise PushError, "Missing push script at #{script}" unless script.exist?
 
-    cmd = [ "bash", script_path.to_s, @json_path.to_s ]
-    Rails.logger.info("[StagingListingsPusher] #{cmd.join(" ")}")
+    Rails.logger.info("[StagingListingsPusher] bash #{script} #{json}")
 
-    ok = system(
-      {
-        "PATH" => [
-          "#{Dir.home}/.local/share/google-cloud-sdk/bin",
-          "#{Dir.home}/.local/share/mise/shims",
-          "#{Dir.home}/.local/bin",
-          ENV.fetch("PATH", "/usr/bin:/bin")
-        ].join(":")
-      },
-      *cmd,
+    _out, status = Open3.capture2e(
+      path_env,
+      "bash",
+      script.to_s,
+      json.to_s,
       chdir: Rails.root.to_s
     )
 
-    unless ok
-      status = $?.respond_to?(:exitstatus) ? $?.exitstatus : "unknown"
-      raise PushError, "Staging listings push failed (exit #{status})"
+    unless status.success?
+      raise PushError, "Staging listings push failed (exit #{status.exitstatus})"
     end
 
     true
@@ -63,5 +63,24 @@ class StagingListingsPusher
 
   def script_path
     Rails.root.join("scripts/push_bok_listings_to_staging.sh")
+  end
+
+  # Only allow JSON under the app tree so the shell argv cannot escape the repo.
+  def safe_json_path!
+    json = @json_path.expand_path
+    raise PushError, "JSON not found: #{json}" unless json.exist?
+
+    root = Rails.root.expand_path.to_s
+    unless json.to_s.start_with?("#{root}/") || json.to_s.start_with?("#{root}\\")
+      raise PushError, "JSON path must be inside the application root"
+    end
+
+    json
+  end
+
+  def path_env
+    {
+      "PATH" => [ GCLOUD_BIN, MISE_BIN, LOCAL_BIN, ENV.fetch("PATH", "/usr/bin:/bin") ].join(":")
+    }
   end
 end

@@ -94,7 +94,7 @@ namespace :listing_copy do
       puts property.description_plain
       puts
       puts "DESCRIPTION (after)"
-      puts cleaned["description"].to_s
+      puts cleaned["description"]
       puts
       puts "VERIFICATION: #{result.status} (confidence=#{result.verification['confidence']})"
       Array(result.verification["mismatches"]).each do |mismatch|
@@ -321,7 +321,7 @@ namespace :listing_copy do
       end
       puts
       puts "BEFORE (plain)"
-      puts outcome.input_plain.to_s
+      puts outcome.input_plain
       puts
       puts "STRUCTURE"
       puts JSON.pretty_generate(outcome.structure)
