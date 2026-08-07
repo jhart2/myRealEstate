@@ -34,6 +34,7 @@ class PropertiesController < ApplicationController
       east: params[:east],
       west: params[:west]
     ) unless @map_boundary
+    @price_histogram = Property.price_histogram(search_params)
     @hide_footer = true
   end
 
@@ -53,7 +54,7 @@ class PropertiesController < ApplicationController
 
   def search_params
     params.permit(
-      :intent, :location, :property_type, :budget, :price_min, :price_max,
+      :intent, :location, :region, :property_type, :budget, :price_min, :price_max,
       :beds, :baths, :sort, :sqft_min, :sqft_max, :acres_min, :days_max, :featured,
       :north, :south, :east, :west,
       property_types: []

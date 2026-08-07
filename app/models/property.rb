@@ -9,6 +9,9 @@ class Property < ApplicationRecord
   TAGS = %w[sale rent new].freeze
   PROPERTY_TYPES = %w[House Apartment Townhouse Villa Penthouse Commercial Land Modern\ Home].freeze
   STATUSES = %w[active pending sold rented].freeze
+  # Full slider spectrum for search price histogram / dual-range control ($0 … $10M+).
+  PRICE_HISTOGRAM_MAX_DOLLARS = 10_000_000
+  PRICE_HISTOGRAM_BUCKETS = 40
 
   scope :active, -> { where(status: "active") }
   scope :featured, -> { active.where(featured: true) }
@@ -217,6 +220,46 @@ class Property < ApplicationRecord
     when "new" then "New #{property_type.downcase}"
     else property_type
     end
+  end
+
+  # Bucket counts for active/searchable inventory matching non-price filters.
+  # Price/budget filters are ignored so the chart stays useful while adjusting the range.
+  def self.price_histogram(params = {}, buckets: PRICE_HISTOGRAM_BUCKETS, max_dollars: PRICE_HISTOGRAM_MAX_DOLLARS)
+    buckets = buckets.to_i.clamp(8, 80)
+    max_dollars = max_dollars.to_i
+    max_dollars = PRICE_HISTOGRAM_MAX_DOLLARS if max_dollars <= 0
+    max_cents = max_dollars * 100
+    last_bucket = buckets - 1
+
+    scoped_params = normalize_search_params(params).except(:price_min, :price_max, :budget, :sort)
+    scope = search(scoped_params).unscope(:order)
+
+    bucket_expr = sanitize_sql_array([
+      <<~SQL.squish,
+        CASE
+          WHEN price_cents IS NULL OR price_cents < 0 THEN 0
+          WHEN price_cents >= ? THEN ?
+          ELSE MIN(?, CAST((price_cents * ?) / ? AS INTEGER))
+        END
+      SQL
+      max_cents,
+      last_bucket,
+      last_bucket,
+      buckets,
+      max_cents
+    ])
+
+    # Guard: SQLite integer division can still yield `buckets` for edge cents —
+    # clamp again in Ruby when packing.
+    counts = Array.new(buckets, 0)
+    scope.unscope(:select)
+         .group(Arel.sql(bucket_expr))
+         .count
+         .each do |bucket, count|
+           index = bucket.to_i.clamp(0, last_bucket)
+           counts[index] += count.to_i
+         end
+    counts
   end
 
   def self.budget_range(label)

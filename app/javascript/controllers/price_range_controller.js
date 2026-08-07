@@ -1,6 +1,6 @@
 import { Controller } from "@hotwired/stimulus"
 
-// Zillow-style dual price range (list price ↔ monthly payment estimate).
+// Dual price range with listing-density histogram (list price ↔ monthly payment estimate).
 const LIST_STEPS = [
   0, 50000, 75000, 100000, 125000, 150000, 175000, 200000, 225000, 250000,
   275000, 300000, 325000, 350000, 375000, 400000, 425000, 450000, 475000, 500000,
@@ -26,12 +26,14 @@ const FACTOR = Math.pow(1 + MONTHLY_RATE, TERM)
 export default class extends Controller {
   static targets = [
     "minRange", "maxRange", "fill", "minDisplay", "maxDisplay",
-    "minHidden", "maxHidden", "listTab", "payTab", "hint"
+    "minHidden", "maxHidden", "listTab", "payTab", "hint", "histogram"
   ]
 
   static values = {
     min: { type: Number, default: 0 },
-    max: { type: Number, default: -1 } // -1 => open (10M+)
+    max: { type: Number, default: -1 }, // -1 => open (10M+)
+    buckets: { type: Number, default: 40 },
+    maxDollars: { type: Number, default: 10_000_000 }
   }
 
   connect() {
@@ -141,11 +143,34 @@ export default class extends Controller {
     this.minHiddenTarget.value = listMin > 0 ? String(listMin) : ""
     this.maxHiddenTarget.value = listMax === "" ? "" : String(listMax)
 
+    this.minRangeTarget.setAttribute("aria-valuetext", this.minDisplayTarget.value)
+    this.maxRangeTarget.setAttribute("aria-valuetext", this.maxDisplayTarget.value)
+
     const span = last || 1
     const left = (this.minIndex / span) * 100
     const right = (this.maxIndex / span) * 100
     this.fillTarget.style.left = `${left}%`
     this.fillTarget.style.width = `${Math.max(right - left, 0)}%`
+
+    this.syncHistogram(listMin, openMax ? null : Number(listMax))
+  }
+
+  syncHistogram(listMin, listMax) {
+    if (!this.hasHistogramTarget) return
+
+    const buckets = Math.max(1, this.bucketsValue || this.histogramTarget.children.length)
+    const maxDollars = this.maxDollarsValue || 10_000_000
+    const width = maxDollars / buckets
+    const selectedMin = Number(listMin) || 0
+    const openMax = listMax == null
+    const selectedMax = openMax ? maxDollars : Number(listMax)
+
+    Array.from(this.histogramTarget.children).forEach((bar, index) => {
+      const bucketStart = index * width
+      const bucketEnd = (index + 1) * width
+      const inRange = bucketEnd > selectedMin && (openMax || bucketStart <= selectedMax)
+      bar.classList.toggle("is-in-range", inRange)
+    })
   }
 
   listMinDollars() {
@@ -199,14 +224,13 @@ export default class extends Controller {
   parseDisplay(text) {
     const cleaned = String(text).replace(/[$,\s]/g, "").toLowerCase()
     if (!cleaned || cleaned === "any") return 0
-    const open = cleaned.endsWith("+")
     const body = cleaned.replace(/\+$/, "")
     let n
     if (body.endsWith("m")) n = parseFloat(body) * 1_000_000
     else if (body.endsWith("k")) n = parseFloat(body) * 1_000
     else n = parseFloat(body)
     if (Number.isNaN(n)) return null
-    return open ? n : n
+    return n
   }
 
   formatDisplay(value, openEnded) {

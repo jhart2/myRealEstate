@@ -617,7 +617,7 @@ body {
   color: var(--color-trinidad-dark);
 }
 
-/* —— Price range panel (Zillow-style) —— */
+/* —— Price range panel (histogram + dual thumbs) —— */
 .search-filter-panel--price {
   width: min(23.5rem, calc(100vw - 1.5rem));
   padding: 1rem 1rem 0.9rem;
@@ -642,7 +642,7 @@ body {
   margin: 0.15rem 0 0.85rem;
   padding: 0.2rem;
   border-radius: 999px;
-  background: #f0eff2;
+  background: color-mix(in srgb, var(--color-ink) 6%, #fff);
 }
 
 .price-range-tab {
@@ -650,7 +650,7 @@ body {
   border: 0;
   border-radius: 999px;
   background: transparent;
-  color: #3a3a42;
+  color: var(--color-ink-2);
   font-family: var(--font-sans);
   font-size: 0.8125rem;
   font-weight: 600;
@@ -659,32 +659,74 @@ body {
 
 .price-range-tab.is-active {
   background: #fff;
-  color: #1a1a22;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+  color: var(--color-ink);
+  box-shadow: 0 1px 2px rgba(26, 23, 20, 0.12);
 }
 
 .price-range-hint {
   margin: 0 0 0.85rem;
   font-size: 0.75rem;
   line-height: 1.35;
-  color: #6a6a75;
+  color: var(--color-ink-3);
+}
+
+.price-range-chart {
+  margin: 0 0 0.85rem;
+}
+
+.price-range-histogram {
+  display: flex;
+  align-items: flex-end;
+  gap: 1.5px;
+  height: 4.75rem;
+  padding: 0.45rem 0.4rem 0.15rem;
+  border: 1px solid color-mix(in srgb, var(--color-trinidad) 28%, #d8d0c8);
+  border-bottom: 0;
+  border-radius: 0.4rem 0.4rem 0 0;
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--color-trinidad) 10%, #fff) 0%,
+      color-mix(in srgb, var(--color-trinidad) 4%, #fff) 100%
+    );
+}
+
+.price-range-bar {
+  flex: 1 1 0;
+  min-width: 0;
+  height: var(--bar-height, 0%);
+  min-height: 0;
+  border-radius: 1px 1px 0 0;
+  background: color-mix(in srgb, var(--color-trinidad) 55%, #8a7f78);
+  opacity: 0.28;
+  transition: opacity 0.12s ease;
+}
+
+.price-range-bar.is-in-range {
+  background: var(--color-trinidad);
+  opacity: 1;
 }
 
 .price-range-slider {
   position: relative;
-  height: 2rem;
-  margin: 0.35rem 0.35rem 1rem;
+  height: 1.65rem;
+  margin: 0;
+  padding: 0 0.15rem;
   display: flex;
   align-items: center;
+  border: 1px solid color-mix(in srgb, var(--color-trinidad) 28%, #d8d0c8);
+  border-top: 0;
+  border-radius: 0 0 0.4rem 0.4rem;
+  background: color-mix(in srgb, var(--color-trinidad) 4%, #fff);
 }
 
 .price-range-rail {
   position: absolute;
-  left: 0;
-  right: 0;
-  height: 4px;
+  left: 0.5rem;
+  right: 0.5rem;
+  height: 3px;
   border-radius: 999px;
-  background: #d8d8de;
+  background: color-mix(in srgb, var(--color-ink) 14%, #fff);
 }
 
 .price-range-fill {
@@ -697,13 +739,13 @@ body {
 
 .price-range-thumb {
   position: absolute;
-  left: 0;
-  width: 100%;
+  left: 0.15rem;
+  width: calc(100% - 0.3rem);
   margin: 0;
   appearance: none;
   background: transparent;
   pointer-events: none;
-  height: 2rem;
+  height: 1.65rem;
 }
 
 .price-range-thumb::-webkit-slider-thumb {
@@ -713,7 +755,7 @@ body {
   border-radius: 999px;
   border: 2px solid var(--color-trinidad);
   background: #fff;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 1px 3px rgba(26, 23, 20, 0.22);
   pointer-events: auto;
   cursor: grab;
 }
@@ -724,19 +766,25 @@ body {
   border-radius: 999px;
   border: 2px solid var(--color-trinidad);
   background: #fff;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 1px 3px rgba(26, 23, 20, 0.22);
   pointer-events: auto;
   cursor: grab;
 }
 
+.price-range-thumb:focus-visible::-webkit-slider-thumb,
+.price-range-thumb:focus-visible::-moz-range-thumb {
+  outline: 2px solid var(--color-trinidad);
+  outline-offset: 2px;
+}
+
 .price-range-thumb::-webkit-slider-runnable-track {
   background: transparent;
-  height: 4px;
+  height: 3px;
 }
 
 .price-range-thumb::-moz-range-track {
   background: transparent;
-  height: 4px;
+  height: 3px;
 }
 
 .price-range-thumb--max {
@@ -755,10 +803,10 @@ body {
   width: 100%;
   height: 2.5rem;
   padding: 0 0.75rem;
-  border: 1px solid #a7a7a7;
+  border: 1px solid color-mix(in srgb, var(--color-ink) 22%, #fff);
   border-radius: 0.4rem;
   background: #fff;
-  color: #2a2a33;
+  color: var(--color-ink);
   font-family: var(--font-sans);
   font-size: 0.9rem;
   font-weight: 600;
@@ -771,7 +819,7 @@ body {
 }
 
 .price-range-dash {
-  color: #6a6a75;
+  color: var(--color-ink-3);
   font-weight: 600;
 }
 
