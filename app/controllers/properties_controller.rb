@@ -2,8 +2,16 @@ class PropertiesController < ApplicationController
   allow_unauthenticated_access only: %i[index show]
 
   def index
-    @properties = Property.search(search_params).includes(:agent, image_attachment: :blob)
     @intent = params[:intent].presence || "all"
+    @sort = params[:sort].presence || (@intent == "new" ? "newest" : "featured")
+    @days_max = params[:days_max].presence
+    @days_max ||= Property.new_listing_days.to_s if @intent == "new"
+
+    filters = search_params.to_h
+    filters["sort"] = @sort if filters["sort"].blank?
+    filters["days_max"] = @days_max if @intent == "new" && filters["days_max"].blank?
+
+    @properties = Property.search(filters).includes(:agent, image_attachment: :blob)
     @location = params[:location]
     @property_types = Array(params[:property_types]).map(&:presence).compact
     if @property_types.empty? && params[:property_type].present? && params[:property_type] != "Any Type"
@@ -19,12 +27,9 @@ class PropertiesController < ApplicationController
     end
     @beds = params[:beds]
     @baths = params[:baths]
-    @sort = params[:sort].presence || (@intent == "new" ? "newest" : "featured")
     @sqft_min = params[:sqft_min].presence
     @sqft_max = params[:sqft_max].presence
     @acres_min = params[:acres_min].presence
-    @days_max = params[:days_max].presence
-    @days_max ||= Property.new_listing_days.to_s if @intent == "new"
     @featured_only = params[:featured].to_s.in?(%w[1 true])
     @map_listings = @properties.select(&:mappable?).map(&:as_map_json)
     @map_boundary = GeoBoundaryLookup.find(@location)
@@ -35,7 +40,7 @@ class PropertiesController < ApplicationController
       east: params[:east],
       west: params[:west]
     ) unless @map_boundary
-    @price_histogram = Property.price_histogram(search_params)
+    @price_histogram = Property.price_histogram(filters)
     @hide_footer = true
   end
 

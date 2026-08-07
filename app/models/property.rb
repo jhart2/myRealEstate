@@ -25,6 +25,8 @@ class Property < ApplicationRecord
   NON_RESIDENTIAL_TYPES = %w[Land Commercial].freeze
   RESIDENTIAL_TYPES = (PROPERTY_TYPES - NON_RESIDENTIAL_TYPES).freeze
   STATUSES = %w[active pending sold rented].freeze
+  # "New Homes" nav/search intent = listings created within this many days.
+  NEW_LISTING_DAYS = 14
   # Full slider spectrum for search price histogram / dual-range control ($0 … $10M+).
   PRICE_HISTOGRAM_MAX_DOLLARS = 10_000_000
   PRICE_HISTOGRAM_BUCKETS = 40
@@ -33,7 +35,7 @@ class Property < ApplicationRecord
   scope :featured, -> { active.where(featured: true) }
   scope :for_sale, -> { active.where(tag: "sale") }
   scope :for_rent, -> { active.where(tag: "rent") }
-  scope :new_homes, -> { active.where(tag: "new") }
+  scope :new_homes, -> { active.where("created_at >= ?", NEW_LISTING_DAYS.days.ago.beginning_of_day) }
   scope :by_type, ->(type) { where(property_type: type) if type.present? }
   scope :residential, -> { where(property_type: RESIDENTIAL_TYPES) }
   scope :copy_needs_review, -> { where(copy_needs_review: true) }
@@ -68,10 +70,22 @@ class Property < ApplicationRecord
   end
 
 
+  def self.new_listing_days
+    NEW_LISTING_DAYS
+  end
+
   def self.search(params = {})
     params = normalize_search_params(params)
     scope = active
-    scope = scope.where(tag: params[:intent]) if params[:intent].present? && TAGS.include?(params[:intent])
+
+    if params[:intent].to_s == "new"
+      # "New Homes" means recently listed (sale or rent), not the construction `tag: new`.
+      days = params[:days_max].presence&.to_i
+      days = new_listing_days if days.nil? || days <= 0
+      scope = scope.where("created_at >= ?", days.days.ago.beginning_of_day)
+    elsif params[:intent].present? && TAGS.include?(params[:intent])
+      scope = scope.where(tag: params[:intent])
+    end
 
     types = Array(params[:property_types]).map(&:presence).compact
     if types.empty? && params[:property_type].present? && params[:property_type] != "Any Type"
@@ -128,7 +142,8 @@ class Property < ApplicationRecord
       scope = scope.where("acres >= ?", params[:acres_min].to_f)
     end
 
-    if params[:days_max].present?
+    # days_max for non-"new" intents; intent=new already applied the window above.
+    if params[:days_max].present? && params[:intent].to_s != "new"
       scope = scope.where("created_at >= ?", params[:days_max].to_i.days.ago.beginning_of_day)
     end
 
@@ -136,9 +151,12 @@ class Property < ApplicationRecord
       scope = scope.where(featured: true)
     end
 
+    sort = params[:sort].to_s
+    sort = "newest" if sort.blank? && params[:intent].to_s == "new"
+
     # Use reorder so a prior ORDER BY (joins/includes) cannot leave featured/recency
     # ahead of the user's price sort.
-    scope = case params[:sort].to_s
+    scope = case sort
     when "price_asc" then scope.reorder(price_cents: :asc)
     when "price_desc" then scope.reorder(price_cents: :desc)
     when "newest" then scope.reorder(created_at: :desc)
