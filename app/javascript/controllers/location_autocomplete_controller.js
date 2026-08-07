@@ -18,12 +18,26 @@ export default class extends Controller {
   disconnect() {
     this.abortController?.abort()
     clearTimeout(this.debounceTimer)
+    clearTimeout(this.emptySubmitTimer)
   }
 
   onInput() {
     const query = this.inputTarget.value.trim()
     clearTimeout(this.debounceTimer)
     this.clearBounds()
+
+    if (query.length === 0) {
+      this.results = []
+      this.hideMenu()
+      // Emptying the box should leave the area, same as the clear (X) control.
+      clearTimeout(this.emptySubmitTimer)
+      this.emptySubmitTimer = setTimeout(() => {
+        if (this.inputTarget.value.trim() !== "") return
+        const form = this.element.closest("form")
+        form?.requestSubmit()
+      }, 280)
+      return
+    }
 
     if (query.length < 2) {
       this.results = []
@@ -38,7 +52,7 @@ export default class extends Controller {
     const form = this.element.closest("form")
     if (!form) return
 
-    ;["north", "south", "east", "west"].forEach((key) => {
+    ;["north", "south", "east", "west", "region"].forEach((key) => {
       const field = form.querySelector(`[name="${key}"]`)
       if (field) field.value = ""
     })

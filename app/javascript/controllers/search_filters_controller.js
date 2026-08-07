@@ -103,9 +103,24 @@ export default class extends Controller {
   clearLocation(event) {
     event.preventDefault()
     if (!this.hasLocationInputTarget) return
+
     this.locationInputTarget.value = ""
+    this.clearAreaBounds()
     this.syncClearBtn()
-    this.locationInputTarget.focus()
+
+    // Re-run search island-wide (keeps intent/price/etc. from the form).
+    const form = this.form || this.locationInputTarget.form
+    form?.requestSubmit()
+  }
+
+  clearAreaBounds() {
+    const form = this.form || this.element.querySelector("form")
+    if (!form) return
+
+    ;["north", "south", "east", "west", "region"].forEach((key) => {
+      const field = form.querySelector(`[name="${key}"]`)
+      if (field) field.value = ""
+    })
   }
 
   onSubmit(event) {
