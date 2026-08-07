@@ -66,7 +66,9 @@ class ListingCopyCleanerTest < ActiveSupport::TestCase
       client: FakeClient.new(payload)
     )
 
-    assert_equal "Fairways Family Home", result.cleaned["title"]
+    assert_match(/Fairways/i, result.cleaned["title"])
+    assert_match(/Family|Home|House|Bed/i, result.cleaned["title"])
+    refute_match(/for sale|TT\$/i, result.cleaned["title"])
     assert_equal "Maraval", result.cleaned["city"]
     assert_equal "mismatch", result.status
     assert result.mismatches?
@@ -250,5 +252,237 @@ class ListingCopyCleanerTest < ActiveSupport::TestCase
     refute_match(/Trinidad,\s*Trinidad/i, full)
     refute_match(/Shorelands,\s*Shorelands/i, full)
     assert_equal "Shorelands, Trinidad", full
+  end
+
+  test "clears Property for Sale address stubs" do
+    payload = {
+      "cleaned" => {
+        "title" => "Hillsboro, Maraval",
+        "address" => "Property for Sale",
+        "city" => "Maraval",
+        "state" => "Trinidad",
+        "description" => "House in Hillsboro, Maraval.",
+        "beds" => 3,
+        "baths" => 3,
+        "sqft" => 8600,
+        "property_type" => "House",
+        "tag" => "sale",
+        "features" => []
+      },
+      "verification" => { "status" => "ok", "confidence" => 0.9, "mismatches" => [] }
+    }
+
+    result = ListingCopyCleaner.call(
+      {
+        title: "Property for Sale",
+        address: "Property for Sale",
+        city: "Hillsboro Maraval",
+        description: "FOR SALE\n\nAbout the Region\nHillsboro is a residential area.",
+        beds: 3,
+        baths: 3,
+        sqft: 8600,
+        property_type: "House",
+        tag: "sale",
+        features: [ "Private Pool", "Gated Compound" ]
+      },
+      client: FakeClient.new(payload)
+    )
+
+    assert_equal "", result.cleaned["address"]
+  end
+
+  test "collapses hallucinated amenities when source description is sparse" do
+    payload = {
+      "cleaned" => {
+        "title" => "Hillsboro, Maraval",
+        "address" => "Hillsboro",
+        "city" => "Maraval",
+        "state" => "Trinidad",
+        "description" => "The home is semi-furnished and move-in ready, located within a gated community that includes a private pool, air conditioning, a patio, and a covered garage.",
+        "beds" => 3,
+        "baths" => 3,
+        "sqft" => 8600,
+        "lot_sqft" => 8600,
+        "property_type" => "House",
+        "tag" => "sale",
+        "features" => [ "Private Pool", "Gated Compound", "Air Conditioning" ]
+      },
+      "verification" => { "status" => "ok", "confidence" => 1.0, "mismatches" => [] }
+    }
+
+    result = ListingCopyCleaner.call(
+      {
+        title: "Property for Sale",
+        address: "Hillsboro Maraval",
+        city: "Maraval",
+        description: "FOR SALE\n\nAbout the Region\nHillsboro Hillsboro is a residential area located in Maraval Trinidad.",
+        beds: 3,
+        baths: 3,
+        sqft: 8600,
+        lot_sqft: 8600,
+        property_type: "House",
+        tag: "sale",
+        features: [ "Private Pool", "Gated Compound", "Air Conditioning" ]
+      },
+      client: FakeClient.new(payload)
+    )
+
+    assert_equal "needs_review", result.status
+    assert_empty result.cleaned["features"]
+    desc = result.cleaned["description"].downcase
+    refute_match(/\bpool\b/, desc)
+    refute_match(/\bgated\b/, desc)
+    refute_match(/air conditioning/, desc)
+    assert_match(/3 bedroom/, desc)
+    assert_match(/maraval/i, desc)
+  end
+
+  test "drops feature chips that are not grounded in title or description" do
+    payload = {
+      "cleaned" => {
+        "title" => "Family Home in Maraval",
+        "address" => "Saddle Road",
+        "city" => "Maraval",
+        "state" => "Trinidad",
+        "description" => "A 4 bedroom house on Saddle Road in Maraval with a large yard.",
+        "beds" => 4,
+        "baths" => 3,
+        "sqft" => 3000,
+        "property_type" => "House",
+        "tag" => "sale",
+        "features" => [ "Private Pool", "Yard", "Large Yard" ]
+      },
+      "verification" => { "status" => "ok", "confidence" => 0.9, "mismatches" => [] }
+    }
+
+    result = ListingCopyCleaner.call(
+      {
+        title: "Family Home in Maraval",
+        description: "A 4 bedroom house on Saddle Road in Maraval with a large yard.",
+        beds: 4,
+        baths: 3,
+        sqft: 3000,
+        property_type: "House",
+        tag: "sale"
+      },
+      client: FakeClient.new(payload)
+    )
+
+    refute_includes result.cleaned["features"], "Private Pool"
+    assert(result.cleaned["features"].any? { |f| f.match?(/yard/i) })
+  end
+
+  test "strips marketing title fragments from address and mines a real street" do
+    payload = {
+      "cleaned" => {
+        "title" => "Charming 3-Bedroom Home in Westmoorings",
+        "address" => "Charming 3",
+        "city" => "Westmoorings",
+        "state" => "Trinidad",
+        "description" => "Upgraded 3 bedroom home in Westmoorings.",
+        "beds" => 3,
+        "baths" => 3,
+        "property_type" => "House",
+        "tag" => "sale",
+        "features" => []
+      },
+      "verification" => { "status" => "ok", "confidence" => 0.9, "mismatches" => [] }
+    }
+
+    result = ListingCopyCleaner.call(
+      {
+        title: "Charming 3-Bedroom Home – For Sale or Rent!",
+        address: "Charming 3",
+        city: "Westmoorings",
+        description: "Nestled in Westmoorings, this upgraded 3-bedroom home is move-in ready.",
+        beds: 3,
+        baths: 3,
+        property_type: "House",
+        tag: "sale",
+        source_url: "https://mybunchofkeys.com/property/newly-renovated-single-storey-executive-home-for-sale-in-north-west-moorings/"
+      },
+      client: FakeClient.new(payload)
+    )
+
+    refute_match(/charming|bed|sale/i, result.cleaned["address"])
+    assert_equal "Westmoorings", result.cleaned["city"]
+  end
+
+  test "rejects 3 Bed House Orange Grove style address fragments" do
+    payload = {
+      "cleaned" => {
+        "title" => "Renovated 3-Bed House in Orange Grove, Tacarigua",
+        "address" => "3 Bed House Orange Grove",
+        "city" => "Tacarigua",
+        "state" => "Trinidad",
+        "description" => "A 3 bedroom house in Orange Grove, Tacarigua.",
+        "beds" => 3,
+        "baths" => 2,
+        "property_type" => "House",
+        "tag" => "sale",
+        "features" => []
+      },
+      "verification" => { "status" => "ok", "confidence" => 0.9, "mismatches" => [] }
+    }
+
+    result = ListingCopyCleaner.call(
+      {
+        title: "3 Bed House Orange Grove, Tacarigua For Sale",
+        address: "3 Bed House Orange Grove",
+        city: "Tacarigua",
+        description: "3 bedroom house located in Orange Grove, Tacarigua.",
+        beds: 3,
+        baths: 2,
+        property_type: "House",
+        tag: "sale"
+      },
+      client: FakeClient.new(payload)
+    )
+
+    refute_match(/\bbed\b|house/i, result.cleaned["address"])
+    addr = result.cleaned["address"]
+    assert(addr.blank? || addr.match?(/orange\s+grove/i))
+  end
+
+  test "rewrites place-only titles into grounded SEO titles" do
+    payload = {
+      "cleaned" => {
+        "title" => "Cleaver Heights, Arima",
+        "address" => "Cleaver Heights",
+        "city" => "Arima",
+        "state" => "Trinidad",
+        "description" => "Grand 4 bedroom home needing some TLC on freehold land.",
+        "beds" => 4,
+        "baths" => 3,
+        "sqft" => 3235,
+        "lot_sqft" => 10381,
+        "property_type" => "House",
+        "tag" => "sale",
+        "features" => []
+      },
+      "verification" => { "status" => "ok", "confidence" => 0.9, "mismatches" => [] }
+    }
+
+    result = ListingCopyCleaner.call(
+      {
+        title: "Cleaver Heights, Arima - Home for Sale- TT$2M",
+        description: "For Sale: Arima Home. While the home may require some TLC. 4 Bedrooms. Land Size: 10,381 Square Feet Building Size: 3,235 Square Feet",
+        beds: 4,
+        baths: 3,
+        sqft: 10381,
+        property_type: "House",
+        tag: "sale",
+        address: "Cleaver Heights",
+        city: "Arima"
+      },
+      client: FakeClient.new(payload)
+    )
+
+    title = result.cleaned["title"]
+    refute_equal "Cleaver Heights, Arima", title
+    assert_operator title.length, :>=, 36
+    assert_match(/Arima/i, title)
+    assert_match(/TLC|4-Bed|Family|Home|House/i, title)
+    refute_match(/TT\$|for sale/i, title)
   end
 end

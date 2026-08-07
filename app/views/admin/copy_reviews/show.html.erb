@@ -1,0 +1,104 @@
+<% content_for :title, "Copy review" %>
+<% notes = @property.copy_review_notes.is_a?(Hash) ? @property.copy_review_notes : {} %>
+<% mismatches = Array(notes["mismatches"]) %>
+<% preview = notes["cleaned_preview"].is_a?(Hash) ? notes["cleaned_preview"] : {} %>
+
+<div class="mb-6">
+  <%= link_to "← Copy reviews", admin_copy_reviews_path, class: "text-sm text-ink-3 hover:text-ink" %>
+</div>
+
+<div class="grid max-w-4xl gap-6">
+  <div class="rounded-xl border border-border bg-panel p-6">
+    <div class="flex flex-wrap items-start justify-between gap-3">
+      <div>
+        <h1 class="font-display text-3xl font-light"><%= @property.title %></h1>
+        <p class="mt-1 text-sm text-ink-3">
+          <%= @property.bok_id.presence || "—" %>
+          · <%= @property.full_address %>
+        </p>
+      </div>
+      <span class="inline-flex rounded-full bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-900">
+        <%= notes["status"].presence || "needs_review" %>
+        <% if notes["confidence"].present? %> · <%= notes["confidence"] %><% end %>
+      </span>
+    </div>
+
+    <div class="mt-6 rounded-lg border border-amber-200 bg-amber-50/60 p-4">
+      <p class="text-xs font-medium uppercase tracking-wider text-amber-900/70">Mismatch scenario</p>
+      <p class="mt-2 text-sm leading-relaxed text-amber-950"><%= notes["scenario"].presence || "No scenario recorded." %></p>
+    </div>
+
+    <% if mismatches.any? %>
+      <div class="mt-6">
+        <h2 class="text-sm font-medium text-ink">Field mismatches</h2>
+        <ul class="mt-3 space-y-2 text-sm">
+          <% mismatches.each do |row| %>
+            <li class="rounded-lg border border-border bg-panel-warm px-3 py-2">
+              <p class="font-medium"><%= row["field"] %>: <span class="font-normal text-ink-3"><%= row["model"].inspect %> → <%= row["from_description"].inspect %></span></p>
+              <% if row["note"].present? %>
+                <p class="mt-1 text-ink-3"><%= row["note"] %></p>
+              <% end %>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <% extra_notes = Array(notes["notes"]).reject(&:blank?) %>
+    <% if extra_notes.any? %>
+      <div class="mt-6">
+        <h2 class="text-sm font-medium text-ink">Notes</h2>
+        <ul class="mt-2 list-disc space-y-1 pl-5 text-sm text-ink-3">
+          <% extra_notes.each do |note| %>
+            <li><%= note %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <% if preview["title"].present? || preview["description"].present? %>
+      <div class="mt-6 border-t border-border pt-6">
+        <h2 class="text-sm font-medium text-ink">Skipped cleaned preview</h2>
+        <p class="mt-1 text-xs text-ink-3">Not written to the listing because verification failed.</p>
+        <dl class="mt-4 grid gap-3 text-sm">
+          <% if preview["title"].present? %>
+            <div>
+              <dt class="text-ink-3">Title</dt>
+              <dd class="text-ink"><%= preview["title"] %></dd>
+            </div>
+          <% end %>
+          <% if preview["beds"] || preview["baths"] || preview["sqft"] %>
+            <div>
+              <dt class="text-ink-3">Specs</dt>
+              <dd class="text-ink">
+                beds=<%= preview["beds"].inspect %>
+                baths=<%= preview["baths"].inspect %>
+                sqft=<%= preview["sqft"].inspect %>
+                lot=<%= preview["lot_sqft"].inspect %>
+              </dd>
+            </div>
+          <% end %>
+          <% if preview["description"].present? %>
+            <div>
+              <dt class="text-ink-3">Description</dt>
+              <dd class="mt-1 whitespace-pre-line text-ink-2"><%= preview["description"] %></dd>
+            </div>
+          <% end %>
+        </dl>
+      </div>
+    <% end %>
+
+    <div class="mt-6 flex flex-wrap gap-3">
+      <%= link_to "Edit listing", edit_admin_property_path(@property), class: "btn-secondary" %>
+      <%= link_to "View on site", property_path(@property), class: "btn-secondary", target: "_blank", rel: "noopener" %>
+    </div>
+  </div>
+
+  <%= form_with url: admin_copy_review_path(@property), method: :patch, class: "rounded-xl border border-border bg-panel p-6 space-y-4" do %>
+    <p class="text-sm text-ink-3">Clear the flag after you’ve resolved the mismatch manually, or keep it queued.</p>
+    <div class="flex flex-wrap gap-3">
+      <button type="submit" name="commit" value="clear" class="btn-primary cursor-pointer">Clear review flag</button>
+      <button type="submit" name="commit" value="keep_flagged" class="btn-secondary cursor-pointer">Keep flagged</button>
+    </div>
+  <% end %>
+</div>

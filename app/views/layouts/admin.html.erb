@@ -21,6 +21,7 @@
         <nav class="flex flex-1 flex-col gap-0.5 p-3 text-sm">
           <%= render "admin/shared/nav_link", label: "Dashboard", path: admin_root_path, section: :dashboard, icon: :dashboard %>
           <%= render "admin/shared/nav_link", label: "Properties", path: admin_properties_path, section: :properties, icon: :properties %>
+          <%= render "admin/shared/nav_link", label: "Copy reviews", path: admin_copy_reviews_path, section: :copy_reviews, icon: :copy_reviews %>
           <%= render "admin/shared/nav_link", label: "Agents", path: admin_agents_path, section: :agents, icon: :agents %>
           <%= render "admin/shared/nav_link", label: "Inquiries", path: admin_inquiries_path, section: :inquiries, icon: :inquiries %>
 
@@ -51,6 +52,13 @@
             <%= content_for?(:admin_breadcrumb) ? yield(:admin_breadcrumb) : "Signed in as #{current_user.name}" %>
           </div>
           <div class="flex items-center gap-3">
+            <%= link_to admin_copy_reviews_path, class: "relative inline-flex h-9 w-9 items-center justify-center rounded-full text-ink-2 transition-colors hover:bg-panel-warm hover:text-ink", aria: { label: "Copy reviews" } do %>
+              <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2M9 12h6M9 16h4"/></svg>
+              <% review_count = admin_copy_review_count %>
+              <% if review_count.positive? %>
+                <span class="absolute -right-0.5 -top-0.5 inline-flex min-w-[1.1rem] items-center justify-center rounded-full bg-amber-500 px-1 text-[10px] font-semibold leading-4 text-white"><%= review_count > 99 ? "99+" : review_count %></span>
+              <% end %>
+            <% end %>
             <%= link_to admin_inquiries_path, class: "relative inline-flex h-9 w-9 items-center justify-center rounded-full text-ink-2 transition-colors hover:bg-panel-warm hover:text-ink", aria: { label: "Open inquiries" } do %>
               <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
               <% open_count = admin_open_inquiry_count %>

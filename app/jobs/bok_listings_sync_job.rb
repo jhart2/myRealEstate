@@ -10,6 +10,9 @@
 #   BOK_SYNC_DELAY         polite delay seconds (default 4)
 #   BOK_SYNC_SKIP_SEARCH   "1" to sitemap-only (default on for hourly)
 #   BOK_SYNC_PUSH_STAGING  "0" to skip staging DB push (default: push outside test)
+#   BOK_APPLY_LISTING_COPY "0" to skip OpenAI listing-copy on create/update
+#                          (OpenAI applies clean copy only; safe rematches are
+#                           a separate dry daisy: bin/rails listing_copy:daisy)
 #
 class BokListingsSyncJob < ApplicationJob
   queue_as :default
@@ -34,6 +37,7 @@ class BokListingsSyncJob < ApplicationJob
     Rails.logger.info(
       "[BokListingsSyncJob] imported created=#{result.created} updated=#{result.updated} " \
       "skipped=#{result.skipped} removed=#{result.removed} errors=#{result.errors.size} " \
+      "copy_applied=#{result.copy_applied} copy_flagged=#{result.copy_flagged} " \
       "from=#{json_path}"
     )
 
@@ -45,6 +49,8 @@ class BokListingsSyncJob < ApplicationJob
       updated: result.updated,
       skipped: result.skipped,
       removed: result.removed,
+      copy_applied: result.copy_applied,
+      copy_flagged: result.copy_flagged,
       errors: result.errors,
       staging_pushed: staging
     }

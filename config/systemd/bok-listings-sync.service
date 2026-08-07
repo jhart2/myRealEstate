@@ -12,6 +12,7 @@ Environment=BOK_SYNC_MAX_DETAILS=250
 Environment=BOK_SYNC_DELAY=4
 Environment=BOK_SYNC_SKIP_SEARCH=1
 Environment=BOK_SYNC_PUSH_STAGING=1
+Environment=BOK_APPLY_LISTING_COPY=1
 Environment=STAGING_GCP_PROJECT=tt-realty-staging
 Environment=STAGING_CLOUDSQL_CONNECTION=tt-realty-staging:us-east1:tt-realty-stg-db
 Environment=STAGING_SQL_PROXY_PORT=5433

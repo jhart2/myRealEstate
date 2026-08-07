@@ -13,6 +13,7 @@ module AdminHelper
     when :properties then path.start_with?("/admin/properties")
     when :agents then path.start_with?("/admin/agents")
     when :inquiries then path.start_with?("/admin/inquiries")
+    when :copy_reviews then path.start_with?("/admin/copy_reviews")
     else false
     end
   end
@@ -51,6 +52,12 @@ module AdminHelper
     return @admin_open_inquiry_count if defined?(@admin_open_inquiry_count)
 
     @admin_open_inquiry_count = Inquiry.open.count
+  end
+
+  def admin_copy_review_count
+    return @admin_copy_review_count if defined?(@admin_copy_review_count)
+
+    @admin_copy_review_count = Property.copy_needs_review.count
   end
 
   def admin_filter_query(overrides = {})
