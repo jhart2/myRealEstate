@@ -1,22 +1,21 @@
-# Formats listing money for display with a fixed FX table.
+# Formats listing money for display with FX conversion.
 #
-# Stored `price_cents` are treated as BASE_CURRENCY (default USD) — the same
-# units already shown with bare `$` in seeds/admin placeholders.
+# Stored `price_cents` are in BASE_CURRENCY minor units. BOK imports are TTD
+# (even when the source page prints a bare "$"), so the default base is TTD.
 #
-# Approximate rates vs TTD (update periodically; not live FX):
-#   1 USD ≈ 6.75 TTD
-#   1 CAD ≈ 5.00 TTD
+# USD/CAD rates (TTD per 1 unit) come from FxRate (OpenAI-backed cache) with
+# static fallbacks when the API is unavailable.
 class MoneyDisplay
   CURRENCIES = %w[TTD USD CAD].freeze
 
   # Stored listing amounts are in this currency's minor units (cents).
-  BASE_CURRENCY = ENV.fetch("CURRENCY_BASE", "USD").upcase.freeze
+  BASE_CURRENCY = ENV.fetch("CURRENCY_BASE", "TTD").upcase.freeze
 
   # First-visit / cookie-missing default for the Trinidad site.
   DEFAULT_CURRENCY = ENV.fetch("CURRENCY_DEFAULT", "TTD").upcase.freeze
 
-  # Units of TTD per 1 unit of the given currency.
-  RATES_TO_TTD = {
+  # Static fallbacks only — live table is FxRate.rates.
+  FALLBACK_RATES_TO_TTD = {
     "TTD" => BigDecimal("1"),
     "USD" => BigDecimal("6.75"),
     "CAD" => BigDecimal("5.0")
@@ -34,6 +33,13 @@ class MoneyDisplay
       CURRENCIES.include?(code) ? code : DEFAULT_CURRENCY
     end
 
+    # Units of TTD per 1 unit of `currency`.
+    def rate_to_ttd(currency)
+      FxRate.to_ttd(currency)
+    rescue StandardError
+      FALLBACK_RATES_TO_TTD.fetch(normalize(currency), FALLBACK_RATES_TO_TTD.fetch("USD"))
+    end
+
     # Convert minor units from BASE_CURRENCY into `to` currency.
     def convert_cents(cents, to:, from: BASE_CURRENCY)
       from = normalize(from)
@@ -41,8 +47,8 @@ class MoneyDisplay
       amount = BigDecimal(cents.to_i.to_s)
       return amount.round.to_i if from == to
 
-      from_rate = RATES_TO_TTD.fetch(from)
-      to_rate = RATES_TO_TTD.fetch(to)
+      from_rate = rate_to_ttd(from)
+      to_rate = rate_to_ttd(to)
       (amount * from_rate / to_rate).round.to_i
     end
 
@@ -83,10 +89,20 @@ class MoneyDisplay
     end
 
     def rates_payload
+      table = FxRate.rates
       {
         base: BASE_CURRENCY,
         default: DEFAULT_CURRENCY,
-        ratesToTtd: RATES_TO_TTD.transform_values(&:to_s)
+        ratesToTtd: CURRENCIES.index_with { |code| rate_to_ttd(code).to_s },
+        asOf: table["as_of"],
+        source: table["source"] || "fallback"
+      }
+    rescue StandardError
+      {
+        base: BASE_CURRENCY,
+        default: DEFAULT_CURRENCY,
+        ratesToTtd: FALLBACK_RATES_TO_TTD.transform_values(&:to_s),
+        source: "fallback"
       }
     end
   end

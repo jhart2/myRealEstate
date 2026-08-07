@@ -289,7 +289,7 @@
 
         <div class="search-filter-panel search-filter-panel--currency hidden" data-search-filters-target="panel" data-panel="currency">
           <p class="search-filter-panel-title">Display currency</p>
-          <p class="search-filter-currency-hint">Converts listing prices for display. Price filters still use stored list amounts.</p>
+          <p class="search-filter-currency-hint">Listing prices are stored in TT$. Switching currency converts for display only.</p>
           <div class="search-filter-options" role="radiogroup" aria-label="Display currency">
             <% MoneyDisplay::CURRENCIES.each do |code| %>
               <button

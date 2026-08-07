@@ -5,15 +5,21 @@ namespace :listing_copy do
       abort "OPENAI_API_KEY is not set (check .env)"
     end
 
-    scope = Property.where.not(bok_id: [ nil, "" ]).order(:id)
+    scope = Property.where.not(bok_id: [ nil, "" ])
     if ENV["BOK_ID"].present?
       scope = scope.where(bok_id: ENV["BOK_ID"])
+    elsif ENV["RANDOM"].to_s != "0"
+      scope = scope.order(Arel.sql("RANDOM()"))
+    else
+      scope = scope.order(:id)
     end
     limit = Integer(ENV.fetch("LIMIT", "3"))
     properties = scope.limit(limit).to_a
     abort "No matching properties" if properties.empty?
 
     puts "Dry-running ListingCopyCleaner on #{properties.size} listing(s)…\n"
+
+    results = []
 
     properties.each_with_index do |property, index|
       puts "=" * 72
@@ -37,8 +43,8 @@ namespace :listing_copy do
       puts "  after:  #{[ cleaned['address'], cleaned['city'], cleaned['state'] ].compact_blank.join(", ")}"
       puts
       puts "SPECS"
-      puts "  before: beds=#{property.beds} baths=#{property.baths} sqft=#{property.sqft} type=#{property.property_type} tag=#{property.tag}"
-      puts "  after:  beds=#{cleaned['beds']} baths=#{cleaned['baths']} sqft=#{cleaned['sqft']} type=#{cleaned['property_type']} tag=#{cleaned['tag']}"
+      puts "  before: beds=#{property.beds} baths=#{property.baths} sqft=#{property.sqft} lot=#{property.try(:lot_sqft)} acres=#{property.try(:acres)} type=#{property.property_type} tag=#{property.tag}"
+      puts "  after:  beds=#{cleaned['beds']} baths=#{cleaned['baths']} sqft=#{cleaned['sqft']} lot=#{cleaned['lot_sqft']} acres=#{cleaned['acres']} type=#{cleaned['property_type']} tag=#{cleaned['tag']}"
       puts
       puts "DESCRIPTION (before, first 220 chars)"
       puts "  #{property.description.to_s.gsub(/\s+/, " ").truncate(220)}"
