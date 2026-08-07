@@ -1,8 +1,63 @@
 <% content_for :title, @property.title %>
+<% has_photos = @property.gallery_image_urls.any? %>
+<% has_map = @property.mappable? %>
+<% default_media = has_photos ? "photos" : (has_map ? "map" : nil) %>
 
 <section class="bg-ink">
-  <div class="listing-show-gallery">
-    <%= render "properties/gallery", property: @property, variant: "show" %>
+  <div
+    class="listing-show-gallery<%= " listing-show-media" if has_photos || has_map %>"
+    <% if has_photos || has_map %>
+      data-controller="property-media"
+    <% end %>
+  >
+    <% if has_photos %>
+      <div
+        data-media-panel="photos"
+        class="listing-show-media-panel<%= " hidden" unless default_media == "photos" %>"
+      >
+        <%= render "properties/gallery", property: @property, variant: "show" %>
+      </div>
+    <% end %>
+
+    <% if has_map %>
+      <div
+        data-media-panel="map"
+        class="listing-show-media-panel<%= " hidden" unless default_media == "map" %>"
+      >
+        <div
+          class="listing-show-map"
+          data-detail-map
+          data-lat="<%= @property.latitude %>"
+          data-lng="<%= @property.longitude %>"
+        ></div>
+      </div>
+    <% elsif !has_photos %>
+      <div class="flex h-full min-h-[12rem] items-center justify-center bg-stone-light text-sm text-ink-3">
+        No media available
+      </div>
+    <% end %>
+
+    <% if has_photos && has_map %>
+      <div class="property-lightbox-media-tabs listing-show-media-tabs" role="tablist" aria-label="Listing media">
+        <button
+          type="button"
+          role="tab"
+          class="property-lightbox-media-tab"
+          data-media-tab
+          data-action="property-media#toggleMedia"
+          aria-selected="false"
+          aria-label="Show map"
+        >
+          <svg data-icon="map" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M12 2c-3.3 0-6 2.6-6 5.8 0 4.4 6 11.2 6 11.2s6-6.8 6-11.2C18 4.6 15.3 2 12 2zm0 8.2a2.4 2.4 0 1 1 0-4.8 2.4 2.4 0 0 1 0 4.8z"/>
+          </svg>
+          <svg class="hidden" data-icon="photos" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M4 7h3l1.5-2h7L17 7h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1z"/>
+            <circle cx="12" cy="13" r="3.25"/>
+          </svg>
+        </button>
+      </div>
+    <% end %>
   </div>
 </section>
 

@@ -2458,8 +2458,34 @@ html.lightbox-open body {
   background: #13110f;
 }
 
+.listing-show-media {
+  position: relative;
+  height: min(52vh, 520px);
+  overflow: hidden;
+  z-index: 0;
+}
+
+.listing-show-media-panel {
+  height: 100%;
+  width: 100%;
+}
+
+.listing-show-media-panel.hidden {
+  display: none !important;
+}
+
+.listing-show-map {
+  height: 100%;
+  width: 100%;
+  background: #e8e4dc;
+}
+
 .listing-gallery--show {
   height: min(52vh, 520px);
+}
+
+.listing-show-media .listing-gallery--show {
+  height: 100%;
 }
 
 .listing-gallery--show .listing-gallery-stream {
@@ -2470,6 +2496,18 @@ html.lightbox-open body {
 
 .listing-gallery--show.listing-gallery {
   background: transparent;
+}
+
+.listing-show-media-tabs {
+  z-index: 5;
+  left: 0.9rem;
+  right: auto;
+  bottom: 0.9rem;
+  transform: none;
+}
+
+.listing-show-media:has(.listing-gallery-viewer:not(.hidden)) .listing-show-media-tabs {
+  display: none;
 }
 
 .property-lightbox-hero {
@@ -2679,8 +2717,18 @@ html.gallery-viewer-open {
     height: min(42vh, 360px);
   }
 
+  .listing-show-media {
+    height: min(42vh, 360px);
+  }
+
   .listing-show-gallery {
     padding: 0;
+  }
+
+  .listing-show-media-tabs {
+    left: auto;
+    right: 0.75rem;
+    bottom: 0.75rem;
   }
 
   .property-lightbox-hero {
