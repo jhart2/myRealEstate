@@ -19,6 +19,7 @@ class Property < ApplicationRecord
   scope :for_rent, -> { active.where(tag: "rent") }
   scope :new_homes, -> { active.where(tag: "new") }
   scope :by_type, ->(type) { where(property_type: type) if type.present? }
+  scope :copy_needs_review, -> { where(copy_needs_review: true) }
 
   validates :title, :address, :city, :state, :price_cents, :tag, :property_type, presence: true
   validates :tag, inclusion: { in: TAGS }
@@ -199,7 +200,7 @@ class Property < ApplicationRecord
       price: display_price,
       priceLabel: map_price_label,
       beds: beds.to_i,
-      baths: baths.to_i,
+      baths: baths.present? ? baths.to_f : 0,
       sqft: sqft,
       sqftLabel: sqft.to_i.positive? ? ActiveSupport::NumberHelper.number_to_delimited(sqft) : nil,
       address: full_address,
@@ -494,7 +495,7 @@ class Property < ApplicationRecord
     def add_structured!(buckets, property)
       room_items = []
       room_items << "Bedrooms: #{property.beds}" if property.beds.present? && property.beds.to_i.positive?
-      room_items << "Bathrooms: #{property.baths}" if property.baths.present? && property.baths.to_i.positive?
+      room_items << "Bathrooms: #{property.baths}" if property.baths.present? && property.baths.to_f.positive?
       buckets["Interior"]["Bedrooms & bathrooms"].concat(room_items) if room_items.any?
 
       lot_items = []

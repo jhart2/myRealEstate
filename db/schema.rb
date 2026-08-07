@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_06_200000) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_07_023000) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -87,10 +87,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_06_200000) do
     t.decimal "acres", precision: 10, scale: 4
     t.string "address"
     t.integer "agent_id", null: false
-    t.integer "baths"
+    t.decimal "baths", precision: 3, scale: 1
     t.integer "beds"
     t.string "bok_id"
     t.string "city"
+    t.boolean "copy_needs_review", default: false, null: false
+    t.json "copy_review_notes", default: {}, null: false
     t.datetime "created_at", null: false
     t.text "description"
     t.boolean "featured", default: false
@@ -115,6 +117,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_06_200000) do
     t.string "zip"
     t.index ["agent_id"], name: "index_properties_on_agent_id"
     t.index ["bok_id"], name: "index_properties_on_bok_id", unique: true
+    t.index ["copy_needs_review"], name: "index_properties_on_copy_needs_review"
     t.index ["latitude", "longitude"], name: "index_properties_on_latitude_and_longitude"
     t.index ["slug"], name: "index_properties_on_slug", unique: true
     t.index ["source_url"], name: "index_properties_on_source_url", unique: true

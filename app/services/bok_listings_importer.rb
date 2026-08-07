@@ -62,7 +62,11 @@ class BokListingsImporter
     "diamond vale" => [ 10.7050, -61.5650 ]
   }.freeze
 
-  Result = Struct.new(:created, :updated, :skipped, :removed, :errors, keyword_init: true)
+  Result = Struct.new(
+    :created, :updated, :skipped, :removed, :errors,
+    :copy_applied, :copy_flagged,
+    keyword_init: true
+  )
 
   def self.import!(path = nil, agent: nil)
     new(path, agent: agent).import!
@@ -78,7 +82,10 @@ class BokListingsImporter
     raise ArgumentError, "Expected a JSON array in #{@path}" unless rows.is_a?(Array)
 
     feed_agent = @agent || import_feed_agent
-    result = Result.new(created: 0, updated: 0, skipped: 0, removed: 0, errors: [])
+    result = Result.new(
+      created: 0, updated: 0, skipped: 0, removed: 0, errors: [],
+      copy_applied: 0, copy_flagged: 0
+    )
     touched_agent_ids = Set.new([ feed_agent.id ])
 
     rows.each do |row|
@@ -191,16 +198,42 @@ class BokListingsImporter
       if property.changed?
         property.save!
         result.updated += 1
+        apply_listing_copy!(property, result)
       else
         result.skipped += 1
       end
     else
-      Property.create!(attrs)
+      property = Property.create!(attrs)
       result.created += 1
+      apply_listing_copy!(property, result)
     end
   rescue ActiveRecord::RecordInvalid => e
     result.errors << "#{bok_id || source_url}: #{e.record.errors.full_messages.to_sentence}"
     result.skipped += 1
+  end
+
+  # After create/update: OpenAI clean → apply if clean, else flag.
+  # Safe rematches are a separate dry daisy (listing_copy:daisy), not inline here.
+  def apply_listing_copy!(property, result)
+    return unless listing_copy_enabled?
+
+    outcome = ListingCopyApplier.call(property)
+    if outcome.applied?
+      result.copy_applied += 1
+    else
+      result.copy_flagged += 1
+    end
+  rescue OpenaiClient::Error, ListingCopyCleaner::Error, ListingCopyApplier::Error => e
+    result.copy_flagged += 1
+    result.errors << "#{property.bok_id || property.id}: listing copy #{e.message}"
+  end
+
+  def listing_copy_enabled?
+    return false if ENV["BOK_APPLY_LISTING_COPY"].to_s == "0"
+    return true if ENV["BOK_APPLY_LISTING_COPY"].to_s == "1"
+    return false if Rails.env.test?
+
+    OpenaiClient.new.configured?
   end
 
   # Feed rows with no real listing photos must not stay public.
@@ -248,7 +281,7 @@ class BokListingsImporter
       zip: place.zip,
       price_cents: price_cents,
       beds: row["bedrooms"].to_s[/\d+/]&.to_i,
-      baths: row["bathrooms"].to_s[/\d+/]&.to_i,
+      baths: parse_baths(row["bathrooms"]),
       sqft: parse_sqft(row["sqft"]),
       description: row["description"].to_s.strip.presence || title,
       image_url: primary,
@@ -347,6 +380,23 @@ class BokListingsImporter
     return nil if digits.blank?
 
     (BigDecimal(digits) * 100).to_i
+  end
+
+  def parse_baths(raw)
+    text = raw.to_s.strip
+    return nil if text.blank?
+
+    if (match = text.match(/(\d+)\s*(?:and\s+a\s+half|\.5|1\/2)/i))
+      return match[1].to_i + 0.5
+    end
+
+    match = text.match(/(\d+(?:\.\d+)?)/)
+    return nil unless match
+
+    number = Float(match[1])
+    number == number.to_i ? number.to_i : number
+  rescue ArgumentError, TypeError
+    nil
   end
 
   def parse_sqft(raw)

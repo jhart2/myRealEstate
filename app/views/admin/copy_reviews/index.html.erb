@@ -1,0 +1,56 @@
+<% content_for :title, "Copy reviews" %>
+
+<div class="flex items-end justify-between gap-4">
+  <div>
+    <h1 class="font-display text-3xl font-light">Copy reviews</h1>
+    <p class="mt-1 text-sm text-ink-3">Listings skipped by OpenAI copy clean because of mismatches or needs-review.</p>
+  </div>
+  <p class="text-sm text-ink-3"><%= @properties.size %> flagged</p>
+</div>
+
+<div class="mt-6 overflow-hidden rounded-xl border border-border bg-panel">
+  <% if @properties.empty? %>
+    <p class="px-4 py-8 text-sm text-ink-3">No listings need copy review.</p>
+  <% else %>
+    <table class="w-full text-left text-sm">
+      <thead class="border-b border-border bg-panel-warm text-xs uppercase tracking-wider text-ink-3">
+        <tr>
+          <th class="px-4 py-3">Listing</th>
+          <th class="px-4 py-3">Status</th>
+          <th class="px-4 py-3">Mismatch scenario</th>
+          <th class="px-4 py-3">Checked</th>
+          <th class="px-4 py-3"></th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-border">
+        <% @properties.each do |property| %>
+          <% notes = property.copy_review_notes.is_a?(Hash) ? property.copy_review_notes : {} %>
+          <tr>
+            <td class="px-4 py-3">
+              <p class="font-medium"><%= property.title %></p>
+              <p class="text-ink-3"><%= property.bok_id.presence || property.slug %></p>
+            </td>
+            <td class="px-4 py-3">
+              <span class="inline-flex rounded-full bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-900">
+                <%= notes["status"].presence || "needs_review" %>
+              </span>
+            </td>
+            <td class="px-4 py-3 max-w-md text-ink-3">
+              <%= truncate(notes["scenario"].presence || Array(notes["notes"]).join(" · ").presence || "—", length: 140) %>
+            </td>
+            <td class="px-4 py-3 text-ink-3">
+              <% if notes["checked_at"].present? %>
+                <%= Time.zone.parse(notes["checked_at"]).strftime("%b %-d, %Y") rescue notes["checked_at"] %>
+              <% else %>
+                —
+              <% end %>
+            </td>
+            <td class="px-4 py-3 text-right">
+              <%= link_to "Open", admin_copy_review_path(property), class: "text-trinidad hover:underline" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
+</div>
