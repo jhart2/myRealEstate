@@ -1090,10 +1090,16 @@ aside.bg-ink .text-trinidad {
   border-width: 0;
 }
 
-/* Search map */
-.estate-price-marker {
-  background: transparent;
+/* Search map — wrapper must never paint a fill (Leaflet icon box is larger
+   than the pill; a green wrapper behind a red pill shows as “corner peek”). */
+.estate-price-marker,
+.estate-price-marker.is-active,
+.leaflet-marker-icon.estate-price-marker {
+  background: none;
+  background-color: transparent;
   border: 0;
+  box-shadow: none;
+  border-radius: 0;
 }
 
 .estate-price-marker .price-pill {
@@ -1104,7 +1110,7 @@ aside.bg-ink .text-trinidad {
   height: 1.75rem;
   padding: 0 0.65rem;
   border-radius: 999px;
-  /* Trinidad & Tobago flag red */
+  /* Trinidad & Tobago flag red — inactive default */
   background-color: hsl(353 85% 44%);
   border: 0;
   color: #fff;
@@ -1115,16 +1121,30 @@ aside.bg-ink .text-trinidad {
   white-space: nowrap;
   cursor: pointer;
   transition:
-    background-color 0.22s ease,
-    transform 0.22s ease;
+    background-color 0.25s ease,
+    color 0.25s ease,
+    box-shadow 0.25s ease,
+    transform 0.25s ease;
 }
 
-.estate-price-marker .price-pill:hover,
-.estate-price-marker.is-active .price-pill {
-  /* Hue shift toward a warmer scarlet on hover/active */
-  background-color: hsl(8 86% 46%);
+.estate-price-marker .price-pill:hover {
+  /* Subtle hover only — never active green */
+  background-color: hsl(353 85% 36%);
   color: #fff;
-  box-shadow: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+  transform: scale(1.06);
+  z-index: 10;
+}
+
+/* One surface owns the fill: the pill button (class and/or parent flag). */
+.estate-price-marker .price-pill.is-active,
+.estate-price-marker .price-pill.is-active:hover,
+.estate-price-marker.is-active .price-pill,
+.estate-price-marker.is-active .price-pill:hover {
+  /* Emerald green = list/map selection only */
+  background-color: #059669;
+  color: #fff;
+  box-shadow: 0 2px 10px rgba(5, 150, 105, 0.35);
   transform: scale(1.08);
   z-index: 10;
 }

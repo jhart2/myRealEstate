@@ -595,8 +595,8 @@ export default class extends Controller {
         autoPanPadding: [24, 24]
       })
 
+      // Click selects; hover styling is CSS-only (must not set is-active / green)
       marker.on("click", () => this.activateListing(listing.id, { scroll: true, openPopup: false }))
-      marker.on("mouseover", () => this.activateListing(listing.id, { scroll: false, openPopup: false }))
 
       marker.addTo(this.markerLayer)
       this.markersById[listing.id] = marker
@@ -754,7 +754,10 @@ export default class extends Controller {
     Object.entries(this.markersById).forEach(([markerId, marker]) => {
       const el = marker.getElement()
       if (!el) return
-      el.classList.toggle("is-active", markerId === numericId)
+      const active = markerId === numericId
+      // Keep wrapper flag for CSS; paint lives only on .price-pill (see application.css).
+      el.classList.toggle("is-active", active)
+      el.querySelector(".price-pill")?.classList.toggle("is-active", active)
     })
 
     const marker = this.markersById[numericId]
