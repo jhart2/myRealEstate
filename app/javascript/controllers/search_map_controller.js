@@ -268,11 +268,6 @@ export default class extends Controller {
       })
 
       this.map.on("moveend", () => {
-        if (this.userMovedMap && this.hasAreaButtonTarget) {
-          this.areaButtonTarget.classList.remove("hidden")
-          this.areaButtonTarget.classList.add("is-visible")
-        }
-
         if (this.suppressAreaButton) {
           this.suppressAreaButton = false
         }
