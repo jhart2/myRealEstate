@@ -163,6 +163,25 @@ body {
   color: #8a8580;
 }
 
+.mobile-nav-search-clear {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: #6a6a75;
+  cursor: pointer;
+}
+
+.mobile-nav-search-clear.is-visible {
+  display: inline-flex;
+}
+
 .mobile-nav-search-submit {
   display: inline-flex;
   align-items: center;
@@ -894,6 +913,22 @@ aside.bg-ink .text-trinidad {
     0 12px 28px rgba(26, 23, 20, 0.14);
 }
 
+/* Mobile nav: full-bleed suggestion sheet under the sticky header */
+.location-ac-menu--nav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 60px;
+  width: 100%;
+  max-width: none;
+  max-height: min(70vh, 32rem);
+  margin: 0;
+  border: 0;
+  border-radius: 1.25rem 1.25rem 0 0;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  z-index: 60;
+}
+
 .location-ac-menu[hidden],
 .location-ac-menu.hidden {
   display: none !important;
@@ -905,6 +940,11 @@ aside.bg-ink .text-trinidad {
   overflow-x: hidden;
   overflow-y: auto;
   padding: 0.25rem;
+}
+
+.location-ac-menu--nav .location-ac-list {
+  max-height: none;
+  padding: 0.35rem 0 0.5rem;
 }
 
 .location-ac-item {
@@ -922,6 +962,14 @@ aside.bg-ink .text-trinidad {
   text-align: left;
   cursor: pointer;
   transition: background-color 0.12s ease;
+}
+
+.location-ac-menu--nav .location-ac-item {
+  grid-template-columns: 1.5rem 1fr;
+  gap: 0.5rem;
+  min-height: 3.15rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0;
 }
 
 .location-ac-item:hover,
@@ -952,6 +1000,13 @@ aside.bg-ink .text-trinidad {
   max-height: 16px;
 }
 
+.location-ac-menu--nav .location-ac-pin svg {
+  width: 20px !important;
+  height: 20px !important;
+  max-width: 20px;
+  max-height: 20px;
+}
+
 .location-ac-copy {
   display: flex;
   min-width: 0;
@@ -970,6 +1025,12 @@ aside.bg-ink .text-trinidad {
   color: var(--color-ink);
 }
 
+.location-ac-menu--nav .location-ac-name {
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
 .location-ac-sub {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -986,6 +1047,10 @@ aside.bg-ink .text-trinidad {
   font-size: 0.7rem;
   font-weight: 500;
   color: var(--color-ink-3);
+}
+
+.location-ac-menu--nav .location-ac-type {
+  display: none;
 }
 
 .location-ac-foot {

@@ -50,7 +50,27 @@
       </span>
     </button>
 
-    <%= form_with url: properties_path, method: :get, class: "mobile-nav-search", html: { data: { turbo: false } } do %>
+    <%= form_with url: properties_path, method: :get, class: "mobile-nav-search", html: {
+          data: {
+            turbo: false,
+            controller: "location-autocomplete",
+            location_autocomplete_auto_submit_value: true
+          }
+        } do %>
+      <% if controller_name == "properties" && action_name == "index" %>
+        <% %w[intent beds baths sort budget price_min price_max sqft_min sqft_max acres_min days_max featured].each do |key| %>
+          <% next if params[key].blank? %>
+          <input type="hidden" name="<%= key %>" value="<%= params[key] %>">
+        <% end %>
+        <% Array(params[:property_types]).each do |type| %>
+          <input type="hidden" name="property_types[]" value="<%= type %>">
+        <% end %>
+      <% end %>
+      <input type="hidden" name="north" value="<%= params[:north] %>" data-location-bound="north">
+      <input type="hidden" name="south" value="<%= params[:south] %>" data-location-bound="south">
+      <input type="hidden" name="east" value="<%= params[:east] %>" data-location-bound="east">
+      <input type="hidden" name="west" value="<%= params[:west] %>" data-location-bound="west">
+
       <label class="sr-only" for="mobile_nav_location">Search location</label>
       <input
         id="mobile_nav_location"
@@ -60,13 +80,29 @@
         placeholder="Address, neighborhood, city…"
         autocomplete="off"
         class="mobile-nav-search-input"
+        data-location-autocomplete-target="input"
+        data-action="input->location-autocomplete#onInput focus->location-autocomplete#onFocus blur->location-autocomplete#onBlur keydown->location-autocomplete#onKeydown"
       >
+      <button
+        type="button"
+        class="mobile-nav-search-clear<%= " is-visible" if params[:location].present? %>"
+        data-location-autocomplete-target="clearBtn"
+        data-action="location-autocomplete#clear"
+        aria-label="Clear search text"
+      >
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
       <button type="submit" class="mobile-nav-search-submit" aria-label="Search">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
           <circle cx="11" cy="11" r="7"/>
           <path d="m20 20-3.5-3.5"/>
         </svg>
       </button>
+      <div
+        class="location-ac-menu location-ac-menu--nav hidden"
+        data-location-autocomplete-target="menu"
+        hidden
+      ></div>
     <% end %>
 
     <% if authenticated? %>

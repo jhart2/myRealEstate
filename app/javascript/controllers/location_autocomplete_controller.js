@@ -2,7 +2,7 @@ import { Controller } from "@hotwired/stimulus"
 
 // Location autocomplete via /locations/autocomplete (Photon / OSM).
 export default class extends Controller {
-  static targets = ["input", "menu"]
+  static targets = ["input", "menu", "clearBtn"]
   static values = {
     url: { type: String, default: "/locations/autocomplete" },
     autoSubmit: { type: Boolean, default: false }
@@ -13,6 +13,7 @@ export default class extends Controller {
     this.results = []
     this.abortController = null
     this.hideMenu()
+    this.syncClearBtn()
   }
 
   disconnect() {
@@ -25,6 +26,7 @@ export default class extends Controller {
     const query = this.inputTarget.value.trim()
     clearTimeout(this.debounceTimer)
     this.clearBounds()
+    this.syncClearBtn()
 
     if (query.length === 0) {
       this.results = []
@@ -33,8 +35,7 @@ export default class extends Controller {
       clearTimeout(this.emptySubmitTimer)
       this.emptySubmitTimer = setTimeout(() => {
         if (this.inputTarget.value.trim() !== "") return
-        const form = this.element.closest("form")
-        form?.requestSubmit()
+        this.submitForm()
       }, 280)
       return
     }
@@ -46,6 +47,26 @@ export default class extends Controller {
     }
 
     this.debounceTimer = setTimeout(() => this.fetchResults(query), 220)
+  }
+
+  clear(event) {
+    event.preventDefault()
+    event.stopPropagation()
+    this.inputTarget.value = ""
+    this.clearBounds()
+    this.hideMenu()
+    this.syncClearBtn()
+    this.submitForm()
+  }
+
+  syncClearBtn() {
+    if (!this.hasClearBtnTarget) return
+    this.clearBtnTarget.classList.toggle("is-visible", this.inputTarget.value.trim().length > 0)
+  }
+
+  submitForm() {
+    const form = this.element.matches("form") ? this.element : this.element.closest("form")
+    form?.requestSubmit()
   }
 
   clearBounds() {
@@ -187,8 +208,7 @@ export default class extends Controller {
     this.dispatch("selected", { detail: result })
 
     if (this.autoSubmitValue) {
-      const form = this.element.closest("form")
-      form?.requestSubmit()
+      this.submitForm()
     }
   }
 
