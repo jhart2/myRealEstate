@@ -215,11 +215,15 @@ class PropertyAddressBackfill
     current_city = property.city.to_s.strip
     google_city = resolved.city.to_s.strip
     current_address = property.address.to_s.strip
+    local_city = preferred_local_city(current_city, property)
 
     city =
-      if keep_local_city?(current_city, google_city)
-        notes << "kept local city #{current_city.inspect} (Google locality #{google_city.inspect})"
-        current_city
+      if keep_local_city?(local_city, google_city)
+        notes << "kept local city #{local_city.inspect} (Google locality #{google_city.inspect})"
+        local_city
+      elsif local_city.present? && local_city != current_city
+        notes << "normalized city #{current_city.inspect} → #{local_city.inspect}"
+        local_city
       else
         google_city.presence || current_city
       end
@@ -241,17 +245,67 @@ class PropertyAddressBackfill
         city.presence.to_s
       end
 
-    state = resolved.state.presence || property.state.presence || "Trinidad"
+    state = prefer_state(property, resolved)
     zip = resolved.zip.presence || property.zip.to_s
+    latitude = property.latitude
+    longitude = property.longitude
+    if usable_coords?(resolved)
+      latitude = resolved.latitude
+      longitude = resolved.longitude
+    else
+      notes << "skipped weak Google coords (#{resolved.location_type}/conf=#{resolved.confidence})"
+    end
 
     {
       address: address,
       city: city,
       state: state,
       zip: zip,
-      latitude: resolved.latitude || property.latitude,
-      longitude: resolved.longitude || property.longitude
+      latitude: latitude,
+      longitude: longitude
     }
+  end
+
+  def usable_coords?(resolved)
+    return false if resolved.latitude.blank? || resolved.longitude.blank?
+    return false if resolved.confidence.to_i < 45
+
+    types = []
+    if resolved.raw.is_a?(Hash)
+      types = Array(resolved.raw["types"]).map(&:to_s) + Array(resolved.raw["_types"]).map(&:to_s)
+    end
+    return false if types.include?("country")
+
+    true
+  end
+
+  def prefer_state(property, resolved)
+    blob = "#{property.title} #{property.source_url} #{property.state} #{resolved.state}".downcase
+    return "Tobago" if blob.include?("tobago")
+    return "Barbados" if blob.include?("barbados")
+    return resolved.state if resolved.state.to_s.match?(/\A(Trinidad|Tobago|Barbados)\z/i)
+
+    property.state.presence || "Trinidad"
+  end
+
+  def preferred_local_city(current_city, property)
+    exact = current_city.to_s.strip
+    return exact if known_city?(exact) && !metro_locality?(exact)
+
+    blob = [ exact, property.title, property.address ].compact.join(" ")
+    found = known_city_in(blob)
+    return found if found.present?
+
+    exact
+  end
+
+  def known_city_in(blob)
+    hay = blob.to_s.downcase
+    KNOWN_CITIES
+      .map { |c| c.to_s.strip }
+      .reject { |c| c.blank? || metro_locality?(c) }
+      .select { |c| hay.include?(c.downcase) }
+      .max_by { |c| c.length }
   end
 
   def usable_google_street?(street, city, resolved)
@@ -259,9 +313,21 @@ class PropertyAddressBackfill
     return false if street.casecmp?(city.to_s)
     return false if plus_code?(street)
     return false if resolved.confidence.to_i < 60
-    return false unless resolved.location_type.to_s.match?(/ROOFTOP|RANGE_INTERPOLATED|PREMISE|STREET/i)
 
-    true
+    location_type = resolved.location_type.to_s
+    return true if location_type.match?(/ROOFTOP|RANGE_INTERPOLATED|PREMISE|STREET/i)
+
+    # TT/BB street centerlines often come back as GEOMETRIC_CENTER + route.
+    hit_types = Array(resolved.raw.is_a?(Hash) ? resolved.raw["_types"] : nil)
+    return true if location_type == "GEOMETRIC_CENTER" && (
+      hit_types.include?("route") || street_token?(street)
+    )
+
+    false
+  end
+
+  def street_token?(value)
+    value.to_s.match?(/\b(?:Road|Rd|Street|St|Avenue|Ave|Drive|Dr|Lane|Ln|Crescent|Close|Trace|Boulevard|Blvd|Way|Hill|Gardens|Estate|Heights)\b/i)
   end
 
   def plus_code?(value)

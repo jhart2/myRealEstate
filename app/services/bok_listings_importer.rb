@@ -64,7 +64,7 @@ class BokListingsImporter
 
   Result = Struct.new(
     :created, :updated, :skipped, :removed, :errors,
-    :copy_applied, :copy_flagged,
+    :copy_applied, :copy_flagged, :address_enriched,
     keyword_init: true
   )
 
@@ -84,7 +84,7 @@ class BokListingsImporter
     feed_agent = @agent || import_feed_agent
     result = Result.new(
       created: 0, updated: 0, skipped: 0, removed: 0, errors: [],
-      copy_applied: 0, copy_flagged: 0
+      copy_applied: 0, copy_flagged: 0, address_enriched: 0
     )
     touched_agent_ids = Set.new([ feed_agent.id ])
 
@@ -191,7 +191,7 @@ class BokListingsImporter
       return
     end
 
-    attrs = build_attrs(row, agent, price_cents, image_urls)
+    attrs = build_attrs(row, agent, price_cents, image_urls, result: result, existing: property)
 
     if property
       property.assign_attributes(attrs.except(:slug))
@@ -261,9 +261,14 @@ class BokListingsImporter
     source_url.present? ? scope.find_by(source_url: source_url) : nil
   end
 
-  def build_attrs(row, agent, price_cents, image_urls)
+  def build_attrs(row, agent, price_cents, image_urls, result: nil, existing: nil)
     title = clean_title(row["title"], row["url"])
-    place = BokAddressResolver.call(row.merge("title" => title))
+    place = ListingAddressBrain.enrich(row.merge("title" => title))
+    if result && place.source.to_s.match?(/openai|google/)
+      result.address_enriched += 1
+    end
+
+    address_attrs = merge_address_attrs(existing, place)
     primary = normalize_image_urls(row["image"]).first || image_urls.first
 
     {
@@ -275,18 +280,18 @@ class BokListingsImporter
       tag: map_tag(row),
       property_type: map_property_type(row),
       status: "active",
-      address: place.address,
-      city: place.city,
-      state: place.state,
-      zip: place.zip,
+      address: address_attrs[:address],
+      city: address_attrs[:city],
+      state: address_attrs[:state],
+      zip: address_attrs[:zip],
       price_cents: price_cents,
       beds: row["bedrooms"].to_s[/\d+/]&.to_i,
       baths: parse_baths(row["bathrooms"]),
       sqft: parse_sqft(row["sqft"]),
       description: row["description"].to_s.strip.presence || title,
       image_url: primary,
-      latitude: place.latitude,
-      longitude: place.longitude,
+      latitude: address_attrs[:latitude],
+      longitude: address_attrs[:longitude],
       featured: false,
       features: normalize_features(row["features"]),
       image_urls: image_urls
@@ -297,6 +302,41 @@ class BokListingsImporter
         attrs[:lot_sqft] = lot.lot_sqft
       end
     end
+  end
+
+  # Never demote a stronger existing street line during sync updates.
+  def merge_address_attrs(existing, place)
+    proposed = {
+      address: place.address.to_s,
+      city: place.city.to_s,
+      state: place.state.to_s,
+      zip: place.zip.to_s,
+      latitude: place.latitude,
+      longitude: place.longitude
+    }
+    return proposed unless existing
+
+    before_q = BokAddressResolver.address_quality(existing.address, existing.city)
+    after_q = BokAddressResolver.address_quality(proposed[:address], proposed[:city])
+
+    if after_q < before_q || (before_q >= 3 && existing.address.to_s.match?(/\d/) && !proposed[:address].match?(/\d/))
+      return {
+        address: existing.address,
+        city: existing.city,
+        state: existing.state,
+        zip: existing.zip.to_s,
+        latitude: proposed[:latitude].presence || existing.latitude,
+        longitude: proposed[:longitude].presence || existing.longitude
+      }
+    end
+
+    island_blob = "#{existing.title} #{existing.source_url} #{existing.city}".downcase
+    if proposed[:state] == "Tobago" && existing.state.to_s != "Tobago" &&
+       !(island_blob.match?(/\btobago\b/) && !island_blob.match?(/trinidad\s+and\s+tobago/))
+      proposed[:state] = existing.state
+    end
+
+    proposed
   end
 
   def map_tag(row)

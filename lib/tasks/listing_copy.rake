@@ -254,7 +254,7 @@ namespace :listing_copy do
     puts "Queue remaining: #{Property.copy_needs_review.count}"
   end
 
-  desc "Rich HTML description polish (2 OpenAI passes). Requires LISTING_COPY_RICH_HTML=1. APPLY=1 to write. LIMIT=3 BOK_ID="
+  desc "Rich HTML description polish (2 OpenAI passes). Requires LISTING_COPY_RICH_HTML=1. APPLY=1 to write. LIMIT=3|all BOK_ID= RANDOM=0"
   task rich_html: :environment do
     $stdout.sync = true
     unless ListingDescriptionRichFormatter.enabled?
@@ -265,12 +265,21 @@ namespace :listing_copy do
     end
 
     apply = ENV["APPLY"].to_s == "1"
-    scope = Property.where.not(bok_id: [ nil, "" ])
+    scope = Property.all
+    scope = scope.where.not(bok_id: [ nil, "" ]) unless ENV["INCLUDE_NON_BOK"].to_s == "1"
     scope = scope.where(bok_id: ENV["BOK_ID"]) if ENV["BOK_ID"].present?
     scope = scope.order(Arel.sql("RANDOM()")) if ENV["RANDOM"].to_s != "0" && ENV["BOK_ID"].blank?
     scope = scope.order(:id) if ENV["RANDOM"].to_s == "0" || ENV["BOK_ID"].present?
-    limit = Integer(ENV.fetch("LIMIT", "3"))
-    properties = scope.limit(limit).to_a
+
+    limit_raw = ENV.fetch("LIMIT", "3").to_s.strip.downcase
+    properties =
+      if %w[all 0].include?(limit_raw)
+        scope.to_a
+      else
+        scope.limit(Integer(limit_raw)).to_a
+      end
+    # Prefer records that still have plain copy to polish.
+    properties.select! { |p| p.description_plain.to_s.strip.present? }
     abort "No matching properties" if properties.empty?
 
     puts "#{apply ? 'Applying' : 'Dry-running'} rich HTML formatter on #{properties.size} listing(s)…"
@@ -280,18 +289,19 @@ namespace :listing_copy do
       "OUT",
       Rails.root.join("tmp", "listing_copy_rich_html_#{Time.now.utc.strftime('%Y%m%d%H%M%S')}.json").to_s
     )
+    log_path = ENV["LOG"].presence || out_path.sub(/\.json\z/, ".log")
     rows = []
     applied = skipped = errors = 0
 
     properties.each_with_index do |property, index|
       puts "=" * 72
-      puts "[#{index + 1}/#{properties.size}] #{property.bok_id} — #{property.title}"
+      puts "[#{index + 1}/#{properties.size}] #{property.bok_id || property.id} — #{property.title}"
       outcome = ListingDescriptionRichFormatter.call(property, apply: apply)
       if outcome.error && outcome.skipped?
         errors += 1 if outcome.error.match?(/OpenAI|empty HTML|JSON/i)
         skipped += 1
         puts "  skipped: #{outcome.error}"
-        rows << { "bok_id" => property.bok_id, "error" => outcome.error }
+        rows << { "bok_id" => property.bok_id, "id" => property.id, "error" => outcome.error }
         next
       end
 
@@ -303,6 +313,12 @@ namespace :listing_copy do
         puts "  dry preview HTML (#{outcome.html.to_s.length} chars)"
       end
 
+      puts
+      puts "HEADING OPPORTUNITIES"
+      Array(outcome.heading_opportunities).each do |hit|
+        demote = hit[:demote] || hit["demote"] ? " (demote)" : ""
+        puts "  - #{hit[:heading] || hit["heading"]} [#{hit[:kind] || hit["kind"]}]#{demote}"
+      end
       puts
       puts "BEFORE (plain)"
       puts outcome.input_plain.to_s
@@ -317,13 +333,32 @@ namespace :listing_copy do
 
       rows << {
         "bok_id" => property.bok_id,
+        "id" => property.id,
         "title" => property.title,
         "before_plain" => outcome.input_plain,
+        "heading_opportunities" => outcome.heading_opportunities,
         "structure" => outcome.structure,
         "after_html" => outcome.html,
+        "grounding" => outcome.grounding,
         "usage" => outcome.usage,
         "applied" => outcome.applied?
       }
+
+      # Periodic checkpoint so a long APPLY=1 run is resumable/auditable.
+      if ((index + 1) % 25).zero? || index + 1 == properties.size
+        FileUtils.mkdir_p(File.dirname(out_path))
+        File.write(out_path, JSON.pretty_generate({
+          "generated_at" => Time.now.utc.iso8601,
+          "apply" => apply,
+          "progress" => "#{index + 1}/#{properties.size}",
+          "applied" => applied,
+          "skipped" => skipped,
+          "errors" => errors,
+          "count" => rows.size,
+          "listings" => rows
+        }))
+        puts "  checkpoint → #{out_path} (applied=#{applied} skipped=#{skipped} errors=#{errors})"
+      end
     end
 
     FileUtils.mkdir_p(File.dirname(out_path))
@@ -331,9 +366,14 @@ namespace :listing_copy do
       "generated_at" => Time.now.utc.iso8601,
       "apply" => apply,
       "count" => rows.size,
+      "applied" => applied,
+      "skipped" => skipped,
+      "errors" => errors,
       "listings" => rows
     }))
-    puts "Done. applied=#{applied} previewed_or_skipped=#{skipped} errors=#{errors} write=#{apply}"
+    summary = "Done. applied=#{applied} previewed_or_skipped=#{skipped} errors=#{errors} write=#{apply}"
+    puts summary
     puts "Wrote #{out_path}"
+    File.write(log_path, "#{summary}\nOUT=#{out_path}\n") if log_path.present?
   end
 end

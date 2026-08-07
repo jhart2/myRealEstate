@@ -36,6 +36,7 @@ export default class extends Controller {
     // frame redirector fails to claim the click (missing FrameElement upgrade, etc.).
     event.preventDefault()
 
+    this.#rememberListingId(event.currentTarget, url)
     this.showOverlay()
     this.#loadIntoFrame(url)
   }
@@ -46,6 +47,11 @@ export default class extends Controller {
     if (!this.frameHasContent()) {
       this.close()
       return
+    }
+
+    const detail = this.frameTarget.querySelector("[data-listing-id]")
+    if (detail?.dataset?.listingId) {
+      this.lastListingId = detail.dataset.listingId
     }
 
     this.showOverlay()
@@ -75,6 +81,7 @@ export default class extends Controller {
     event?.preventDefault?.()
     if (!this.hasOverlayTarget) return
 
+    const listingId = this.lastListingId
     this.openValue = false
     this.overlayTarget.classList.remove("is-open")
     this.overlayTarget.setAttribute("aria-hidden", "true")
@@ -86,6 +93,8 @@ export default class extends Controller {
         this.frameTarget.innerHTML = ""
       }
       this.unlockScroll()
+      // After the modal is gone, pan the search map so the listing pin is centered.
+      this.#centerMapOnListing(listingId)
     }, 180)
   }
 
@@ -236,6 +245,60 @@ export default class extends Controller {
     if (typeof event.button === "number" && event.button !== 0) return false
     if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return false
     return true
+  }
+
+  #rememberListingId(trigger, url) {
+    const fromTrigger = trigger?.dataset?.listingId
+    const fromParent = trigger?.closest?.("[data-listing-id]")?.dataset?.listingId
+    const fromMap = this.#listingIdFromUrl(url)
+    this.lastListingId = fromTrigger || fromParent || fromMap || this.lastListingId || null
+  }
+
+  #listingIdFromUrl(url) {
+    try {
+      const path = new URL(url, window.location.href).pathname
+      const slug = path.split("/").filter(Boolean).pop()
+      if (!slug) return null
+
+      const map = this.#searchMapController()
+      const listings = map?.listingsValue || []
+      const match = listings.find((listing) => {
+        if (!listing) return false
+        if (String(listing.id) === slug) return true
+        if (listing.slug && listing.slug === slug) return true
+        if (listing.url) {
+          try {
+            return new URL(listing.url, window.location.href).pathname.endsWith(`/${slug}`)
+          } catch (_) {
+            return false
+          }
+        }
+        return false
+      })
+      return match ? String(match.id) : null
+    } catch (_) {
+      return null
+    }
+  }
+
+  #centerMapOnListing(listingId) {
+    const id = listingId || this.lastListingId
+    if (!id) return
+
+    const map = this.#searchMapController()
+    if (!map || typeof map.activateListing !== "function") return
+
+    // Wait a tick so overlay unlock doesn't fight Leaflet layout, then pan to pin.
+    window.requestAnimationFrame(() => {
+      map.activateListing(id, { scroll: true, openPopup: false })
+      if (map.map?.invalidateSize) {
+        window.setTimeout(() => map.map.invalidateSize(), 40)
+      }
+    })
+  }
+
+  #searchMapController() {
+    return this.application.getControllerForElementAndIdentifier(this.element, "search-map")
   }
 
   #loadIntoFrame(url) {

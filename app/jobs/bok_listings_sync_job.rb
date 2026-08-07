@@ -13,6 +13,9 @@
 #   BOK_APPLY_LISTING_COPY "0" to skip OpenAI listing-copy on create/update
 #                          (OpenAI applies clean copy only; safe rematches are
 #                           a separate dry daisy: bin/rails listing_copy:daisy)
+#   BOK_ADDRESS_BRAIN      "1" to OpenAI(+Google) enrich weak addresses on import
+#                          (scraper also sets weak_address / weak_reasons flags)
+#   ADDRESS_BRAIN_BATCH    batch size for bulk backfill script (default 12)
 #
 class BokListingsSyncJob < ApplicationJob
   queue_as :default
@@ -38,6 +41,7 @@ class BokListingsSyncJob < ApplicationJob
       "[BokListingsSyncJob] imported created=#{result.created} updated=#{result.updated} " \
       "skipped=#{result.skipped} removed=#{result.removed} errors=#{result.errors.size} " \
       "copy_applied=#{result.copy_applied} copy_flagged=#{result.copy_flagged} " \
+      "address_enriched=#{result.address_enriched} " \
       "from=#{json_path}"
     )
 
@@ -51,6 +55,7 @@ class BokListingsSyncJob < ApplicationJob
       removed: result.removed,
       copy_applied: result.copy_applied,
       copy_flagged: result.copy_flagged,
+      address_enriched: result.address_enriched,
       errors: result.errors,
       staging_pushed: staging
     }

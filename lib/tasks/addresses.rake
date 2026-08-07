@@ -61,6 +61,62 @@ namespace :addresses do
     puts apply ? "Applied updates where action=applied." : "Dry-run only. Re-run with APPLY=1 to write."
   end
 
+  desc <<~DESC.gsub(/\s+/, " ").strip
+    Re-geocode street-like addresses that are still parked on CITY_COORDS / DEFAULT
+    centroids. Lat/lng only — does not invent streets for city-only stubs.
+    Dry-run by default. APPLY=1 to write. LIMIT=50 BOK_ONLY=1
+  DESC
+  task geocode_streets: :environment do
+    apply = ENV["APPLY"].to_s.match?(/\A(1|true|yes)\z/i)
+    limit = ENV["LIMIT"].presence&.then { |v| Integer(v) }
+    google = GoogleAddressClient.new
+    abort "GOOGLE_MAPS_API_KEY is not set" unless google.configured?
+
+    scope = Property.where.not(latitude: nil, longitude: nil).order(:id)
+    scope = scope.where.not(bok_id: [ nil, "" ]) if ENV["BOK_ONLY"].to_s.match?(/\A(1|true|yes)\z/i)
+    scope = scope.where(bok_id: ENV["BOK_ID"]) if ENV["BOK_ID"].present?
+
+    geocoder = PropertyStreetGeocoder.new(google: google)
+    candidates = []
+    scope.find_each do |property|
+      next unless geocoder.needs_refine?(property)
+
+      candidates << property
+      break if limit && candidates.size >= limit
+    end
+
+    puts "Street geocode backfill (apply=#{apply}, candidates=#{candidates.size})"
+    updated = 0
+    skipped = 0
+    failed = 0
+
+    candidates.each do |property|
+      before = [ property.latitude.to_f, property.longitude.to_f ]
+      refined = geocoder.refine(property)
+      unless refined
+        skipped += 1
+        puts "  skip ##{property.id} #{property.address}, #{property.city} (no usable geocode)"
+        next
+      end
+
+      after = [ refined.latitude.to_f, refined.longitude.to_f ]
+      puts "  ##{property.id} #{property.address}, #{property.city}"
+      puts "    #{before.map { |n| n.round(5) }.join(',')} → #{after.map { |n| n.round(5) }.join(',')} (conf=#{refined.confidence})"
+
+      if apply
+        property.update!(latitude: refined.latitude, longitude: refined.longitude)
+        updated += 1
+      end
+    rescue GoogleAddressClient::Error => e
+      failed += 1
+      puts "  error ##{property.id}: #{e.message}"
+    end
+
+    puts
+    puts "Summary: candidates=#{candidates.size} updated=#{updated} skipped=#{skipped} failed=#{failed}"
+    puts apply ? "Applied lat/lng updates." : "Dry-run only. Re-run with APPLY=1 to write."
+  end
+
   desc "Score only (no Google calls). LIMIT=10 BOK_ID= optional"
   task rank: :environment do
     unless OpenaiClient.new.configured?

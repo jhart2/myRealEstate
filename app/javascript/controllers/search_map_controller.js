@@ -624,6 +624,7 @@ export default class extends Controller {
       <a href="${listing.url}"
          class="popup-card"
          data-turbo-frame="property_lightbox"
+         data-listing-id="${listing.id}"
          data-action="click->property-lightbox#open">
         <div class="popup-media">
           ${image}

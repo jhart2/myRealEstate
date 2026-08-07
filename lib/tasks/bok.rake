@@ -24,6 +24,8 @@ namespace :bok do
     puts "Updated: #{summary[:updated]}"
     puts "Skipped: #{summary[:skipped]}"
     puts "Removed: #{summary[:removed]}" if summary[:removed].positive?
+    puts "Address enriched: #{summary[:address_enriched]}" if summary[:address_enriched].to_i.positive?
+    puts "Copy applied: #{summary[:copy_applied]}" if summary[:copy_applied].to_i.positive?
     puts "Staging push: #{summary[:staging_pushed] ? "yes" : "skipped"}"
     if summary[:errors].any?
       puts "Errors (#{summary[:errors].size}):"

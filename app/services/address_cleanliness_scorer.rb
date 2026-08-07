@@ -21,6 +21,9 @@ class AddressCleanlinessScorer
     You rank real-estate listing addresses for data quality.
     Markets are mainly Trinidad & Tobago and Barbados (community names matter: Maraval, Westmoorings, Cascade, Holetown, etc.).
 
+    Mine street/estate lines from title, URL slug, and description when the address field is marketing junk
+    ("House For Sale", "Investment Property"). Prefer those mined lines in suggested_query.
+
     Score 0–100:
     - 90–100: real street line + community/city + country/island, usable as a postal/map pin
     - 70–89: community + weak/partial street, still mappable at neighbourhood level
@@ -41,7 +44,7 @@ class AddressCleanlinessScorer
     @client = client
   end
 
-  def call(property = nil, address: nil, city: nil, state: nil, zip: nil, title: nil, source_url: nil)
+  def call(property = nil, address: nil, city: nil, state: nil, zip: nil, title: nil, source_url: nil, description: nil)
     raise Error, "OPENAI_API_KEY is not set" unless @client.configured?
 
     parts = if property
@@ -52,7 +55,11 @@ class AddressCleanlinessScorer
         zip: property.zip,
         title: property.title,
         source_url: property.source_url,
-        full_address: property.try(:full_address)
+        description_excerpt: property.description.to_s[0, 1200],
+        full_address: property.try(:full_address),
+        mined_hint: BokAddressResolver.call(property: property).then { |r|
+          { address: r.address, city: r.city, state: r.state, notes: r.notes }
+        }
       }
     else
       {
@@ -62,6 +69,7 @@ class AddressCleanlinessScorer
         zip: zip,
         title: title,
         source_url: source_url,
+        description_excerpt: description.to_s[0, 1200],
         full_address: [ address, city, state, zip ].compact_blank.join(", ")
       }
     end

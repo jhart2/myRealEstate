@@ -4,7 +4,6 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 UNIT_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/systemd/user"
-SERVICE_SRC="$ROOT/config/systemd/bok-listings-sync.service"
 TIMER_SRC="$ROOT/config/systemd/bok-listings-sync.timer"
 
 # systemd needs spaces in paths escaped as \x20 for ExecStart argv[0].
@@ -21,12 +20,16 @@ Wants=network-online.target
 [Service]
 Type=oneshot
 WorkingDirectory=$ROOT
+EnvironmentFile=-${ROOT_ESC}/.env
 Environment=RAILS_ENV=development
 Environment=BOK_SYNC_DAYS=7
 Environment=BOK_SYNC_MAX_DETAILS=250
 Environment=BOK_SYNC_DELAY=4
 Environment=BOK_SYNC_SKIP_SEARCH=1
 Environment=BOK_SYNC_PUSH_STAGING=1
+Environment=BOK_APPLY_LISTING_COPY=1
+Environment=BOK_ADDRESS_BRAIN=1
+Environment=ADDRESS_BRAIN_BATCH=12
 Environment=STAGING_GCP_PROJECT=tt-realty-staging
 Environment=STAGING_CLOUDSQL_CONNECTION=tt-realty-staging:us-east1:tt-realty-stg-db
 Environment=STAGING_SQL_PROXY_PORT=5433
@@ -44,6 +47,7 @@ cp "$TIMER_SRC" "$UNIT_DIR/bok-listings-sync.timer"
 
 systemctl --user daemon-reload
 systemctl --user enable --now bok-listings-sync.timer
+systemctl --user reset-failed bok-listings-sync.service 2>/dev/null || true
 
 # Allow the timer to run without an interactive login while the machine is powered on.
 if command -v loginctl >/dev/null 2>&1; then
@@ -58,6 +62,6 @@ systemctl --user status bok-listings-sync.timer --no-pager || true
 echo
 systemctl --user list-timers bok-listings-sync.timer --no-pager || true
 echo
-echo "Installed. Manual run: systemctl --user start bok-listings-sync.service"
+echo "Installed (address brain ON). Manual run: systemctl --user start bok-listings-sync.service"
 echo "Logs:           journalctl --user -u bok-listings-sync.service -f"
 echo "Disable:        systemctl --user disable --now bok-listings-sync.timer"

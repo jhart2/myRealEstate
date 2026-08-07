@@ -81,7 +81,61 @@ class Listing:
     property_type: str = ""
     description: str = ""
     features: list[str] = field(default_factory=list)
+    # Scraper "brain" flags — Rails ListingAddressBrain uses these to decide
+    # whether an OpenAI/Google enrich pass is needed on import.
+    weak_address: bool = False
+    weak_reasons: list[str] = field(default_factory=list)
+    has_street_signal: bool = False
     scraped_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+
+
+MARKETING_RE = re.compile(
+    r"\b(?:house|home|homes?|apartment|townhouse|property)?\s*"
+    r"(?:for\s+sale|for\s+rent|of\s+sale)|"
+    r"\b(?:investment\s+propert|income\s+generating|prime\s+propert|reduced)\b",
+    re.I,
+)
+STREET_RE = re.compile(
+    r"\b(?:road|rd\.?|street|st\.?|avenue|ave\.?|drive|dr\.?|lane|ln\.?|"
+    r"crescent|close|trace|boulevard|blvd\.?|way|gardens|estate|heights|"
+    r"terrace|hill|shores|court|place)\b",
+    re.I,
+)
+PLACEHOLDER_LOC = re.compile(r"^(?:n/?a|na|none|null|unknown|-)?$", re.I)
+
+
+def assess_address_strength(title: str, location: str, description: str, url: str = "") -> dict:
+    """Cheap heuristic used at scrape time to flag weak address documents."""
+    title = title or ""
+    location = (location or "").strip()
+    desc = (description or "")[:1200]
+    slug = ""
+    m = re.search(r"/property/([^/]+)/?", url or "")
+    if m:
+        slug = m.group(1).replace("-", " ")
+
+    reasons: list[str] = []
+    blob = f"{title}\n{location}\n{slug}\n{desc}"
+    has_street = bool(STREET_RE.search(blob))
+
+    if PLACEHOLDER_LOC.match(location):
+        reasons.append("missing_location")
+    if MARKETING_RE.search(title) and not STREET_RE.search(title):
+        reasons.append("marketing_title")
+    if location and len(location.split()) >= 4 and not STREET_RE.search(location):
+        reasons.append("noisy_location")
+    if not has_street:
+        reasons.append("no_street_signal")
+    # Community-only location with marketing-ish title — still enrichable.
+    if location and not STREET_RE.search(location) and MARKETING_RE.search(f"{title} {desc[:200]}"):
+        if "marketing_title" not in reasons:
+            reasons.append("community_only_marketing")
+
+    return {
+        "weak_address": bool(reasons),
+        "weak_reasons": reasons,
+        "has_street_signal": has_street,
+    }
 
 
 class GentleClient:
@@ -564,12 +618,15 @@ def parse_listing(url: str, html: str, lastmod: str = "") -> Listing | None:
         title = unescape(first_match(r"<h1[^>]*>(.*?)</h1>", html, re.I | re.S))
         title = strip_tags(title)
 
+    location_clean = strip_tags(location)
+    strength = assess_address_strength(title, location_clean, description, url)
+
     return Listing(
         url=url,
         title=title,
         price=price,
         bok_id=bok_id,
-        location=strip_tags(location),
+        location=location_clean,
         bedrooms=bedrooms,
         bathrooms=bathrooms,
         sqft=strip_tags(sqft),
@@ -586,6 +643,9 @@ def parse_listing(url: str, html: str, lastmod: str = "") -> Listing | None:
         property_type=ptype,
         description=description,
         features=features,
+        weak_address=strength["weak_address"],
+        weak_reasons=strength["weak_reasons"],
+        has_street_signal=strength["has_street_signal"],
     )
 
 
@@ -790,7 +850,8 @@ def main() -> int:
             completed[url] = {"ok": True, "kept": True, "style": style_label}
             print(
                 f"  kept: {listing.bok_id or listing.title[:60]} | {style_label} | "
-                f"{listing.price} | {listing.location}",
+                f"{listing.price} | {listing.location}"
+                + (f" | weak={','.join(listing.weak_reasons)}" if listing.weak_address else ""),
                 flush=True,
             )
 

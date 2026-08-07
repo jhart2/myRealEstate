@@ -61,6 +61,19 @@ class GoogleAddressClient
   def geocode(query:, region: nil, components: nil)
     raise ConfigurationError, "GOOGLE_MAPS_API_KEY is not set" unless configured?
 
+    cache_key = [
+      "google_geocode/v1",
+      Digest::SHA1.hexdigest(
+        [ query.to_s.strip.downcase, region.to_s.downcase, components.to_s ].join("|")
+      )
+    ]
+
+    Rails.cache.fetch(cache_key, expires_in: 30.days) do
+      geocode_uncached(query: query, region: region, components: components)
+    end
+  end
+
+  def geocode_uncached(query:, region: nil, components: nil)
     params = { address: query.to_s.strip, key: @api_key }
     params[:region] = region.downcase if region.present?
     params[:components] = components if components.present?
@@ -139,12 +152,13 @@ class GoogleAddressClient
            components["administrative_area_level_2"]&.dig(:long)
 
     country_short = components["country"]&.dig(:short).to_s.upcase
-    state = country_to_state(country_short) ||
-            components["administrative_area_level_1"]&.dig(:long)
+    admin = components["administrative_area_level_1"]&.dig(:long)
+    state = island_state(country_short, admin) || admin
 
     loc = hit.dig("geometry", "location") || {}
     location_type = hit.dig("geometry", "location_type").to_s
-    confidence = geocode_confidence(location_type, street)
+    hit_types = Array(hit["types"]).map(&:to_s)
+    confidence = geocode_confidence(location_type, street, hit_types)
     fallback_line = hit["formatted_address"].to_s.split(",").first.to_s.strip
     fallback_line = city if fallback_line.match?(/\A[A-Z0-9]{2,}\+[A-Z0-9]{2,}\z/i)
 
@@ -160,7 +174,7 @@ class GoogleAddressClient
       location_type: location_type,
       confidence: confidence,
       source: "geocoding",
-      raw: hit
+      raw: hit.merge("_types" => hit_types)
     )
   end
 
@@ -195,9 +209,16 @@ class GoogleAddressClient
   end
 
   def country_to_state(code)
-    case code.to_s.upcase
-    when "TT" then "Trinidad"
-    when "BB" then "Barbados"
+    island_state(code, nil)
+  end
+
+  # TT is one country; use admin area so Tobago listings stay Tobago.
+  def island_state(country_code, admin)
+    case country_code.to_s.upcase
+    when "TT"
+      admin.to_s.match?(/tobago/i) ? "Tobago" : "Trinidad"
+    when "BB"
+      "Barbados"
     end
   end
 
@@ -210,11 +231,12 @@ class GoogleAddressClient
     end
   end
 
-  def geocode_confidence(location_type, street)
+  def geocode_confidence(location_type, street, hit_types = [])
     base = case location_type
     when "ROOFTOP" then 95
     when "RANGE_INTERPOLATED" then 85
-    when "GEOMETRIC_CENTER" then 65
+    when "GEOMETRIC_CENTER"
+      hit_types.include?("route") || street.present? ? 75 : 65
     when "APPROXIMATE" then 45
     else 40
     end
