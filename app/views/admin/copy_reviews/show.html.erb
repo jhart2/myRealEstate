@@ -81,7 +81,7 @@
           <% if preview["description"].present? %>
             <div>
               <dt class="text-ink-3">Description</dt>
-              <dd class="mt-1 whitespace-pre-line text-ink-2"><%= preview["description"] %></dd>
+              <dd class="property-description trix-content mt-1 text-ink-2"><%= sanitize(preview["description"].to_s, tags: %w[div p br h2 h3 strong em ul ol li a], attributes: %w[href]) %></dd>
             </div>
           <% end %>
         </dl>

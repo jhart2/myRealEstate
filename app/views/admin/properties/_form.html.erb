@@ -185,7 +185,7 @@
           <%= render "gallery_editor", form: f, property: @property %>
           <div class="field-group">
             <%= f.label :description, class: "field-label" %>
-            <%= f.text_area :description, rows: 5, class: "field field-on-panel", placeholder: "Describe the property…" %>
+            <%= f.rich_text_area :description, class: "field field-on-panel", placeholder: "Describe the property…" %>
           </div>
           <label class="flex items-center gap-2 text-sm font-medium text-ink">
             <%= f.check_box :featured, class: "rounded border-border text-trinidad focus:ring-trinidad" %>

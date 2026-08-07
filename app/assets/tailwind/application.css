@@ -3042,3 +3042,346 @@ select.field.field-on-panel {
   display: block;
 }
 
+
+/* —— Auth modal (Airbnb-style overlay) —— */
+html.auth-modal-open,
+html.auth-modal-open body {
+  overflow: hidden;
+}
+
+.auth-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(20, 16, 14, 0.55);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease;
+}
+
+.auth-modal.hidden {
+  display: none !important;
+}
+
+.auth-modal.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.auth-modal-dialog {
+  position: relative;
+  width: min(28.5rem, 100%);
+  max-height: calc(100dvh - 2rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 1.75rem 1.5rem 1.5rem;
+  border-radius: 1rem;
+  background: var(--color-panel);
+  box-shadow: 0 20px 56px rgba(0, 0, 0, 0.32);
+  transform: translateY(12px);
+  transition: transform 0.2s ease;
+}
+
+.auth-modal.is-open .auth-modal-dialog {
+  transform: translateY(0);
+}
+
+.auth-modal-close {
+  position: absolute;
+  top: 0.85rem;
+  right: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--color-ink);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.auth-modal-close:hover {
+  background: var(--color-stone-light, #ebe6df);
+}
+
+.auth-modal-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  margin-top: 0.35rem;
+  margin-bottom: 0.85rem;
+}
+
+.auth-modal-heading {
+  margin: 0;
+  text-align: center;
+  font-size: 1.35rem;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--color-ink);
+}
+
+.auth-modal-subtext {
+  margin: 0.45rem 0 0;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--color-ink-3);
+}
+
+.auth-modal-subtext.hidden,
+.auth-modal-subtext[hidden] {
+  display: none !important;
+}
+
+.auth-modal-dialog > [data-auth-modal-target="emailStep"],
+.auth-modal-dialog > [data-auth-modal-target="passwordStep"],
+.auth-modal-dialog > [data-auth-modal-target="signupStep"] {
+  margin-top: 1.25rem;
+}
+
+.auth-modal-alert:not(.hidden) {
+  margin-top: 1rem;
+}
+
+.auth-modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.auth-modal-field {
+  width: 100%;
+  border-radius: 0.65rem;
+  border: 1px solid var(--color-border);
+  background: #fff;
+  padding: 0.85rem 0.95rem;
+  font-size: 0.95rem;
+  color: var(--color-ink);
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.auth-modal-field:focus {
+  border-color: var(--color-trinidad);
+}
+
+.auth-modal-field--readonly {
+  background: var(--color-panel-warm);
+  color: var(--color-ink-2);
+}
+
+.auth-modal-submit {
+  width: 100%;
+  margin-top: 0.25rem;
+  padding-top: 0.85rem;
+  padding-bottom: 0.85rem;
+  border-radius: 0.65rem;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.auth-modal-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin: 1.15rem 0;
+  color: var(--color-ink-3);
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: lowercase;
+}
+
+.auth-modal-divider::before,
+.auth-modal-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--color-border);
+}
+
+.auth-modal-secondary {
+  display: inline-flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-border);
+  border-radius: 0.65rem;
+  background: #fff;
+  padding: 0.85rem 0.95rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-ink);
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.auth-modal-secondary:hover {
+  border-color: var(--color-ink-3);
+  background: var(--color-panel-warm, #f7f4ef);
+}
+
+.auth-modal-switch {
+  margin-top: 1.15rem;
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--color-ink-3);
+}
+
+.auth-modal-link {
+  border: 0;
+  background: none;
+  padding: 0;
+  font: inherit;
+  font-weight: 600;
+  color: var(--color-ink);
+  text-decoration: underline;
+  text-decoration-color: var(--color-trinidad);
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.auth-modal-link:hover {
+  color: var(--color-trinidad);
+}
+
+a.auth-modal-link {
+  display: inline;
+}
+
+.auth-modal-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  margin: -0.35rem 0 0.85rem;
+  border: 0;
+  background: none;
+  padding: 0.25rem 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-ink-2);
+  cursor: pointer;
+}
+
+.auth-modal-back:hover {
+  color: var(--color-ink);
+}
+
+.auth-modal-alert {
+  margin: 0 0 1rem;
+  border-radius: 0.5rem;
+  background: #fef2f2;
+  padding: 0.65rem 0.75rem;
+  font-size: 0.875rem;
+  color: #b91c1c;
+}
+
+.auth-modal-notice {
+  margin: 0 0 1rem;
+  border-radius: 0.5rem;
+  background: var(--color-stone-light, #ebe6df);
+  padding: 0.65rem 0.75rem;
+  font-size: 0.875rem;
+  color: var(--color-ink);
+}
+
+@media (min-width: 480px) {
+  .auth-modal-dialog {
+    padding: 2rem 1.75rem 1.75rem;
+  }
+
+  .auth-modal-heading {
+    font-size: 1.5rem;
+  }
+}
+
+.js-hide {
+  display: none;
+}
+
+/* Action Text / Trix — editor + public rich description */
+@import "../stylesheets/actiontext.css";
+
+.property-description.trix-content,
+.trix-content.property-description {
+  color: var(--color-ink-2);
+  font-size: 0.875rem;
+  line-height: 1.65;
+}
+
+.property-description.trix-content h2,
+.property-description.trix-content h3,
+.trix-content.property-description h2,
+.trix-content.property-description h3 {
+  font-family: var(--font-display);
+  color: var(--color-ink);
+  font-weight: 600;
+  margin-top: 1.25em;
+  margin-bottom: 0.4em;
+}
+
+.property-description.trix-content h2,
+.trix-content.property-description h2 {
+  font-size: 1.25rem;
+}
+
+.property-description.trix-content h3,
+.trix-content.property-description h3 {
+  font-size: 1.05rem;
+}
+
+.property-description.trix-content ul,
+.trix-content.property-description ul {
+  list-style: disc;
+  padding-left: 1.25rem;
+  margin: 0.5em 0 1em;
+}
+
+.property-description.trix-content ol,
+.trix-content.property-description ol {
+  list-style: decimal;
+  padding-left: 1.25rem;
+  margin: 0.5em 0 1em;
+}
+
+.property-description.trix-content li,
+.trix-content.property-description li {
+  margin: 0.25em 0;
+}
+
+.property-description.trix-content strong,
+.trix-content.property-description strong {
+  color: var(--color-ink);
+  font-weight: 600;
+}
+
+.property-description.trix-content p,
+.property-description.trix-content div,
+.trix-content.property-description p,
+.trix-content.property-description div {
+  margin: 0.65em 0;
+}
+
+.field-group trix-toolbar,
+.field trix-toolbar {
+  border: 1px solid var(--color-border);
+  border-bottom: 0;
+  border-radius: 0.5rem 0.5rem 0 0;
+  background: var(--color-panel-warm);
+}
+
+.field-group trix-editor,
+.field trix-editor {
+  border: 1px solid var(--color-border);
+  border-radius: 0 0 0.5rem 0.5rem;
+  min-height: 12rem;
+  background: #fff;
+  padding: 0.75rem 1rem;
+}

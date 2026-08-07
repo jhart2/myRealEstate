@@ -5,6 +5,20 @@ class Property < ApplicationRecord
   has_many :favorites, dependent: :destroy
   has_many :favorited_by_users, through: :favorites, source: :user
   has_many :inquiries, dependent: :destroy
+  has_rich_text :description
+
+  # Plain text for OpenAI / matching; HTML for public render.
+  def description_plain
+    return "" unless description.present?
+
+    description.to_plain_text.to_s
+  end
+
+  def description_html
+    return "" unless description.present?
+
+    description.body.to_html
+  end
 
   TAGS = %w[sale rent new].freeze
   PROPERTY_TYPES = %w[House Apartment Townhouse Villa Penthouse Commercial Land Modern\ Home].freeze

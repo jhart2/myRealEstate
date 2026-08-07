@@ -1,5 +1,7 @@
 <% flash.each do |type, message| %>
   <% next if message.blank? %>
+  <%# Auth modal surfaces alerts when it auto-opens (auth pages or ?auth= on any page) %>
+  <% next if (@auth_modal_auto_open.present? || params[:auth].present?) && type.to_s == "alert" %>
   <div class="flash-banner <%= flash_class(type) %>" data-controller="flash" data-action="animationend->flash#remove">
     <%= message %>
   </div>

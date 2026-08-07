@@ -16,10 +16,16 @@
   </head>
   <body
     class="min-h-screen bg-ground text-ink antialiased <%= 'overflow-hidden' if content_for?(:hide_footer) || @hide_footer %>"
-    data-controller="currency"
+    data-controller="currency<%= ' auth-modal' unless authenticated? %>"
     data-currency-code-value="<%= current_currency %>"
     data-currency-default-code-value="<%= MoneyDisplay::DEFAULT_CURRENCY %>"
     data-currency-rates-value="<%= ERB::Util.html_escape(MoneyDisplay.rates_payload.to_json) %>"
+    <% unless authenticated? %>
+      data-auth-modal-auto-open-value="<%= @auth_modal_auto_open.presence || (content_for?(:auth_modal_auto_open) ? yield(:auth_modal_auto_open) : nil).presence || params[:auth].presence %>"
+      <% if params[:email_address].present? %>
+        data-auth-modal-prefill-email-value="<%= params[:email_address] %>"
+      <% end %>
+    <% end %>
   >
     <%= render "shared/flash" %>
     <%= render "shared/navbar" %>
@@ -28,6 +34,9 @@
     </main>
     <% unless content_for?(:hide_footer) || @hide_footer %>
       <%= render "shared/footer" %>
+    <% end %>
+    <% unless authenticated? %>
+      <%= render "shared/auth_modal" %>
     <% end %>
   </body>
 </html>

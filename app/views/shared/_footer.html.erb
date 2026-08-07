@@ -11,16 +11,35 @@
         </p>
       </div>
 
+      <% account_links =
+           if authenticated?
+             [["Saved Homes", favorites_path]]
+           else
+             [
+               ["Sign In", new_session_path, { action: "auth-modal#open", auth_modal_mode_param: "login" }],
+               ["Create Account", new_registration_path, { action: "auth-modal#open", auth_modal_mode_param: "signup" }],
+               ["Saved Homes", favorites_path]
+             ]
+           end %>
       <% [
-        { heading: "Search", links: [["Buy a Home", properties_path(intent: "sale")], ["Rent a Home", properties_path(intent: "rent")], ["New Builds", properties_path(intent: "new")], ["Find an Agent", agents_path]] },
-        { heading: "Company", links: [["About Us", about_path], ["Contact", contact_path], ["Admin", admin_root_path]] },
-        { heading: "Account", links: [["Sign In", new_session_path], ["Create Account", new_registration_path], ["Saved Homes", favorites_path]] }
+        { heading: "Search", links: [
+          ["Buy a Home", properties_path(intent: "sale")],
+          ["Rent a Home", properties_path(intent: "rent")],
+          ["New Builds", properties_path(intent: "new")],
+          ["Find an Agent", agents_path]
+        ]},
+        { heading: "Company", links: [
+          ["About Us", about_path],
+          ["Contact", contact_path],
+          ["Admin", admin_root_path]
+        ]},
+        { heading: "Account", links: account_links }
       ].each do |col| %>
         <div>
           <p class="mb-5 text-xs font-semibold uppercase tracking-[0.18em] text-ground/55"><%= col[:heading] %></p>
           <ul class="flex flex-col gap-3">
-            <% col[:links].each do |label, path| %>
-              <li><%= link_to label, path, class: "text-sm text-ground/65 transition-colors hover:text-ground" %></li>
+            <% col[:links].each do |label, path, data| %>
+              <li><%= link_to label, path, class: "text-sm text-ground/65 transition-colors hover:text-ground", data: data %></li>
             <% end %>
           </ul>
         </div>

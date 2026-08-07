@@ -97,10 +97,6 @@ export default class extends Controller {
     if (event.target === this.overlayTarget) this.close(event)
   }
 
-  onKeydown(event) {
-    if (event.key === "Escape" && this.openValue) this.close()
-  }
-
   frameHasContent() {
     return this.hasFrameTarget && this.frameTarget.childElementCount > 0
   }
@@ -171,7 +167,14 @@ export default class extends Controller {
 
   promptSignIn(event) {
     event.preventDefault()
-    this.flashShare("Sign in to save homes")
+    document.dispatchEvent(new CustomEvent("auth-modal:open", { detail: { mode: "login", intent: "save" } }))
+  }
+
+  onKeydown(event) {
+    if (event.key !== "Escape" || !this.openValue) return
+    // Auth modal (higher overlay) owns Escape while open.
+    if (document.documentElement.classList.contains("auth-modal-open")) return
+    this.close()
   }
 
   flashShare(message) {

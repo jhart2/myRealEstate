@@ -423,7 +423,7 @@ class ListingCopyApplierTest < ActiveSupport::TestCase
     refute outcome.skipped?
     refute property.copy_needs_review
     assert_equal "Family Home on Alexander Road, Vistabella", property.title
-    assert_match(/family home/i, property.description)
+    assert_match(/family home/i, property.description_plain)
   end
 
   test "OpenAI path flags title-strong type for dry daisy chain" do
@@ -639,7 +639,7 @@ class ListingCopyApplierTest < ActiveSupport::TestCase
     assert_equal 1, stats[:applied]
     refute property.copy_needs_review
     assert_equal "Brand New Luxury Home in Moka, Trinidad", property.title
-    assert_equal "Brand new luxury home in Moka.", property.description
+    assert_equal "Brand new luxury home in Moka.", property.description_plain
     assert_equal [ "Pool", "Garage", "AC" ], property.features
     assert_equal "safe_sparse_copy_rematch", property.copy_review_notes["policy"]
     assert property.copy_review_notes["kept_features"]

@@ -25,7 +25,9 @@
         <% end %>
         <%= button_to "Sign out", session_path, method: :delete, class: "btn-ghost cursor-pointer" %>
       <% else %>
-        <%= link_to "Sign In", new_session_path, class: "btn-ghost" %>
+        <%= link_to "Sign In", new_session_path,
+              class: "btn-ghost",
+              data: { action: "auth-modal#open", auth_modal_mode_param: "login" } %>
         <%= link_to "List Property", contact_path, class: "btn-primary" %>
       <% end %>
     </div>
@@ -70,7 +72,9 @@
     <% if authenticated? %>
       <%= link_to "Account", favorites_path, class: "mobile-nav-signin" %>
     <% else %>
-      <%= link_to "Sign in", new_session_path, class: "mobile-nav-signin" %>
+      <%= link_to "Sign in", new_session_path,
+            class: "mobile-nav-signin",
+            data: { action: "auth-modal#open", auth_modal_mode_param: "login" } %>
     <% end %>
   </div>
 
@@ -96,7 +100,9 @@
           <% end %>
           <%= button_to "Sign out", session_path, method: :delete, class: "text-sm font-medium text-ink-2" %>
         <% else %>
-          <%= link_to "Sign In", new_session_path, class: "text-sm font-medium text-ink-2" %>
+          <%= link_to "Sign In", new_session_path,
+                class: "text-sm font-medium text-ink-2",
+                data: { action: "auth-modal#open", auth_modal_mode_param: "login" } %>
           <%= link_to "List Property", contact_path, class: "btn-primary !px-3 !py-2 text-sm" %>
         <% end %>
       </div>

@@ -98,7 +98,7 @@ class ListingCopyCleaner
           "city" => record_or_hash.city,
           "state" => record_or_hash.state,
           "zip" => record_or_hash.zip,
-          "description" => record_or_hash.description,
+          "description" => description_value_for(record_or_hash),
           "beds" => record_or_hash.beds,
           "baths" => record_or_hash.baths,
           "sqft" => record_or_hash.sqft,
@@ -112,7 +112,7 @@ class ListingCopyCleaner
           "bok_id" => record_or_hash.try(:bok_id),
           "source_url" => record_or_hash.try(:source_url),
           "price_label" => record_or_hash.try(:display_price)
-        }.merge(attrs.slice(*(INPUT_KEYS - [ "features" ])))
+        }.merge(attrs.slice(*(INPUT_KEYS - %w[features description])))
       else
         record_or_hash.deep_stringify_keys
       end
@@ -878,5 +878,13 @@ class ListingCopyCleaner
     number == number.to_i ? number.to_i : number
   rescue ArgumentError, TypeError
     nil
+  end
+
+  def description_value_for(record_or_hash)
+    if record_or_hash.respond_to?(:description_plain)
+      record_or_hash.description_plain
+    else
+      record_or_hash.description.to_s
+    end
   end
 end

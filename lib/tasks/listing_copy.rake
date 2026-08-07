@@ -45,7 +45,7 @@ namespace :listing_copy do
         "before" => {
           "title" => property.title,
           "address" => property.full_address,
-          "description" => property.description.to_s,
+          "description" => property.description_plain,
           "beds" => property.beds,
           "baths" => property.baths,
           "sqft" => property.sqft,
@@ -91,7 +91,7 @@ namespace :listing_copy do
       puts "  after:  beds=#{cleaned['beds']} baths=#{cleaned['baths']} sqft=#{cleaned['sqft']} lot=#{cleaned['lot_sqft']} acres=#{cleaned['acres']} type=#{cleaned['property_type']} tag=#{cleaned['tag']}"
       puts
       puts "DESCRIPTION (before)"
-      puts property.description.to_s
+      puts property.description_plain
       puts
       puts "DESCRIPTION (after)"
       puts cleaned["description"].to_s
@@ -252,5 +252,88 @@ namespace :listing_copy do
     stats = ListingCopyApplier.reprocess_safe_sparse_flags!(scope)
     puts "Done. applied=#{stats[:applied]} skipped=#{stats[:skipped]}"
     puts "Queue remaining: #{Property.copy_needs_review.count}"
+  end
+
+  desc "Rich HTML description polish (2 OpenAI passes). Requires LISTING_COPY_RICH_HTML=1. APPLY=1 to write. LIMIT=3 BOK_ID="
+  task rich_html: :environment do
+    $stdout.sync = true
+    unless ListingDescriptionRichFormatter.enabled?
+      abort "Set LISTING_COPY_RICH_HTML=1 to run this isolated step"
+    end
+    unless OpenaiClient.new.configured?
+      abort "OPENAI_API_KEY is not set (check .env)"
+    end
+
+    apply = ENV["APPLY"].to_s == "1"
+    scope = Property.where.not(bok_id: [ nil, "" ])
+    scope = scope.where(bok_id: ENV["BOK_ID"]) if ENV["BOK_ID"].present?
+    scope = scope.order(Arel.sql("RANDOM()")) if ENV["RANDOM"].to_s != "0" && ENV["BOK_ID"].blank?
+    scope = scope.order(:id) if ENV["RANDOM"].to_s == "0" || ENV["BOK_ID"].present?
+    limit = Integer(ENV.fetch("LIMIT", "3"))
+    properties = scope.limit(limit).to_a
+    abort "No matching properties" if properties.empty?
+
+    puts "#{apply ? 'Applying' : 'Dry-running'} rich HTML formatter on #{properties.size} listing(s)…"
+    puts "  isolation flag: LISTING_COPY_RICH_HTML=1 · passes: structure → render\n"
+
+    out_path = ENV.fetch(
+      "OUT",
+      Rails.root.join("tmp", "listing_copy_rich_html_#{Time.now.utc.strftime('%Y%m%d%H%M%S')}.json").to_s
+    )
+    rows = []
+    applied = skipped = errors = 0
+
+    properties.each_with_index do |property, index|
+      puts "=" * 72
+      puts "[#{index + 1}/#{properties.size}] #{property.bok_id} — #{property.title}"
+      outcome = ListingDescriptionRichFormatter.call(property, apply: apply)
+      if outcome.error && outcome.skipped?
+        errors += 1 if outcome.error.match?(/OpenAI|empty HTML|JSON/i)
+        skipped += 1
+        puts "  skipped: #{outcome.error}"
+        rows << { "bok_id" => property.bok_id, "error" => outcome.error }
+        next
+      end
+
+      if outcome.applied?
+        applied += 1
+        puts "  applied HTML (#{outcome.html.to_s.length} chars)"
+      else
+        skipped += 1
+        puts "  dry preview HTML (#{outcome.html.to_s.length} chars)"
+      end
+
+      puts
+      puts "BEFORE (plain)"
+      puts outcome.input_plain.to_s
+      puts
+      puts "STRUCTURE"
+      puts JSON.pretty_generate(outcome.structure)
+      puts
+      puts "AFTER (html)"
+      puts outcome.html
+      puts
+      puts "usage: #{outcome.usage.inspect}" if outcome.usage.present?
+
+      rows << {
+        "bok_id" => property.bok_id,
+        "title" => property.title,
+        "before_plain" => outcome.input_plain,
+        "structure" => outcome.structure,
+        "after_html" => outcome.html,
+        "usage" => outcome.usage,
+        "applied" => outcome.applied?
+      }
+    end
+
+    FileUtils.mkdir_p(File.dirname(out_path))
+    File.write(out_path, JSON.pretty_generate({
+      "generated_at" => Time.now.utc.iso8601,
+      "apply" => apply,
+      "count" => rows.size,
+      "listings" => rows
+    }))
+    puts "Done. applied=#{applied} previewed_or_skipped=#{skipped} errors=#{errors} write=#{apply}"
+    puts "Wrote #{out_path}"
   end
 end

@@ -145,12 +145,12 @@ class ListingCopyApplier
     return false unless size_rematch_supported?(
       input_sqft: property.sqft,
       input_title: property.title,
-      input_description: property.description,
+      input_description: property.description_plain,
       cleaned: preview,
       mismatches: size_mms
     )
 
-    blob = "#{property.title}\n#{property.description}"
+    blob = "#{property.title}\n#{property.description_plain}"
     return false unless bed_mms.all? { |m| nil_fill_beds_supported?(m, blob) }
     return false unless bath_mms.all? { |m| nil_fill_baths_supported?(m, blob) }
 
@@ -249,14 +249,14 @@ class ListingCopyApplier
     return false unless half_bath_step_supported?(
       mismatch: bath_mms.first,
       title: property.title,
-      description: property.description
+      description: property.description_plain
     )
 
     preview = notes["cleaned_preview"].is_a?(Hash) ? notes["cleaned_preview"] : {}
     size_rematch_supported?(
       input_sqft: property.sqft,
       input_title: property.title,
-      input_description: property.description,
+      input_description: property.description_plain,
       cleaned: preview,
       mismatches: size_mms
     )
@@ -282,7 +282,7 @@ class ListingCopyApplier
     half_bath_step_supported?(
       mismatch: mismatches.first,
       title: property.title,
-      description: property.description
+      description: property.description_plain
     )
   end
 
@@ -312,7 +312,7 @@ class ListingCopyApplier
     size_rematch_supported?(
       input_sqft: property.sqft,
       input_title: property.title,
-      input_description: property.description,
+      input_description: property.description_plain,
       cleaned: preview,
       mismatches: mismatches
     )
@@ -364,7 +364,7 @@ class ListingCopyApplier
     if policy == "safe_sparse_copy_rematch"
       property.update!(
         title: preview["title"].presence || property.title,
-        description: preview["description"].presence || property.description,
+        description: preview["description"].presence || property.description_plain,
         copy_needs_review: false,
         copy_review_notes: {
           "status" => "ok",
@@ -390,7 +390,7 @@ class ListingCopyApplier
       city: preview["city"].presence || property.city,
       state: preview["state"].presence || property.state,
       zip: preview["zip"].to_s,
-      description: preview["description"].presence || property.description,
+      description: preview["description"].presence || property.description_plain,
       beds: preview.key?("beds") ? preview["beds"] : property.beds,
       baths: preview.key?("baths") ? preview["baths"] : property.baths,
       sqft: preview.key?("sqft") ? preview["sqft"] : property.sqft,
@@ -456,7 +456,7 @@ class ListingCopyApplier
       city: cleaned["city"].presence || @property.city,
       state: cleaned["state"].presence || @property.state,
       zip: cleaned["zip"].to_s,
-      description: cleaned["description"].presence || @property.description,
+      description: cleaned["description"].presence || @property.description_plain,
       beds: cleaned["beds"],
       baths: cleaned["baths"],
       sqft: cleaned["sqft"],
