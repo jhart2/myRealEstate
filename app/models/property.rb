@@ -235,14 +235,20 @@ class Property < ApplicationRecord
     scoped_params = normalize_search_params(params).except(:price_min, :price_max, :budget, :sort)
     scope = search(scoped_params).unscope(:order)
 
+    # Clamp with CASE (not scalar MIN/MAX): Postgres rejects 2-arg MIN(); this
+    # project's SQLite build also lacks LEAST. Nested-free CASE works on both.
     bucket_expr = sanitize_sql_array([
       <<~SQL.squish,
         CASE
           WHEN price_cents IS NULL OR price_cents < 0 THEN 0
           WHEN price_cents >= ? THEN ?
-          ELSE MIN(?, CAST((price_cents * ?) / ? AS INTEGER))
+          WHEN CAST((price_cents * ?) / ? AS INTEGER) > ? THEN ?
+          ELSE CAST((price_cents * ?) / ? AS INTEGER)
         END
       SQL
+      max_cents,
+      last_bucket,
+      buckets,
       max_cents,
       last_bucket,
       last_bucket,
