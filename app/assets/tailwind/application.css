@@ -6,12 +6,15 @@
   --color-ground: #f5f3ef;
   --color-ink: #1a1714;
   --color-ink-2: #4a4440;
-  --color-ink-3: #8a7f78;
+  /* Darkened for WCAG AA 4.5:1 on ground/panel/panel-warm */
+  --color-ink-3: #6b635c;
   --color-stone: #c9a96e;
   --color-stone-dark: #b8944e;
   --color-stone-light: #e8dfd1;
   --color-trinidad: hsl(353 85% 44%);
   --color-trinidad-dark: hsl(353 85% 38%);
+  /* Brighter brand red for dark surfaces (ink/deep) — AA on #13110f / #1a1714 */
+  --color-trinidad-bright: #e85a6a;
   --color-trinidad-soft: hsl(353 70% 96%);
   --color-panel: #ffffff;
   --color-panel-warm: #faf8f5;
@@ -853,6 +856,16 @@ body {
 
 .section-eyebrow {
   @apply text-xs font-medium uppercase tracking-[0.2em] text-trinidad;
+}
+
+/* Trinidad brand accents need a lighter red on dark surfaces for WCAG contrast */
+.bg-ink .section-eyebrow,
+.bg-deep .section-eyebrow,
+.bg-ink .text-trinidad,
+.bg-deep .text-trinidad,
+footer .text-trinidad,
+aside.bg-ink .text-trinidad {
+  color: var(--color-trinidad-bright);
 }
 
 .flash-banner {

@@ -43,6 +43,7 @@
             name="location"
             placeholder="Address, neighborhood, city…"
             autocomplete="off"
+            aria-label="Location"
             class="w-full rounded-lg bg-panel-warm px-3 py-3 text-sm text-ink outline-none"
             data-location-autocomplete-target="input"
             data-action="input->location-autocomplete#onInput focus->location-autocomplete#onFocus blur->location-autocomplete#onBlur keydown->location-autocomplete#onKeydown"
@@ -53,13 +54,13 @@
             hidden
           ></div>
         </div>
-        <select name="property_type" class="cursor-pointer rounded-lg bg-panel-warm px-3 py-3 text-sm text-ink outline-none md:w-44">
+        <select name="property_type" aria-label="Property type" class="cursor-pointer rounded-lg bg-panel-warm px-3 py-3 text-sm text-ink outline-none md:w-44">
           <option>Any Type</option>
           <% Property::PROPERTY_TYPES.each do |type| %>
             <option><%= type %></option>
           <% end %>
         </select>
-        <select name="budget" class="cursor-pointer rounded-lg bg-panel-warm px-3 py-3 text-sm text-ink outline-none md:w-40">
+        <select name="budget" aria-label="Budget" class="cursor-pointer rounded-lg bg-panel-warm px-3 py-3 text-sm text-ink outline-none md:w-40">
           <option>Any Price</option>
           <option>Under $500K</option>
           <option>$500K – $1M</option>
@@ -189,11 +190,12 @@
   <div class="relative z-10 mx-auto max-w-3xl px-6 text-center">
     <span class="section-eyebrow">Stay Ahead</span>
     <h2 class="font-display mt-3 mb-5 text-4xl font-light text-ground md:text-5xl">New listings, straight to your inbox.</h2>
-    <p class="mx-auto mb-10 max-w-md text-sm text-ground/55">Get weekly curated properties matched to your search criteria before they hit the market.</p>
+    <p class="mx-auto mb-10 max-w-md text-sm text-ground/65">Get weekly curated properties matched to your search criteria before they hit the market.</p>
     <%= form_with url: subscriptions_path, class: "mx-auto flex max-w-lg flex-col gap-2 rounded-xl bg-white/8 p-2 sm:flex-row" do |f| %>
-      <input type="email" name="email" required placeholder="Your email address" class="flex-1 rounded-lg bg-white/8 px-4 py-3 text-sm text-ground outline-none placeholder:text-ground/40">
+      <label class="sr-only" for="newsletter-email">Email address</label>
+      <input id="newsletter-email" type="email" name="email" required placeholder="Your email address" class="flex-1 rounded-lg bg-white/8 px-4 py-3 text-sm text-ground outline-none placeholder:text-ground/55">
       <button type="submit" class="btn-accent whitespace-nowrap px-6 py-3">Subscribe</button>
     <% end %>
-    <p class="mt-4 text-xs text-ground/35">No spam. Unsubscribe any time.</p>
+    <p class="mt-4 text-xs text-ground/55">No spam. Unsubscribe any time.</p>
   </div>
 </section>
