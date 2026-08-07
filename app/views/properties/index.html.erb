@@ -498,7 +498,10 @@
           <div class="p-10 text-center">
             <p class="font-display text-2xl text-ink">No homes match</p>
             <p class="mt-2 text-sm text-ink-3">Try clearing filters or searching a wider area.</p>
-            <%= link_to "Clear search", properties_path, class: "btn-primary mt-6" %>
+            <%= link_to "Clear search", properties_path,
+                  class: "btn-primary mt-6",
+                  data: { turbo: false },
+                  onclick: "try{localStorage.removeItem('tt-realty-search-filters')}catch(e){}" %>
           </div>
         <% end %>
       </div>
