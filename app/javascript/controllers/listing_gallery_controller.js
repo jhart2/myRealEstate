@@ -21,7 +21,9 @@ export default class extends Controller {
   connect() {
     this._onDocKey = this.onKeydown.bind(this)
     this._pointerX = 0
+    this._swipeStartIndex = 0
     this._scrollRaf = null
+    this._wrapping = false
   }
 
   disconnect() {
@@ -43,6 +45,11 @@ export default class extends Controller {
 
   onSlidePointerDown(event) {
     this._pointerX = event.clientX
+    this._swipeStartIndex = this.currentMobileIndex()
+  }
+
+  onSlidePointerUp(event) {
+    this.maybeWrapMobileSwipe(event.clientX)
   }
 
   onSlideClick(event) {
@@ -117,6 +124,7 @@ export default class extends Controller {
   }
 
   onTrackScroll() {
+    if (this._wrapping) return
     if (this._scrollRaf) cancelAnimationFrame(this._scrollRaf)
     this._scrollRaf = requestAnimationFrame(() => {
       this._scrollRaf = null
@@ -124,6 +132,37 @@ export default class extends Controller {
       this.indexValue = index
       this.syncMobileChrome(index)
     })
+  }
+
+  // At either end of the mobile banner, continue the swipe to wrap around.
+  maybeWrapMobileSwipe(clientX) {
+    const total = this.total()
+    if (total < 2 || this._wrapping) return
+
+    const dx = clientX - this._pointerX
+    if (Math.abs(dx) < 40) return
+
+    const start = this._swipeStartIndex
+    const current = this.currentMobileIndex()
+    const swipedNext = dx < 0
+    const swipedPrev = dx > 0
+
+    if (swipedNext && start >= total - 1 && current >= total - 1) {
+      this.wrapMobileTo(0)
+    } else if (swipedPrev && start <= 0 && current <= 0) {
+      this.wrapMobileTo(total - 1)
+    }
+  }
+
+  wrapMobileTo(index) {
+    this._wrapping = true
+    // Jump instantly so wrap doesn't animate through every intermediate slide.
+    this.scrollToSlide(index, false)
+    this.syncMobileChrome(index)
+    this.indexValue = index
+    window.setTimeout(() => {
+      this._wrapping = false
+    }, 50)
   }
 
   goToSlide(event) {

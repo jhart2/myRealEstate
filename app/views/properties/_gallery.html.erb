@@ -79,7 +79,7 @@
             data-listing-gallery-target="slide"
             data-index="<%= index %>"
             data-src="<%= url %>"
-            data-action="pointerdown->listing-gallery#onSlidePointerDown click->listing-gallery#onSlideClick"
+            data-action="pointerdown->listing-gallery#onSlidePointerDown pointerup->listing-gallery#onSlidePointerUp pointercancel->listing-gallery#onSlidePointerUp click->listing-gallery#onSlideClick"
             aria-label="Photo <%= index + 1 %> of <%= urls.size %>"
           >
             <img
