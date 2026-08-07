@@ -236,14 +236,15 @@ class Property < ApplicationRecord
     scope = search(scoped_params).unscope(:order)
 
     # Clamp with CASE (not scalar MIN/MAX): Postgres rejects 2-arg MIN(); this
-    # project's SQLite build also lacks LEAST. Nested-free CASE works on both.
+    # project's SQLite build also lacks LEAST. Cast to BIGINT before multiply so
+    # price_cents * buckets cannot overflow Postgres integer (seen at ~$10M×40).
     bucket_expr = sanitize_sql_array([
       <<~SQL.squish,
         CASE
           WHEN price_cents IS NULL OR price_cents < 0 THEN 0
           WHEN price_cents >= ? THEN ?
-          WHEN CAST((price_cents * ?) / ? AS INTEGER) > ? THEN ?
-          ELSE CAST((price_cents * ?) / ? AS INTEGER)
+          WHEN CAST((CAST(price_cents AS BIGINT) * ?) / ? AS INTEGER) > ? THEN ?
+          ELSE CAST((CAST(price_cents AS BIGINT) * ?) / ? AS INTEGER)
         END
       SQL
       max_cents,

@@ -41,6 +41,16 @@ class PropertyPriceHistogramTest < ActiveSupport::TestCase
     assert_equal 2, beds_only.sum
   end
 
+  test "price_histogram handles near-max prices without integer overflow" do
+    # price_cents * buckets can exceed 32-bit int on Postgres without BIGINT cast
+    create_property!(title: "Near Cap", price_cents: 9_999_999_00, beds: 4)
+
+    counts = Property.price_histogram({}, buckets: 40, max_dollars: 10_000_000)
+    assert_equal 40, counts.length
+    assert_equal 5, counts.sum
+    assert_operator counts[-2] + counts.last, :>=, 1
+  end
+
   private
 
   def create_property!(title:, price_cents:, beds:)
