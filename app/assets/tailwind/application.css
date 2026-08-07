@@ -1851,6 +1851,12 @@ html.lightbox-open body {
   min-width: 0;
 }
 
+.property-lightbox-status-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
 .property-lightbox-status {
   display: inline-flex;
   align-items: center;
@@ -1877,6 +1883,17 @@ html.lightbox-open body {
 
 .property-lightbox-status-dot.is-sale {
   background: #fff;
+}
+
+.property-lightbox-active-led {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 999px;
+  background: #2fbf71;
+  box-shadow:
+    0 0 0 2px rgb(47 191 113 / 0.22),
+    0 0 7px rgb(47 191 113 / 0.65);
+  flex-shrink: 0;
 }
 
 .property-lightbox-price {

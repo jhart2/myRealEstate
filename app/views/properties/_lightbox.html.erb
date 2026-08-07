@@ -90,10 +90,15 @@
     <div class="property-lightbox-main">
       <div class="property-lightbox-overview">
         <div class="property-lightbox-overview-main">
-          <span class="property-lightbox-status">
-            <span class="property-lightbox-status-dot <%= property.tag == 'sale' || property.tag == 'new' ? 'is-sale' : '' %>"></span>
-            <%= property.tag_label %>
-          </span>
+          <div class="property-lightbox-status-row">
+            <span class="property-lightbox-status">
+              <span class="property-lightbox-status-dot <%= property.tag == 'sale' || property.tag == 'new' ? 'is-sale' : '' %>"></span>
+              <%= property.tag_label %>
+            </span>
+            <% if property.status == "active" %>
+              <span class="property-lightbox-active-led" title="Active listing" aria-label="Active listing"></span>
+            <% end %>
+          </div>
           <p class="property-lightbox-price"><%= property_money(property) %></p>
           <% if property.title.present? %>
             <h1 class="property-lightbox-title"><%= property.title %></h1>
