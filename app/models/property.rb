@@ -22,6 +22,8 @@ class Property < ApplicationRecord
 
   TAGS = %w[sale rent new].freeze
   PROPERTY_TYPES = %w[House Apartment Townhouse Villa Penthouse Commercial Land Modern\ Home].freeze
+  NON_RESIDENTIAL_TYPES = %w[Land Commercial].freeze
+  RESIDENTIAL_TYPES = (PROPERTY_TYPES - NON_RESIDENTIAL_TYPES).freeze
   STATUSES = %w[active pending sold rented].freeze
   # Full slider spectrum for search price histogram / dual-range control ($0 … $10M+).
   PRICE_HISTOGRAM_MAX_DOLLARS = 10_000_000
@@ -33,6 +35,7 @@ class Property < ApplicationRecord
   scope :for_rent, -> { active.where(tag: "rent") }
   scope :new_homes, -> { active.where(tag: "new") }
   scope :by_type, ->(type) { where(property_type: type) if type.present? }
+  scope :residential, -> { where(property_type: RESIDENTIAL_TYPES) }
   scope :copy_needs_review, -> { where(copy_needs_review: true) }
 
   validates :title, :address, :city, :state, :price_cents, :tag, :property_type, presence: true
@@ -174,6 +177,7 @@ class Property < ApplicationRecord
 
   def self.homepage_region_rows(per_region: 12)
     by_region = active
+      .residential
       .includes(:agent, image_attachment: :blob)
       .order(featured: :desc, views_count: :desc, created_at: :desc)
       .group_by { |property| property.region.key }
