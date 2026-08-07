@@ -19,11 +19,12 @@ class PropertiesController < ApplicationController
     end
     @beds = params[:beds]
     @baths = params[:baths]
-    @sort = params[:sort].presence || "featured"
+    @sort = params[:sort].presence || (@intent == "new" ? "newest" : "featured")
     @sqft_min = params[:sqft_min].presence
     @sqft_max = params[:sqft_max].presence
     @acres_min = params[:acres_min].presence
     @days_max = params[:days_max].presence
+    @days_max ||= Property.new_listing_days.to_s if @intent == "new"
     @featured_only = params[:featured].to_s.in?(%w[1 true])
     @map_listings = @properties.select(&:mappable?).map(&:as_map_json)
     @map_boundary = GeoBoundaryLookup.find(@location)

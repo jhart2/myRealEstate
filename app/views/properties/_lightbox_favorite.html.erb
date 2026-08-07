@@ -6,7 +6,7 @@
       <%= button_to property_favorite_path(property),
             method: :delete,
             class: "property-lightbox-icon-btn is-saved",
-            form: { class: "property-lightbox-icon-form" },
+            form: { class: "property-lightbox-icon-form", data: { turbo_stream: true } },
             params: { source: "lightbox" },
             aria: { label: "Remove from saved" } do %>
         <svg class="property-lightbox-icon-svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -17,7 +17,7 @@
       <%= button_to property_favorite_path(property),
             method: :post,
             class: "property-lightbox-icon-btn",
-            form: { class: "property-lightbox-icon-form" },
+            form: { class: "property-lightbox-icon-form", data: { turbo_stream: true } },
             params: { source: "lightbox" },
             aria: { label: "Save home" } do %>
         <svg class="property-lightbox-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">

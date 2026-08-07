@@ -9,7 +9,7 @@
     <div class="flex items-center gap-8">
       <%= nav_link_to "Buy", properties_path(intent: "sale") %>
       <%= nav_link_to "Rent", properties_path(intent: "rent") %>
-      <%= nav_link_to "New Homes", properties_path(intent: "new") %>
+      <%= nav_link_to "New Homes", properties_path(intent: "new", sort: "newest") %>
       <%= nav_link_to "Agents", agents_path %>
       <%= nav_link_to "About", about_path %>
     </div>
@@ -86,7 +86,7 @@
     <div class="flex flex-col gap-3.5">
       <%= link_to "Buy", properties_path(intent: "sale"), class: "text-sm font-medium text-ink-2" %>
       <%= link_to "Rent", properties_path(intent: "rent"), class: "text-sm font-medium text-ink-2" %>
-      <%= link_to "New Homes", properties_path(intent: "new"), class: "text-sm font-medium text-ink-2" %>
+      <%= link_to "New Homes", properties_path(intent: "new", sort: "newest"), class: "text-sm font-medium text-ink-2" %>
       <%= link_to "Agents", agents_path, class: "text-sm font-medium text-ink-2" %>
       <%= link_to "About", about_path, class: "text-sm font-medium text-ink-2" %>
       <div class="flex flex-wrap gap-3 border-t border-border pt-3">

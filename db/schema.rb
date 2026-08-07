@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_07_031352) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_07_140000) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -109,6 +109,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_07_031352) do
     t.string "image_url"
     t.json "image_urls", default: [], null: false
     t.decimal "latitude"
+    t.string "location_raw"
     t.decimal "longitude"
     t.integer "lot_sqft"
     t.bigint "price_cents"

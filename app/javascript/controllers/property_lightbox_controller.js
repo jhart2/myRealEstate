@@ -55,7 +55,10 @@ export default class extends Controller {
     }
 
     this.showOverlay()
+    // Defer until dialog layout settles; hidden map panel is skipped inside initDetailMap.
     this.initDetailMap()
+    window.requestAnimationFrame(() => this.initDetailMap())
+    window.setTimeout(() => this.initDetailMap(), 80)
   }
 
   onFrameMissing(event) {
@@ -153,6 +156,8 @@ export default class extends Controller {
     }
 
     if (mode === "map") {
+      // Panel just became visible — Leaflet needs a real size before setView sticks.
+      window.requestAnimationFrame(() => this.initDetailMap(panel))
       window.setTimeout(() => this.initDetailMap(panel), 40)
     }
   }
@@ -198,22 +203,36 @@ export default class extends Controller {
   initDetailMap(root = this.overlayTarget) {
     if (!window.L || !root) return
     const mapEl = root.querySelector("[data-detail-map]")
-    if (!mapEl || mapEl.dataset.ready === "1") {
-      if (mapEl?._leaflet_map) {
-        mapEl._leaflet_map.invalidateSize()
-      }
-      return
-    }
+    if (!mapEl) return
+
+    // Photos is the default panel — map starts with display:none. Leaflet init on a
+    // zero-size container locks a bad center; invalidateSize alone does not recover it.
+    const mapPanel = mapEl.closest('[data-media-panel="map"]')
+    if (mapPanel?.classList.contains("hidden")) return
 
     const lat = parseFloat(mapEl.dataset.lat)
     const lng = parseFloat(mapEl.dataset.lng)
     if (Number.isNaN(lat) || Number.isNaN(lng)) return
 
+    if (mapEl.dataset.ready === "1" && mapEl._leaflet_map) {
+      this.#syncDetailMap(mapEl._leaflet_map, mapEl._leaflet_marker, lat, lng)
+      return
+    }
+
+    // Stale Leaflet leftovers after Turbo replaced markup without our ready flag.
+    if (mapEl._leaflet_id) {
+      try {
+        mapEl._leaflet_map?.remove?.()
+      } catch (_) { /* ignore */ }
+      mapEl._leaflet_id = undefined
+      mapEl.innerHTML = ""
+    }
+
     const map = L.map(mapEl, {
       zoomControl: false,
       attributionControl: false,
       scrollWheelZoom: false
-    }).setView([lat, lng], 15)
+    })
 
     L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
       maxZoom: 19
@@ -233,11 +252,27 @@ export default class extends Controller {
       `
     })
 
-    L.marker([lat, lng], { icon: homeIcon, interactive: false }).addTo(map)
+    const marker = L.marker([lat, lng], { icon: homeIcon, interactive: false }).addTo(map)
 
     mapEl.dataset.ready = "1"
     mapEl._leaflet_map = map
-    window.setTimeout(() => map.invalidateSize(), 80)
+    mapEl._leaflet_marker = marker
+    this.#syncDetailMap(map, marker, lat, lng)
+  }
+
+  #syncDetailMap(map, marker, lat, lng) {
+    if (!map) return
+    const center = [lat, lng]
+    if (marker?.setLatLng) marker.setLatLng(center)
+
+    const apply = () => {
+      map.invalidateSize({ animate: false })
+      map.setView(center, 15, { animate: false })
+    }
+
+    apply()
+    window.requestAnimationFrame(apply)
+    window.setTimeout(apply, 80)
   }
 
   #isPrimaryActivation(event) {

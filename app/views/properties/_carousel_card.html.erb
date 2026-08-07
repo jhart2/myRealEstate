@@ -15,24 +15,7 @@
       </span>
     <% end %>
 
-    <% if authenticated? %>
-      <% if current_user.favorited?(property) %>
-        <%= button_to property_favorite_path(property), method: :delete, class: "absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.45)]", aria: { label: "Remove favorite" } do %>
-          <svg class="h-[18px] w-[18px]" viewBox="0 0 24 24" fill="currentColor"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
-        <% end %>
-      <% else %>
-        <%= button_to property_favorite_path(property), method: :post, class: "absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.45)]", aria: { label: "Save property" } do %>
-          <svg class="h-[18px] w-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
-        <% end %>
-      <% end %>
-    <% else %>
-      <%= link_to new_session_path,
-            class: "absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.45)]",
-            aria: { label: "Sign in to save" },
-            data: { action: "auth-modal#open", auth_modal_mode_param: "login", auth_modal_intent_param: "save" } do %>
-        <svg class="h-[18px] w-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
-      <% end %>
-    <% end %>
+    <%= render "properties/favorite_heart", property: property, variant: "carousel" %>
   </div>
 
   <%= link_to property_path(property), class: "block min-w-0" do %>

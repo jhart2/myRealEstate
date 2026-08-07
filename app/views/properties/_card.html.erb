@@ -10,24 +10,7 @@
       <%= property.tag_label %>
     </span>
 
-    <% if authenticated? %>
-      <% if current_user.favorited?(property) %>
-        <%= button_to property_favorite_path(property), method: :delete, class: "absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-white/90", aria: { label: "Remove favorite" } do %>
-          <svg class="h-4 w-4 text-trinidad" viewBox="0 0 24 24" fill="currentColor"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
-        <% end %>
-      <% else %>
-        <%= button_to property_favorite_path(property), method: :post, class: "absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-white/90", aria: { label: "Save property" } do %>
-          <svg class="h-4 w-4 text-ink-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
-        <% end %>
-      <% end %>
-    <% else %>
-      <%= link_to new_session_path,
-            class: "absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-white/90",
-            aria: { label: "Sign in to save" },
-            data: { action: "auth-modal#open", auth_modal_mode_param: "login", auth_modal_intent_param: "save" } do %>
-        <svg class="h-4 w-4 text-ink-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
-      <% end %>
-    <% end %>
+    <%= render "properties/favorite_heart", property: property, variant: "card" %>
   </div>
 
   <div class="p-5">

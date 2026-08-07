@@ -1,6 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 // Desktop mosaic preview + mobile full-bleed slideshow + full photo viewer.
+// Mobile track wraps (last ↔ first) via edge clones when there are 2+ photos.
 export default class extends Controller {
   static targets = [
     "hero",
@@ -21,15 +22,62 @@ export default class extends Controller {
   connect() {
     this._onDocKey = this.onKeydown.bind(this)
     this._pointerX = 0
-    this._swipeStartIndex = 0
     this._scrollRaf = null
-    this._wrapping = false
+    this._scrollEndTimer = null
+    this._loopReady = false
+    this._jumping = false
+    this._onScrollEnd = () => this.correctLoopEdge()
+
+    this.setupMobileLoop()
   }
 
   disconnect() {
     document.removeEventListener("keydown", this._onDocKey)
     if (this._scrollRaf) cancelAnimationFrame(this._scrollRaf)
+    if (this._scrollEndTimer) clearTimeout(this._scrollEndTimer)
+    if (this.hasTrackTarget && this._onScrollEnd) {
+      this.trackTarget.removeEventListener("scrollend", this._onScrollEnd)
+    }
     this.unlockScroll()
+  }
+
+  setupMobileLoop() {
+    if (!this.hasTrackTarget) return
+    const slides = this.slideTargets
+    if (slides.length < 2) return
+    if (this.trackTarget.querySelector("[data-loop-clone]")) {
+      this._loopReady = true
+      return
+    }
+
+    const track = this.trackTarget
+    const first = slides[0]
+    const last = slides[slides.length - 1]
+
+    const head = last.cloneNode(true)
+    const tail = first.cloneNode(true)
+    ;[head, tail].forEach((clone) => {
+      clone.removeAttribute("data-listing-gallery-target")
+      clone.classList.remove("is-active")
+      clone.setAttribute("aria-hidden", "true")
+      clone.tabIndex = -1
+    })
+    head.dataset.loopClone = "head"
+    head.dataset.index = String(slides.length - 1)
+    tail.dataset.loopClone = "tail"
+    tail.dataset.index = "0"
+
+    track.insertBefore(head, first)
+    track.appendChild(tail)
+    this._loopReady = true
+
+    track.addEventListener("scrollend", this._onScrollEnd)
+
+    // Start on the real first slide (offset 1 after the leading clone).
+    window.requestAnimationFrame(() => {
+      this.jumpToLoopOffset(1)
+      this.syncMobileChrome(0)
+    })
   }
 
   openViewer(event) {
@@ -45,11 +93,6 @@ export default class extends Controller {
 
   onSlidePointerDown(event) {
     this._pointerX = event.clientX
-    this._swipeStartIndex = this.currentMobileIndex()
-  }
-
-  onSlidePointerUp(event) {
-    this.maybeWrapMobileSwipe(event.clientX)
   }
 
   onSlideClick(event) {
@@ -124,7 +167,7 @@ export default class extends Controller {
   }
 
   onTrackScroll() {
-    if (this._wrapping) return
+    if (this._jumping) return
     if (this._scrollRaf) cancelAnimationFrame(this._scrollRaf)
     this._scrollRaf = requestAnimationFrame(() => {
       this._scrollRaf = null
@@ -132,37 +175,10 @@ export default class extends Controller {
       this.indexValue = index
       this.syncMobileChrome(index)
     })
-  }
 
-  // At either end of the mobile banner, continue the swipe to wrap around.
-  maybeWrapMobileSwipe(clientX) {
-    const total = this.total()
-    if (total < 2 || this._wrapping) return
-
-    const dx = clientX - this._pointerX
-    if (Math.abs(dx) < 40) return
-
-    const start = this._swipeStartIndex
-    const current = this.currentMobileIndex()
-    const swipedNext = dx < 0
-    const swipedPrev = dx > 0
-
-    if (swipedNext && start >= total - 1 && current >= total - 1) {
-      this.wrapMobileTo(0)
-    } else if (swipedPrev && start <= 0 && current <= 0) {
-      this.wrapMobileTo(total - 1)
-    }
-  }
-
-  wrapMobileTo(index) {
-    this._wrapping = true
-    // Jump instantly so wrap doesn't animate through every intermediate slide.
-    this.scrollToSlide(index, false)
-    this.syncMobileChrome(index)
-    this.indexValue = index
-    window.setTimeout(() => {
-      this._wrapping = false
-    }, 50)
+    // Fallback when scrollend is unavailable.
+    if (this._scrollEndTimer) clearTimeout(this._scrollEndTimer)
+    this._scrollEndTimer = window.setTimeout(() => this.correctLoopEdge(), 90)
   }
 
   goToSlide(event) {
@@ -213,7 +229,14 @@ export default class extends Controller {
     const track = this.trackTarget
     const width = track.clientWidth
     if (!width) return this.indexValue
-    return Math.round(track.scrollLeft / width)
+
+    const raw = Math.round(track.scrollLeft / width)
+    if (!this._loopReady) return raw
+
+    const n = this.total()
+    if (raw <= 0) return n - 1
+    if (raw >= n + 1) return 0
+    return raw - 1
   }
 
   scrollToSlide(index, smooth) {
@@ -221,9 +244,46 @@ export default class extends Controller {
     const track = this.trackTarget
     const width = track.clientWidth
     if (!width) return
-    const left = index * width
+
+    const offset = this._loopReady ? index + 1 : index
+    const left = offset * width
     if (Math.abs(track.scrollLeft - left) < 2) return
     track.scrollTo({ left, behavior: smooth ? "smooth" : "auto" })
+  }
+
+  correctLoopEdge() {
+    if (!this._loopReady || this._jumping || !this.hasTrackTarget) return
+
+    const track = this.trackTarget
+    const width = track.clientWidth
+    if (!width) return
+
+    const raw = Math.round(track.scrollLeft / width)
+    const n = this.total()
+    if (raw <= 0) {
+      this.jumpToLoopOffset(n)
+    } else if (raw >= n + 1) {
+      this.jumpToLoopOffset(1)
+    }
+  }
+
+  jumpToLoopOffset(offset) {
+    if (!this.hasTrackTarget) return
+    const track = this.trackTarget
+    const width = track.clientWidth
+    if (!width) return
+
+    this._jumping = true
+    track.scrollTo({ left: offset * width, behavior: "auto" })
+
+    const n = this.total()
+    const index = offset <= 0 ? n - 1 : offset >= n + 1 ? 0 : offset - 1
+    this.indexValue = index
+    this.syncMobileChrome(index)
+
+    window.requestAnimationFrame(() => {
+      this._jumping = false
+    })
   }
 
   syncMobileChrome(index) {

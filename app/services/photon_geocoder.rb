@@ -45,7 +45,9 @@ class PhotonGeocoder
     prefer_tt = ranked.select { |r| r[:in_tt] } + ranked.reject { |r| r[:in_tt] }
     # Prefer real places over rivers/peaks when ranks are otherwise similar
     prefer_tt = prefer_tt.sort_by { |r| place_rank(r[:type]) }
-    prefer_tt.first(limit).map { |r| r.except(:in_tt).merge(lat: r[:lat], lng: r[:lng]) }
+    prefer_tt.first(limit).map do |r|
+      r.except(:in_tt).merge(lat: r[:lat], lng: r[:lng], city: r[:city], state: r[:state], countrycode: r[:countrycode])
+    end
   end
 
   private
@@ -87,11 +89,12 @@ class PhotonGeocoder
     name = props["name"].presence
     return nil if name.blank?
 
+    city = props["city"].presence || props["locality"].presence || props["district"].presence
+    state = props["state"].presence || props["county"].presence
     parts = [
       name,
-      props["city"],
-      props["county"],
-      props["state"],
+      city,
+      state,
       props["country"]
     ].compact.map(&:strip).uniq
 
@@ -103,6 +106,9 @@ class PhotonGeocoder
     {
       id: feature["properties"]&.dig("osm_id") || label,
       name: name,
+      city: city,
+      state: state,
+      countrycode: countrycode,
       label: label,
       type: props["type"].presence || props["osm_value"].presence || "place",
       lat: lat,

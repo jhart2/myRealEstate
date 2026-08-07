@@ -59,12 +59,36 @@ class BokListingsImporter
     "maracas" => [ 10.7600, -61.4400 ],
     "las cuevas" => [ 10.7800, -61.4000 ],
     "petit valley" => [ 10.7000, -61.5500 ],
-    "diamond vale" => [ 10.7050, -61.5650 ]
+    "diamond vale" => [ 10.7050, -61.5650 ],
+    "palmiste" => [ 10.2550, -61.4750 ],
+    "gulf view" => [ 10.2550, -61.4550 ],
+    "philipine" => [ 10.2650, -61.4600 ],
+    "phillipine" => [ 10.2650, -61.4600 ],
+    "tacarigua" => [ 10.6400, -61.3750 ],
+    "orange grove" => [ 10.6400, -61.3700 ],
+    "south oropouche" => [ 10.2050, -61.5300 ],
+    "oropouche" => [ 10.2050, -61.5300 ],
+    "la romain" => [ 10.2550, -61.4900 ],
+    "endeavour" => [ 10.5250, -61.4050 ],
+    "cunupia" => [ 10.5498, -61.3727 ],
+    "chin chin" => [ 10.5535, -61.3706 ],
+    "charlieville" => [ 10.5623, -61.4138 ],
+    "carenage" => [ 10.6850, -61.5800 ],
+    "cedros" => [ 10.0928, -61.8602 ],
+    "blanchisseuse" => [ 10.7880, -61.3080 ],
+    "longdenville" => [ 10.5142, -61.3786 ],
+    "chase village" => [ 10.4719, -61.4142 ],
+    "penal" => [ 10.1667, -61.4500 ],
+    "gasparillo" => [ 10.3167, -61.4000 ],
+    "toco" => [ 10.8333, -60.9500 ],
+    "piarco" => [ 10.5950, -61.3400 ],
+    "las lomas" => [ 10.5400, -61.3300 ]
   }.freeze
 
   Result = Struct.new(
     :created, :updated, :skipped, :removed, :errors,
     :copy_applied, :copy_flagged, :address_enriched,
+    :touched_bok_ids, :created_bok_ids, :deduped,
     keyword_init: true
   )
 
@@ -72,8 +96,19 @@ class BokListingsImporter
     new(path, agent: agent).import!
   end
 
-  def initialize(path = nil, agent: nil)
-    @path = resolve_path(path)
+  # Apply latest sale/rent + price rules to matching properties from a feed JSON
+  # without re-running listing-copy / image / address upserts.
+  def self.reconcile_offers!(path)
+    new(path).reconcile_offers!
+  end
+
+  # Collapse soft-fingerprint rows, keeping the highest BOK id.
+  def self.dedupe_soft_duplicates!
+    new(skip_path: true).dedupe_soft_duplicates!
+  end
+
+  def initialize(path = nil, agent: nil, skip_path: false)
+    @path = skip_path ? nil : resolve_path(path)
     @agent = agent
   end
 
@@ -84,18 +119,127 @@ class BokListingsImporter
     feed_agent = @agent || import_feed_agent
     result = Result.new(
       created: 0, updated: 0, skipped: 0, removed: 0, errors: [],
-      copy_applied: 0, copy_flagged: 0, address_enriched: 0
+      copy_applied: 0, copy_flagged: 0, address_enriched: 0,
+      touched_bok_ids: [], created_bok_ids: [], deduped: 0
     )
     touched_agent_ids = Set.new([ feed_agent.id ])
+    total = rows.size
+    cadence = BokSyncProgress.every
+    started = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+    BokSyncProgress.say("import #{total} rows from #{File.basename(@path.to_s)}")
 
-    rows.each do |row|
+    rows.each_with_index do |row, index|
       agent = resolve_listing_agent(row, feed_agent)
       touched_agent_ids << agent.id
       import_row(row, agent, result)
+
+      done = index + 1
+      if done == total || (cadence.positive? && (done % cadence).zero?)
+        elapsed = (Process.clock_gettime(Process::CLOCK_MONOTONIC) - started).round
+        BokSyncProgress.say(
+          "import #{done}/#{total} (#{elapsed}s) " \
+          "created=#{result.created} updated=#{result.updated} skipped=#{result.skipped} " \
+          "addr=#{result.address_enriched} copy=#{result.copy_applied} errors=#{result.errors.size}"
+        )
+      end
     end
+
+    BokSyncProgress.say("import dedupe soft-fingerprint matches…")
+    dup_summary = dedupe_soft_duplicates!
+    result.deduped = dup_summary[:removed].to_i
+    result.removed += result.deduped
+    result.touched_bok_ids |= Array(dup_summary[:kept_bok_ids])
+    BokSyncProgress.say("import deduped=#{result.deduped}") if result.deduped.positive?
 
     touched_agent_ids.each { |id| Agent.reset_counters(id, :properties) }
     result
+  end
+
+  # Soft duplicates: same title + price + beds + baths + sqft + image set.
+  # Differing beds/baths/sqft (nil vs present) or different galleries are NOT dups.
+  def dedupe_soft_duplicates!
+    removed = 0
+    kept = []
+    errors = []
+
+    fingerprint_groups.each do |_fp, props|
+      next if props.size <= 1
+
+      ordered = props.sort_by { |p| [ -bok_id_rank(p.bok_id), -p.id ] }
+      keeper = ordered.first
+      losers = ordered.drop(1)
+      losers.each do |dup|
+        dup.destroy!
+        removed += 1
+      rescue StandardError => e
+        errors << "#{dup.bok_id || dup.id}: #{e.class}: #{e.message}"
+      end
+      kept << keeper.bok_id if keeper.bok_id.present?
+    end
+
+    { removed: removed, kept_bok_ids: kept.compact.uniq, errors: errors }
+  end
+
+  # Re-apply resolve_offer rules to feed rows that already exist locally.
+  # Fixes dual sale/rent tip-price + tag drift without a full re-upsert.
+  def reconcile_offers!
+    rows = JSON.parse(File.read(@path))
+    raise ArgumentError, "Expected a JSON array in #{@path}" unless rows.is_a?(Array)
+
+    updated = 0
+    skipped = 0
+    missing = 0
+    errors = []
+    touched = []
+    total = rows.size
+    cadence = BokSyncProgress.every
+    BokSyncProgress.say("offer reconcile #{total} feed rows")
+
+    rows.each_with_index do |row, index|
+      bok_id = row["bok_id"].to_s.strip.presence
+      next if bok_id.blank?
+
+      property = Property.find_by(bok_id: bok_id)
+      unless property
+        missing += 1
+        next
+      end
+
+      offer = resolve_offer(row)
+      price_cents = offer[:price_cents]
+      tag = offer[:tag]
+      if price_cents.nil? || price_cents <= 0 || tag.blank?
+        skipped += 1
+        next
+      end
+
+      property.assign_attributes(tag: tag, price_cents: price_cents)
+      if property.changed?
+        property.save!
+        updated += 1
+        touched << bok_id
+      else
+        skipped += 1
+      end
+    rescue StandardError => e
+      errors << "#{bok_id}: #{e.class}: #{e.message}"
+    ensure
+      done = index + 1
+      if done == total || (cadence.positive? && (done % cadence).zero?)
+        BokSyncProgress.say(
+          "offer reconcile #{done}/#{total} updated=#{updated} skipped=#{skipped} missing=#{missing}"
+        )
+      end
+    end
+
+    {
+      path: @path.to_s,
+      updated: updated,
+      skipped: skipped,
+      missing: missing,
+      errors: errors,
+      touched_bok_ids: touched
+    }
   end
 
   private
@@ -176,7 +320,8 @@ class BokListingsImporter
       return
     end
 
-    price_cents = parse_price_cents(row["price"])
+    offer = resolve_offer(row)
+    price_cents = offer[:price_cents]
     if price_cents.nil? || price_cents <= 0
       result.skipped += 1
       result.errors << "#{bok_id || source_url}: missing/invalid price"
@@ -184,20 +329,35 @@ class BokListingsImporter
     end
 
     image_urls = resolve_image_urls(row)
-    property = find_property(bok_id, source_url)
-
     if image_urls.empty?
+      property = find_property(bok_id, source_url)
       handle_unusable_images!(property, bok_id || source_url, result)
       return
     end
 
-    attrs = build_attrs(row, agent, price_cents, image_urls, result: result, existing: property)
+    beds = row["bedrooms"].to_s[/\d+/]&.to_i
+    baths = parse_baths(row["bathrooms"])
+    sqft = parse_sqft(row["sqft"])
+    title = clean_title(row["title"], row["url"])
+    fingerprint = soft_fingerprint(
+      title:, price_cents:, beds:, baths:, sqft:, image_urls:
+    )
+    property = find_property(bok_id, source_url, fingerprint: fingerprint)
+
+    attrs = build_attrs(
+      row, agent, price_cents, image_urls,
+      result: result, existing: property, tag: offer[:tag]
+    )
+    # Keep site-polished rich HTML; BOK scrape copy must not flatten it.
+    attrs = attrs.except(:description) if property && polished_rich_description?(property)
+    attrs = prefer_newer_identity(attrs, property, bok_id, source_url)
 
     if property
       property.assign_attributes(attrs.except(:slug))
       if property.changed?
         property.save!
         result.updated += 1
+        result.touched_bok_ids << property.bok_id if property.bok_id.present?
         apply_listing_copy!(property, result)
       else
         result.skipped += 1
@@ -205,6 +365,10 @@ class BokListingsImporter
     else
       property = Property.create!(attrs)
       result.created += 1
+      if property.bok_id.present?
+        result.touched_bok_ids << property.bok_id
+        result.created_bok_ids << property.bok_id
+      end
       apply_listing_copy!(property, result)
     end
   rescue ActiveRecord::RecordInvalid => e
@@ -212,10 +376,138 @@ class BokListingsImporter
     result.skipped += 1
   end
 
+  # Dual sale/rent pages often scrape the monthly USD tip price as "For Sale".
+  # Prefer an explicit purchase price from the body and keep tag=sale for duals.
+  PURCHASE_FLOOR_CENTS = 100_000_00 # TT$100k
+
+  def resolve_offer(row)
+    scraped = row["price"].to_s
+    title = row["title"].to_s
+    url = row["url"].to_s
+    desc = row["description"].to_s
+    blob = [ title, url, desc ].join("\n")
+
+    sale_cents = extract_sale_price_cents(blob)
+    rent_cents = extract_rent_price_cents(blob)
+    scraped_cents = parse_price_cents(scraped)
+    scraped_monthly = monthly_price_label?(scraped)
+    dual = dual_offer_text?(blob) || (sale_cents.present? && rent_cents.present?)
+
+    if scraped_monthly && sale_cents
+      return { tag: "sale", price_cents: sale_cents }
+    end
+
+    if scraped_cents && scraped_cents < PURCHASE_FLOOR_CENTS && rentish_dwelling?(row) &&
+        (scraped_monthly || sale_cents.nil?)
+      return { tag: "rent", price_cents: scraped_cents }
+    end
+
+    if dual
+      purchase = sale_cents
+      purchase ||= scraped_cents if scraped_cents && scraped_cents >= PURCHASE_FLOOR_CENTS && !scraped_monthly
+      if purchase
+        return { tag: "sale", price_cents: purchase }
+      end
+
+      monthly = rent_cents || scraped_cents
+      return { tag: "rent", price_cents: monthly } if monthly
+    end
+
+    tag = map_tag(
+      row,
+      sale_cents: sale_cents,
+      rent_cents: rent_cents,
+      scraped_cents: scraped_cents,
+      dual: dual
+    )
+    price =
+      if tag == "sale"
+        sale_cents || scraped_cents
+      else
+        rent_cents || scraped_cents
+      end
+    { tag: tag, price_cents: price }
+  end
+
+  def dual_offer_text?(blob)
+    blob.to_s.downcase.match?(
+      /for\s+sale\s*\/\s*or\s*\/?\s*rent|for\s+rent\s*\/\s*sale|sale\s*\/?\s*or\s*\/?\s*rent|
+       sale-or-rent|for-sale-rent|rent\s+or\s+sale|sale\s+or\s+rent|for\s+sale\s*\/\s*rent|
+       for\s+rent\s*\/\s*or\s*\/?\s*sale/x
+    )
+  end
+
+  def rentish_dwelling?(row)
+    style = row["property_style"].to_s
+    title = row["title"].to_s
+    style.match?(/apartment|townhouse/i) ||
+      title.match?(/apartment|townhouse|condo|penthouse|house|home/i)
+  end
+
+  def monthly_price_label?(raw)
+    text = raw.to_s.downcase
+    return true if text.match?(/\/\s*mth|\/\s*mo\b|per\s+month|\/\s*month/)
+
+    digits = text.gsub(/[^\d]/, "").to_i
+    text.include?("(usd)") && digits.between?(500, 20_000)
+  end
+
+  def extract_sale_price_cents(blob)
+    text = blob.to_s
+    patterns = [
+      /for\s+sale[^$\d]{0,40}(?:tt\$|\$)?\s*([\d.,]+)\s*(m\b|mil(?:lion)?|mm)?/i,
+      /sale\s*(?:price)?\s*[:=\-–]?\s*(?:tt\$|\$)?\s*([\d.,]+)\s*(m\b|mil(?:lion)?|mm)?/i
+    ]
+    amounts = patterns.flat_map { |re| text.scan(re) }.filter_map do |num, mag|
+      to_price_cents(num, magnitude: mag)
+    end
+    amounts.select { |c| c >= PURCHASE_FLOOR_CENTS }.max
+  end
+
+  def extract_rent_price_cents(blob)
+    text = blob.to_s
+    patterns = [
+      /for\s+rent[^$\d]{0,40}(?:us\$|usd|tt\$|\$)?\s*([\d.,]+)/i,
+      /rent(?:al)?(?:\s+options?)?\s*[:=\-–]?\s*(?:us\$|usd|tt\$|\$)?\s*([\d.,]+)/i,
+      /(?:us\$|usd|tt\$|\$)\s*([\d.,]+)\s*(?:\/\s*mth|\/\s*mo\b|per\s+month|\/\s*month)/i
+    ]
+    amounts = patterns.flat_map { |re| text.scan(re) }.filter_map do |match|
+      num = match.is_a?(Array) ? match[0] : match
+      cents = to_price_cents(num)
+      cents && cents < PURCHASE_FLOOR_CENTS ? cents : nil
+    end
+    amounts.max
+  end
+
+  def to_price_cents(num, magnitude: nil)
+    digits = num.to_s.gsub(/[^\d.]/, "")
+    return nil if digits.blank?
+
+    value = BigDecimal(digits)
+    mag = magnitude.to_s.downcase
+    value *= 1_000_000 if mag.start_with?("m")
+    (value * 100).to_i
+  rescue ArgumentError
+    nil
+  end
+
+  def polished_rich_description?(property)
+    html = property.respond_to?(:description_html) ? property.description_html.to_s : ""
+    return false if html.blank?
+    return true if html.match?(/<h2\b/i) &&
+      ListingDescriptionRichFormatter::BESPOKE_HEADING_LABELS.any? { |label|
+        html.include?(label) || html.include?(ERB::Util.html_escape(label))
+      }
+
+    false
+  end
+
   # After create/update: OpenAI clean → apply if clean, else flag.
+  # Never rewrite after a successful apply (status=ok) or polished rich HTML.
   # Safe rematches are a separate dry daisy (listing_copy:daisy), not inline here.
   def apply_listing_copy!(property, result)
     return unless listing_copy_enabled?
+    return if listing_copy_locked?(property)
 
     outcome = ListingCopyApplier.call(property)
     if outcome.applied?
@@ -226,6 +518,15 @@ class BokListingsImporter
   rescue OpenaiClient::Error, ListingCopyCleaner::Error, ListingCopyApplier::Error => e
     result.copy_flagged += 1
     result.errors << "#{property.bok_id || property.id}: listing copy #{e.message}"
+  end
+
+  def listing_copy_locked?(property)
+    polished_rich_description?(property) || listing_copy_applied_ok?(property)
+  end
+
+  def listing_copy_applied_ok?(property)
+    notes = property.respond_to?(:copy_review_notes) ? property.copy_review_notes : nil
+    notes.is_a?(Hash) && notes["status"].to_s == "ok"
   end
 
   def listing_copy_enabled?
@@ -253,22 +554,98 @@ class BokListingsImporter
     normalize_image_urls(row["images"].presence || row["image"])
   end
 
-  def find_property(bok_id, source_url)
+  def find_property(bok_id, source_url, fingerprint: nil)
     scope = Property.all
     by_bok = bok_id.present? ? scope.find_by(bok_id: bok_id) : nil
     return by_bok if by_bok
 
-    source_url.present? ? scope.find_by(source_url: source_url) : nil
+    by_url = source_url.present? ? scope.find_by(source_url: source_url) : nil
+    return by_url if by_url
+
+    find_soft_duplicate(fingerprint)
   end
 
-  def build_attrs(row, agent, price_cents, image_urls, result: nil, existing: nil)
-    title = clean_title(row["title"], row["url"])
-    place = ListingAddressBrain.enrich(row.merge("title" => title))
-    if result && place.source.to_s.match?(/openai|google/)
-      result.address_enriched += 1
-    end
+  def soft_fingerprint(title:, price_cents:, beds:, baths:, sqft:, image_urls:)
+    images = images_fingerprint(image_urls)
+    {
+      title: title.to_s.strip.downcase,
+      price_cents: price_cents.to_i,
+      beds: beds.nil? ? nil : beds.to_i,
+      baths: baths.nil? ? nil : BigDecimal(baths.to_s),
+      sqft: sqft.nil? ? nil : sqft.to_i,
+      images: images
+    }
+  end
 
-    address_attrs = merge_address_attrs(existing, place)
+  # Canonical gallery identity: order-insensitive normalized URL set.
+  def images_fingerprint(urls)
+    normalize_image_urls(urls)
+      .map { |url| url.to_s.strip.downcase.sub(/\?.*\z/, "").delete_suffix("/") }
+      .reject(&:blank?)
+      .uniq
+      .sort
+  end
+
+  def find_soft_duplicate(fingerprint)
+    return nil if fingerprint.blank? || fingerprint[:title].blank? || fingerprint[:price_cents].to_i <= 0
+    return nil if fingerprint[:images].blank?
+
+    scope = Property.where("LOWER(TRIM(title)) = ?", fingerprint[:title])
+      .where(price_cents: fingerprint[:price_cents])
+    scope = fingerprint[:beds].nil? ? scope.where(beds: nil) : scope.where(beds: fingerprint[:beds])
+    scope = fingerprint[:baths].nil? ? scope.where(baths: nil) : scope.where(baths: fingerprint[:baths])
+    scope = fingerprint[:sqft].nil? ? scope.where(sqft: nil) : scope.where(sqft: fingerprint[:sqft])
+
+    scope.select { |p| images_fingerprint(p.image_urls) == fingerprint[:images] }
+      .max_by { |p| [ bok_id_rank(p.bok_id), p.id ] }
+  end
+
+  def fingerprint_groups
+    Property.where.not(title: [ nil, "" ]).where("price_cents > 0").find_each
+      .group_by { |p|
+        soft_fingerprint(
+          title: p.title,
+          price_cents: p.price_cents,
+          beds: p.beds,
+          baths: p.baths,
+          sqft: p.sqft,
+          image_urls: p.image_urls
+        )
+      }
+      .select { |fp, props| props.size > 1 && fp[:images].present? }
+  end
+
+  def bok_id_rank(bok_id)
+    bok_id.to_s[/\d+/].to_i
+  end
+
+  # Soft-matched older scrape keeps the newer BOK identity when ranks differ.
+  def prefer_newer_identity(attrs, existing, incoming_bok_id, _incoming_url)
+    return attrs unless existing
+
+    if bok_id_rank(incoming_bok_id) < bok_id_rank(existing.bok_id)
+      attrs = attrs.merge(bok_id: existing.bok_id)
+      attrs = attrs.merge(source_url: existing.source_url) if existing.source_url.present?
+    elsif bok_id_rank(incoming_bok_id) == bok_id_rank(existing.bok_id) &&
+          incoming_bok_id.present? && existing.bok_id.present? &&
+          incoming_bok_id != existing.bok_id
+      attrs = attrs.merge(bok_id: existing.bok_id, source_url: existing.source_url)
+    end
+    attrs
+  end
+
+  def build_attrs(row, agent, price_cents, image_urls, result: nil, existing: nil, tag: nil)
+    title = clean_title(row["title"], row["url"])
+    # Never re-reconcile addresses on updates — AI/Google run once on create only.
+    address_attrs = if existing
+      existing_address_attrs(existing)
+    else
+      place = ListingAddressBrain.enrich(row.merge("title" => title))
+      if result && place.source.to_s.match?(/openai|google/)
+        result.address_enriched += 1
+      end
+      merge_address_attrs(nil, place)
+    end
     primary = normalize_image_urls(row["image"]).first || image_urls.first
 
     {
@@ -277,13 +654,14 @@ class BokListingsImporter
       source_url: row["url"].presence,
       title: title,
       slug: slug_for(row),
-      tag: map_tag(row),
+      tag: tag.presence || map_tag(row),
       property_type: map_property_type(row),
       status: "active",
       address: address_attrs[:address],
       city: address_attrs[:city],
       state: address_attrs[:state],
       zip: address_attrs[:zip],
+      location_raw: BokLocationToolkit.sanitize(row["location"]),
       price_cents: price_cents,
       beds: row["bedrooms"].to_s[/\d+/]&.to_i,
       baths: parse_baths(row["bathrooms"]),
@@ -304,6 +682,17 @@ class BokListingsImporter
     end
   end
 
+  def existing_address_attrs(property)
+    {
+      address: property.address,
+      city: property.city,
+      state: property.state,
+      zip: property.zip.to_s,
+      latitude: property.latitude,
+      longitude: property.longitude
+    }
+  end
+
   # Never demote a stronger existing street line during sync updates.
   def merge_address_attrs(existing, place)
     proposed = {
@@ -320,13 +709,14 @@ class BokListingsImporter
     after_q = BokAddressResolver.address_quality(proposed[:address], proposed[:city])
 
     if after_q < before_q || (before_q >= 3 && existing.address.to_s.match?(/\d/) && !proposed[:address].match?(/\d/))
+      lat, lng = prefer_street_coords(existing, proposed)
       return {
         address: existing.address,
         city: existing.city,
         state: existing.state,
         zip: existing.zip.to_s,
-        latitude: proposed[:latitude].presence || existing.latitude,
-        longitude: proposed[:longitude].presence || existing.longitude
+        latitude: lat,
+        longitude: lng
       }
     end
 
@@ -336,19 +726,46 @@ class BokListingsImporter
       proposed[:state] = existing.state
     end
 
-    proposed
+    lat, lng = prefer_street_coords(existing, proposed)
+    proposed.merge(latitude: lat, longitude: lng)
   end
 
-  def map_tag(row)
+  # Keep a refined street pin if the proposal is still a city-centroid dump.
+  def prefer_street_coords(existing, proposed)
+    existing_city = PropertyStreetGeocoder.city_level_coords?(existing.latitude, existing.longitude)
+    proposed_city = PropertyStreetGeocoder.city_level_coords?(proposed[:latitude], proposed[:longitude])
+
+    if !existing_city && (proposed[:latitude].blank? || proposed_city)
+      return [ existing.latitude, existing.longitude ]
+    end
+
+    [
+      proposed[:latitude].presence || existing.latitude,
+      proposed[:longitude].presence || existing.longitude
+    ]
+  end
+
+  def map_tag(row, sale_cents: nil, rent_cents: nil, scraped_cents: nil, dual: nil)
     intent = row["property_type"].to_s.downcase
     price = row["price"].to_s.downcase
     url = row["url"].to_s.downcase
     title = row["title"].to_s.downcase
+    desc = row["description"].to_s.downcase
+    blob = "#{title}\n#{url}\n#{desc}"
+    dual = dual.nil? ? dual_offer_text?(blob) : dual
+    scraped_cents ||= parse_price_cents(row["price"])
+    purchase_like = (sale_cents && sale_cents >= PURCHASE_FLOOR_CENTS) ||
+      (scraped_cents && scraped_cents >= PURCHASE_FLOOR_CENTS && !monthly_price_label?(row["price"]))
 
-    return "rent" if intent.include?("rent")
-    return "rent" if price.include?("/ mth") || price.include?("/mth") || price.include?("per month")
-    return "rent" if url.include?("for-rent") || title.include?("for rent")
-    return "sale" if intent.include?("sale") || intent.include?("buy")
+    # Dual listing with a purchase price stays sale (don't flip from title "for rent").
+    return "sale" if dual && purchase_like
+
+    # Explicit rent intent without a dual/sale conflict.
+    return "rent" if intent.include?("rent") && !intent.include?("sale") && !dual
+    return "rent" if monthly_price_label?(price) && !purchase_like
+    return "rent" if (url.include?("for-rent") || title.include?("for rent")) && !purchase_like && !dual
+
+    return "sale" if intent.include?("sale") || intent.include?("buy") || purchase_like
 
     "sale"
   end

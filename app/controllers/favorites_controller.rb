@@ -18,18 +18,45 @@ class FavoritesController < ApplicationController
   private
 
   def respond_after_change(property, notice:, fallback: nil)
+    respond_to do |format|
+      format.turbo_stream { render turbo_stream: favorite_streams(property) }
+      format.html do
+        redirect_back fallback_location: fallback || property_path(property), notice: notice
+      end
+    end
+  end
+
+  def favorite_streams(property)
+    streams = []
+
     if lightbox_source?
-      render turbo_stream: turbo_stream.replace(
+      streams << turbo_stream.replace(
         helpers.dom_id(property, :lightbox_favorite),
         partial: "properties/lightbox_favorite",
         locals: { property: property }
       )
     else
-      redirect_back fallback_location: fallback || property_path(property), notice: notice
+      streams << turbo_stream.replace(
+        helpers.dom_id(property, :favorite_heart),
+        partial: "properties/favorite_heart",
+        locals: { property: property, variant: heart_variant }
+      )
+      # Keep lightbox heart in sync if that panel is open for the same listing.
+      streams << turbo_stream.replace(
+        helpers.dom_id(property, :lightbox_favorite),
+        partial: "properties/lightbox_favorite",
+        locals: { property: property }
+      )
     end
+
+    streams
   end
 
   def lightbox_source?
     params[:source].to_s == "lightbox"
+  end
+
+  def heart_variant
+    params[:variant].to_s == "card" ? "card" : "carousel"
   end
 end

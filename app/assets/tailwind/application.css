@@ -2334,7 +2334,7 @@ html.lightbox-open body {
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
   touch-action: pan-x;
-  overscroll-behavior-x: contain;
+  overscroll-behavior-x: auto;
   scrollbar-width: none;
 }
 

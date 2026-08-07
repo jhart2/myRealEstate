@@ -18,6 +18,13 @@ namespace :bok do
   desc "Scrape up to BOK_SYNC_MAX_DETAILS (default 250) newest unfinished BOK houses, then import (and push changes to staging)"
   task sync: :environment do
     puts "Starting BOK sync (newest first, lookback #{ENV.fetch("BOK_SYNC_DAYS", "7")} days)…"
+    # Surface external stops clearly (systemctl stop/kill). Without this, Ruby often
+    # raises SignalException deep inside OpenaiClient during address-brain work.
+    Signal.trap("TERM") do
+      warn "[bok:sync] SIGTERM received — usually systemctl stop/kill, not an OpenAI outage"
+      Rails.logger.warn("[BokListingsSyncJob] SIGTERM received (external stop)")
+      raise SignalException, "SIGTERM"
+    end
     summary = BokListingsSyncJob.perform_now
     puts "JSON: #{summary[:json_path]}"
     puts "Created: #{summary[:created]}"

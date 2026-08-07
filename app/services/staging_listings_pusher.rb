@@ -43,6 +43,7 @@ class StagingListingsPusher
     raise PushError, "Missing push script at #{script}" unless script.exist?
 
     Rails.logger.info("[StagingListingsPusher] bash #{script} #{json}")
+    BokSyncProgress.say("staging script #{script.basename} #{json.basename}")
 
     _out, status = Open3.capture2e(
       path_env,
@@ -80,7 +81,12 @@ class StagingListingsPusher
 
   def path_env
     {
-      "PATH" => [ GCLOUD_BIN, MISE_BIN, LOCAL_BIN, ENV.fetch("PATH", "/usr/bin:/bin") ].join(":")
+      "PATH" => [
+        GCLOUD_BIN,
+        MISE_BIN,
+        LOCAL_BIN,
+        ENV.fetch("PATH", "/usr/bin:/bin")
+      ].join(":")
     }
   end
 end

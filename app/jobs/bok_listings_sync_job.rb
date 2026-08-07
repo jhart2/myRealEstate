@@ -1,21 +1,29 @@
-# Hourly BOK sync: scrape up to N newest unfinished house listings in a lookback
-# window, then upsert into Property via BokListingsImporter.
+# Hourly BOK sync: scrape up to N newest unfinished listings in an expanding
+# lookback window, then upsert into Property via BokListingsImporter.
 #
 #   BokListingsSyncJob.perform_now
 #   bin/rails bok:sync
 #
 # Env (optional):
-#   BOK_SYNC_DAYS          lookback days (default 7)
+#   BOK_SYNC_DAYS          starting lookback peg + expansion step in days (default 7).
+#                          progress_cache.lookback_days grows by this when a window
+#                          is fully fetched so later runs reach further back.
 #   BOK_SYNC_MAX_DETAILS   detail fetches per run (default 250)
 #   BOK_SYNC_DELAY         polite delay seconds (default 4)
 #   BOK_SYNC_SKIP_SEARCH   "1" to sitemap-only (default on for hourly)
 #   BOK_SYNC_PUSH_STAGING  "0" to skip staging DB push (default: push outside test)
 #   BOK_APPLY_LISTING_COPY "0" to skip OpenAI listing-copy on create/update
-#                          (OpenAI applies clean copy only; safe rematches are
-#                           a separate dry daisy: bin/rails listing_copy:daisy)
-#   BOK_ADDRESS_BRAIN      "1" to OpenAI(+Google) enrich weak addresses on import
-#                          (scraper also sets weak_address / weak_reasons flags)
+#                          (never rewrites after status=ok or polished rich HTML;
+#                           safe rematches: bin/rails listing_copy:daisy)
+#   BOK_ADDRESS_BRAIN      "1" to OpenAI(+Google) enrich weak addresses on create only
+#                          (existing rows keep stored address; never re-reconciled)
 #   ADDRESS_BRAIN_BATCH    batch size for bulk backfill script (default 12)
+#   BOK_COORD_RECONCILE    "0" to skip post-create street pin reconcile (default: on)
+#   BOK_COORD_RECONCILE_SOURCES  deep|public_deep|public|auto (default: deep)
+#   BOK_COORD_RECONCILE_LIMIT    optional cap per sync run (creates only)
+#   BOK_OFFER_RECONCILE    "0" to skip post-import sale/rent+price reconcile (default: on)
+#   BOK_SYNC_QUIET         "1" to silence stdout progress (tests default quiet)
+#   BOK_SYNC_PROGRESS_EVERY import progress cadence in rows (default 25)
 #
 class BokListingsSyncJob < ApplicationJob
   queue_as :default
@@ -32,20 +40,43 @@ class BokListingsSyncJob < ApplicationJob
     delay = float_opt(delay, "BOK_SYNC_DELAY", DEFAULT_DELAY)
     skip_search = boolean_opt(skip_search_crawl, "BOK_SYNC_SKIP_SEARCH", true)
 
+    BokSyncProgress.say(
+      "phase=start days_peg=#{days} max_details=#{max_details} delay=#{delay}s " \
+      "(scraper expands lookback_days in progress_cache when window clears)"
+    )
     seed_known_urls_into_cache!
     reopen_style_skips_in_cache!
+
+    BokSyncProgress.say("phase=scrape")
     json_path = run_scraper!(days:, max_details:, delay:, skip_search_crawl: skip_search)
+
+    BokSyncProgress.say("phase=import file=#{File.basename(json_path.to_s)}")
     result = BokListingsImporter.import!(json_path)
 
-    Rails.logger.info(
-      "[BokListingsSyncJob] imported created=#{result.created} updated=#{result.updated} " \
-      "skipped=#{result.skipped} removed=#{result.removed} errors=#{result.errors.size} " \
-      "copy_applied=#{result.copy_applied} copy_flagged=#{result.copy_flagged} " \
-      "address_enriched=#{result.address_enriched} " \
-      "from=#{json_path}"
+    BokSyncProgress.say(
+      "phase=import_done created=#{result.created} updated=#{result.updated} " \
+      "skipped=#{result.skipped} removed=#{result.removed} deduped=#{result.deduped} " \
+      "errors=#{result.errors.size} copy_applied=#{result.copy_applied} " \
+      "copy_flagged=#{result.copy_flagged} address_enriched=#{result.address_enriched}"
     )
 
-    staging = push_to_staging_if_needed!(json_path, result)
+    BokSyncProgress.say("phase=offer_reconcile")
+    offers = reconcile_offers_if_needed!(json_path)
+    if offers.is_a?(Hash) && Array(offers[:touched_bok_ids]).any?
+      result.touched_bok_ids |= Array(offers[:touched_bok_ids])
+    end
+
+    BokSyncProgress.say("phase=coord_reconcile")
+    coords = reconcile_coords_if_needed!(result)
+
+    BokSyncProgress.say("phase=staging_push")
+    staging = push_to_staging_if_needed!(json_path, result, offer_updates: offers.is_a?(Hash) ? offers[:updated].to_i : 0)
+
+    BokSyncProgress.say(
+      "phase=done staging=#{staging ? "yes" : "no"} " \
+      "offers=#{offers.is_a?(Hash) ? offers[:updated].to_i : 0} " \
+      "coords_applied=#{coords.is_a?(Hash) ? coords[:applied].to_i : 0}"
+    )
 
     {
       json_path: json_path.to_s,
@@ -53,9 +84,12 @@ class BokListingsSyncJob < ApplicationJob
       updated: result.updated,
       skipped: result.skipped,
       removed: result.removed,
+      deduped: result.deduped,
       copy_applied: result.copy_applied,
       copy_flagged: result.copy_flagged,
       address_enriched: result.address_enriched,
+      offers_reconciled: offers,
+      coords_reconciled: coords,
       errors: result.errors,
       staging_pushed: staging
     }
@@ -99,7 +133,7 @@ class BokListingsSyncJob < ApplicationJob
     cache["updated_at"] = Time.current.utc.iso8601
     out_dir.mkpath
     cache_path.write(JSON.pretty_generate(cache))
-    Rails.logger.info("[BokListingsSyncJob] seeded #{added} known source_urls into progress cache")
+    BokSyncProgress.say("seeded #{added} known source_urls into progress cache")
   end
 
   # Older runs skipped non-House styles. Clear those cache rows so the next
@@ -121,7 +155,7 @@ class BokListingsSyncJob < ApplicationJob
     removed.each { |url| completed.delete(url) }
     cache["updated_at"] = Time.current.utc.iso8601
     cache_path.write(JSON.pretty_generate(cache))
-    Rails.logger.info("[BokListingsSyncJob] reopened #{removed.size} previously style-skipped URLs")
+    BokSyncProgress.say("reopened #{removed.size} previously style-skipped URLs")
   end
 
   def run_scraper!(days:, max_details:, delay:, skip_search_crawl:)
@@ -138,7 +172,7 @@ class BokListingsSyncJob < ApplicationJob
 
     before = Dir.glob(out_dir.join("houses_last_month_*.json")).map { |p| File.mtime(p) }.max
 
-    Rails.logger.info("[BokListingsSyncJob] running: #{cmd.join(" ")}")
+    BokSyncProgress.say("scraper #{cmd.join(" ")}")
     ok = execute_scraper!(cmd)
     unless ok
       status = $?.respond_to?(:exitstatus) ? $?.exitstatus : "unknown"
@@ -149,7 +183,7 @@ class BokListingsSyncJob < ApplicationJob
     raise SyncError, "No houses_last_month_*.json written under #{out_dir}" unless newest
 
     if before && File.mtime(newest) <= before
-      Rails.logger.warn("[BokListingsSyncJob] no newer JSON stamp; importing latest #{newest}")
+      BokSyncProgress.say("warn: no newer JSON stamp; importing latest #{File.basename(newest)}")
     end
 
     Pathname.new(newest)
@@ -161,20 +195,94 @@ class BokListingsSyncJob < ApplicationJob
   end
 
   # Mirror created/updated/removed rows onto staging Postgres after local import.
-  def push_to_staging_if_needed!(json_path, result)
+  def push_to_staging_if_needed!(json_path, result, offer_updates: 0)
     return false unless StagingListingsPusher.enabled?
 
     changed = result.created.to_i + result.updated.to_i + result.removed.to_i
-    if changed.zero?
-      Rails.logger.info("[BokListingsSyncJob] no local changes; skipping staging push")
+    if changed.zero? && offer_updates.to_i.zero?
+      BokSyncProgress.say("staging push skipped (no local changes)")
       return false
     end
 
+    BokSyncProgress.say("staging push starting (local_changes=#{changed} offer_updates=#{offer_updates.to_i})")
     StagingListingsPusher.push!(json_path)
-    Rails.logger.info("[BokListingsSyncJob] pushed feed to staging (local changes=#{changed})")
+    BokSyncProgress.say("staging push complete")
     true
   rescue StagingListingsPusher::PushError => e
     raise SyncError, e.message
+  end
+
+  # After import: re-apply dual sale/rent price+tag rules across the feed so
+  # skipped/unchanged rows still pick up resolve_offer fixes.
+  def reconcile_offers_if_needed!(json_path)
+    enabled = boolean_opt(nil, "BOK_OFFER_RECONCILE", true)
+    unless enabled
+      BokSyncProgress.say("offer reconcile skipped (BOK_OFFER_RECONCILE=0)")
+      return { enabled: false }
+    end
+
+    summary = BokListingsImporter.reconcile_offers!(json_path)
+    BokSyncProgress.say(
+      "offer reconcile done updated=#{summary[:updated]} skipped=#{summary[:skipped]} " \
+      "missing=#{summary[:missing]} errors=#{summary[:errors].size}"
+    )
+    summary.merge(enabled: true)
+  rescue StandardError => e
+    BokSyncProgress.say("offer reconcile failed: #{e.class}: #{e.message}")
+    Rails.logger.error("[BokListingsSyncJob] offer reconcile failed: #{e.class}: #{e.message}")
+    { enabled: true, error: "#{e.class}: #{e.message}" }
+  end
+
+  # After import: pin-reconcile newly created listings once only.
+  # Never re-reconcile updates / residual city-centroid backfill on hourly sync.
+  def reconcile_coords_if_needed!(result = nil)
+    enabled = boolean_opt(nil, "BOK_COORD_RECONCILE", true)
+    unless enabled
+      BokSyncProgress.say("coord reconcile skipped (BOK_COORD_RECONCILE=0)")
+      return { enabled: false }
+    end
+
+    created = Array(result&.created_bok_ids).compact.uniq
+    if created.empty?
+      BokSyncProgress.say("coord reconcile skipped (no creates — never re-reconcile)")
+      return { enabled: true, candidates: 0, skipped: "no_creates" }
+    end
+
+    sources = ENV.fetch("BOK_COORD_RECONCILE_SOURCES", "deep")
+    limit = ENV["BOK_COORD_RECONCILE_LIMIT"].presence&.then { |v| Integer(v) }
+    include_city_only = boolean_opt(nil, "BOK_COORD_RECONCILE_CITY_ONLY", true)
+    scope = Property.where(bok_id: created).order(:id)
+    BokSyncProgress.say("coord reconcile scope=created_bok_ids count=#{created.size} sources=#{sources}")
+
+    proposals = PropertyCoordReconciler.new.call(
+      scope,
+      limit: limit,
+      apply: true,
+      sources: sources,
+      include_city_only: include_city_only
+    )
+
+    counts = proposals.group_by(&:action).transform_values(&:size)
+    BokSyncProgress.say(
+      "coord reconcile done city_only=#{include_city_only} candidates=#{proposals.size} #{counts.inspect}"
+    )
+
+    {
+      enabled: true,
+      sources: sources,
+      include_city_only: include_city_only,
+      candidates: proposals.size,
+      applied: counts["applied"].to_i,
+      proposed: counts["proposed"].to_i,
+      unresolved: counts["unresolved"].to_i,
+      noop: counts["noop"].to_i,
+      rejected_city_level: counts["rejected_city_level"].to_i,
+      errors: counts["error"].to_i
+    }
+  rescue StandardError => e
+    BokSyncProgress.say("coord reconcile failed: #{e.class}: #{e.message}")
+    Rails.logger.error("[BokListingsSyncJob] coord reconcile failed: #{e.class}: #{e.message}")
+    { enabled: true, error: "#{e.class}: #{e.message}" }
   end
 
   def integer_opt(value, env_key, default)

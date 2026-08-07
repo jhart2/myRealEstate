@@ -58,7 +58,7 @@ module ApplicationHelper
     case intent.to_s
     when "sale" then "For sale"
     when "rent" then "For rent"
-    when "new" then "New homes"
+    when "new" then "New listings"
     else "For sale"
     end
   end

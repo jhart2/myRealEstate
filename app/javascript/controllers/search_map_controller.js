@@ -572,11 +572,12 @@ export default class extends Controller {
     this.listingsValue.forEach((listing) => {
       if (listing.lat == null || listing.lng == null) return
 
+      // iconSize/iconAnchor 0: wrapper is a point; CSS centers the pill (no oversized colored box)
       const icon = L.divIcon({
         className: "estate-price-marker",
         html: `<button type="button" class="price-pill" data-id="${listing.id}">${listing.priceLabel}</button>`,
-        iconSize: [70, 28],
-        iconAnchor: [35, 14]
+        iconSize: [0, 0],
+        iconAnchor: [0, 0]
       })
 
       const marker = L.marker([listing.lat, listing.lng], { icon, riseOnHover: true })
@@ -750,8 +751,8 @@ export default class extends Controller {
       const el = marker.getElement()
       if (!el) return
       const active = markerId === numericId
-      // Keep wrapper flag for CSS; paint lives only on .price-pill (see application.css).
-      el.classList.toggle("is-active", active)
+      // Never style via wrapper.is-active — only the pill paints fill.
+      el.classList.remove("is-active")
       el.querySelector(".price-pill")?.classList.toggle("is-active", active)
     })
 

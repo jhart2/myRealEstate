@@ -112,4 +112,15 @@ class BokListingsSyncJobTest < ActiveSupport::TestCase
     end
     assert_match(/scraper exited/i, error.message)
   end
+
+  test "coord reconcile skips when import had no creates" do
+    result = BokListingsImporter::Result.new(
+      created: 0, updated: 5, skipped: 10, removed: 0, errors: [],
+      touched_bok_ids: [ "BOK-1", "BOK-2" ], created_bok_ids: []
+    )
+
+    summary = BokListingsSyncJob.new.send(:reconcile_coords_if_needed!, result)
+    assert_equal "no_creates", summary[:skipped]
+    assert_equal 0, summary[:candidates]
+  end
 end

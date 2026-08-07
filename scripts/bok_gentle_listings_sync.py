@@ -9,17 +9,19 @@ Design goals:
   - Configurable delay + jitter between requests.
   - Clear identifying User-Agent (not disguised).
   - Resume-friendly JSON progress cache.
-  - All property styles (house, apartment/townhouse, land, commercial, …)
-    published/updated in the last N days.
+  - Expanding lookback: --days is the starting peg (and expansion step).
+    Each run resumes from progress_cache lookback_days, skips completed URLs,
+    and when the current window has no unfinished work, stretches further
+    back by --days so the frontier keeps moving older over hourly batches.
 
 Examples:
-  python3 scripts/bok_gentle_listings_sync.py --days 30 --delay 4
+  python3 scripts/bok_gentle_listings_sync.py --days 7 --delay 4
   python3 scripts/bok_gentle_listings_sync.py --days 7 --delay 4 --max-details 250
   python3 scripts/bok_gentle_listings_sync.py --days 7 --skip-search-crawl
 
-Hourly batches (--max-details N) fetch newest unfinished URLs first; the
-progress cache skips completed ones so later runs reach further back until
-the window is covered.
+Hourly batches (--max-details N) fetch newest unfinished URLs first; completed
+rows are skipped so later runs either finish the current window or expand it
+further back when the window is cleared.
 
 Then load into Rails:
   bin/rails bok:import
@@ -569,23 +571,25 @@ def parse_listing(url: str, html: str, lastmod: str = "") -> Listing | None:
         style = "Commercial"
 
     price_block = first_match(r'<div class="column-half price">(.*?)</div>\s*<div', html, re.I | re.S)
+    price_block_text = strip_tags(price_block) if price_block else ""
     price = ""
     if price_block:
         # Prefer largest/most complete price-looking text
-        candidates = re.findall(r"\$[\d,]+(?:\s*/\s*Mth)?(?:\s*\(USD\))?", strip_tags(price_block))
+        candidates = re.findall(r"\$[\d,]+(?:\s*/\s*Mth)?(?:\s*\(USD\))?", price_block_text)
         price = candidates[0] if candidates else ""
     if not price:
         price = first_match(r'<h4[^>]*>\s*(\$[^<]+)\s*</h4>', html)
 
-    ptype = ""
-    if "for sale" in find_more_text or "buy" in find_more_text:
-        ptype = "For Sale"
-    elif "for rent" in find_more_text or re.search(r"\brent\b", find_more_text):
-        ptype = "For Rent"
-    elif "/ mth" in price.lower() or "/mth" in price.lower() or "for-rent" in hint or "for rent" in hint:
-        ptype = "For Rent"
-    elif "for-sale" in hint or "for sale" in hint:
-        ptype = "For Sale"
+    description = parse_description(html)
+    price, ptype = resolve_price_and_type(
+        price=price,
+        price_block_text=price_block_text,
+        description=description,
+        find_more_text=find_more_text,
+        hint=hint,
+        title=title,
+        url=url,
+    )
 
     location = first_match(r"<strong>Location:</strong>\s*<br\s*/?>\s*([^<\n]+)", html)
     if not location:
@@ -599,7 +603,6 @@ def parse_listing(url: str, html: str, lastmod: str = "") -> Listing | None:
     bok_id = re.sub(r"\s+", "", bok_id)
     agent, agent_agency, agent_phone, agent_image = parse_agent_block(html)
 
-    description = parse_description(html)
     features = parse_features(html)
     images = parse_gallery_images(html)
     if image and is_placeholder_image(image):
@@ -649,15 +652,172 @@ def parse_listing(url: str, html: str, lastmod: str = "") -> Listing | None:
     )
 
 
+def _money_to_number(num: str, magnitude: str | None = None) -> float | None:
+    digits = re.sub(r"[^\d.]", "", num or "")
+    if not digits:
+        return None
+    try:
+        value = float(digits)
+    except ValueError:
+        return None
+    mag = (magnitude or "").lower()
+    if mag.startswith("m"):
+        value *= 1_000_000
+    return value
+
+
+def resolve_price_and_type(
+    *,
+    price: str,
+    price_block_text: str,
+    description: str,
+    find_more_text: str,
+    hint: str,
+    title: str,
+    url: str,
+) -> tuple[str, str]:
+    """Prefer purchase price on dual sale/rent pages; avoid monthly tip as sale price."""
+    blob = f"{price_block_text}\n{description}\n{title}\n{url}"
+    blob_l = blob.lower()
+    price_l = (price or "").lower()
+
+    sale_amounts: list[float] = []
+    for m in re.finditer(
+        r"for\s+sale[^$\d]{0,40}(?:tt\$|\$)?\s*([\d.,]+)\s*(m\b|mil(?:lion)?|mm)?",
+        blob,
+        re.I,
+    ):
+        n = _money_to_number(m.group(1), m.group(2))
+        if n and n >= 100_000:
+            sale_amounts.append(n)
+    for m in re.finditer(
+        r"sale\s*(?:price)?\s*[:=\-–]?\s*(?:tt\$|\$)?\s*([\d.,]+)\s*(m\b|mil(?:lion)?|mm)?",
+        blob,
+        re.I,
+    ):
+        n = _money_to_number(m.group(1), m.group(2))
+        if n and n >= 100_000:
+            sale_amounts.append(n)
+
+    rent_amounts: list[float] = []
+    for m in re.finditer(
+        r"for\s+rent[^$\d]{0,40}(?:us\$|usd|tt\$|\$)?\s*([\d.,]+)",
+        blob,
+        re.I,
+    ):
+        n = _money_to_number(m.group(1))
+        if n and n < 100_000:
+            rent_amounts.append(n)
+    for m in re.finditer(
+        r"(?:us\$|usd|tt\$|\$)\s*([\d.,]+)\s*(?:/\s*mth|/\s*mo\b|per\s+month|/\s*month)",
+        blob,
+        re.I,
+    ):
+        n = _money_to_number(m.group(1))
+        if n and n < 100_000:
+            rent_amounts.append(n)
+
+    dual = bool(
+        re.search(
+            r"sale\s*/?\s*or\s*/?\s*rent|rent\s+or\s+sale|for\s+sale\s*/\s*rent|for\s+rent\s*/\s*sale|sale-or-rent",
+            blob_l,
+        )
+    ) or (sale_amounts and rent_amounts)
+
+    tip_monthly = bool(re.search(r"/\s*mth|/\s*mo\b|per\s+month", price_l))
+    tip_digits = int(re.sub(r"[^\d]", "", price) or 0)
+    if "(usd)" in price_l and 500 <= tip_digits <= 20_000:
+        tip_monthly = True
+
+    # Dual / mis-scraped tip: promote body sale price.
+    if sale_amounts and (tip_monthly or dual or (tip_digits and tip_digits < 100_000)):
+        best = max(sale_amounts)
+        price = f"${best:,.0f}"
+        tip_monthly = False
+        dual_has_purchase = True
+    else:
+        dual_has_purchase = bool(sale_amounts)
+
+    # Intent
+    ptype = ""
+    if dual and dual_has_purchase:
+        ptype = "For Sale"
+    elif dual and (tip_monthly or rent_amounts or (tip_digits and tip_digits < 100_000)):
+        ptype = "For Rent"
+    elif tip_monthly or "/ mth" in price_l or "/mth" in price_l:
+        ptype = "For Rent"
+    elif "for-rent" in hint or re.search(r"\bfor\s+rent\b", hint):
+        # Don't prefer Find-More "For Sale" chips over clear rent title/url when monthly.
+        if not sale_amounts:
+            ptype = "For Rent"
+    if not ptype:
+        if "for sale" in find_more_text or "buy" in find_more_text:
+            ptype = "For Sale"
+        elif "for rent" in find_more_text or re.search(r"\brent\b", find_more_text):
+            ptype = "For Rent"
+        elif "for-sale" in hint or "for sale" in hint:
+            ptype = "For Sale"
+        elif "for-rent" in hint or "for rent" in hint:
+            ptype = "For Rent"
+
+    # Final tip-price sanity: dwelling For Sale under 100k with USD tip → rent
+    if ptype == "For Sale" and tip_monthly and not sale_amounts:
+        ptype = "For Rent"
+        if tip_digits and "/ mth" not in price_l and "/mth" not in price_l:
+            price = f"{price} / Mth" if price else price
+
+    return price, ptype
+
+
 def load_cache(path: Path) -> dict:
     if not path.exists():
-        return {"completed": {}, "listings": []}
-    return json.loads(path.read_text())
+        return {"completed": {}, "listings": [], "lookback_days": 0}
+    data = json.loads(path.read_text())
+    data.setdefault("completed", {})
+    data.setdefault("listings", [])
+    data.setdefault("lookback_days", 0)
+    return data
 
 
 def save_cache(path: Path, cache: dict) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(cache, indent=2, ensure_ascii=False))
+
+
+def unfinished_candidates(
+    candidates: list[str], completed: dict, *, refetch: bool = False
+) -> list[str]:
+    if refetch:
+        return list(candidates)
+    return [url for url in candidates if not (completed.get(url) or {}).get("ok")]
+
+
+def resolve_lookback_days(cache: dict, min_days: int) -> int:
+    """Starting peg is --days; cache may already be further back."""
+    stored = int(cache.get("lookback_days") or 0)
+    return max(min_days, stored) if stored > 0 else min_days
+
+
+def maybe_expand_lookback(
+    lookback_days: int, *, step: int, max_lookback_days: int
+) -> int:
+    nxt = lookback_days + step
+    if max_lookback_days > 0:
+        nxt = min(nxt, max_lookback_days)
+    return nxt if nxt > lookback_days else lookback_days
+
+
+def cache_snapshot(
+    completed: dict,
+    listings: list,
+    lookback_days: int,
+) -> dict:
+    return {
+        "completed": completed,
+        "listings": listings,
+        "lookback_days": lookback_days,
+        "updated_at": datetime.now(timezone.utc).isoformat(),
+    }
 
 
 def sort_candidates_newest_first(urls: Iterable[str], lastmod_by_url: dict[str, str]) -> list[str]:
@@ -696,7 +856,13 @@ def write_outputs(listings: Iterable[Listing], out_dir: Path, stamp: str) -> Non
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Gentle house listing sync for mybunchofkeys.com")
-    parser.add_argument("--days", type=int, default=30, help="Lookback window in days (default: 30)")
+    parser.add_argument("--days", type=int, default=30, help="Starting lookback peg / expansion step in days (default: 30)")
+    parser.add_argument(
+        "--max-lookback-days",
+        type=int,
+        default=0,
+        help="Optional cap on expanding lookback (0 = no cap)",
+    )
     parser.add_argument("--delay", type=float, default=4.0, help="Base seconds between requests (default: 4)")
     parser.add_argument("--jitter", type=float, default=1.5, help="Extra random delay 0..jitter seconds")
     parser.add_argument("--max-search-pages", type=int, default=250, help="Max house search pages to crawl")
@@ -734,13 +900,28 @@ def main() -> int:
         print("Refusing delay < 2s — keep this gentle on production traffic.", file=sys.stderr)
         return 2
 
-    cutoff = datetime.now(timezone.utc) - timedelta(days=args.days)
+    if args.days < 1:
+        print("--days must be >= 1", file=sys.stderr)
+        return 2
+
     client = GentleClient(delay=args.delay, jitter=args.jitter)
     cache_path = args.out_dir / "progress_cache.json"
     cache = load_cache(cache_path)
+    lookback_days = resolve_lookback_days(cache, args.days)
+    expand_discovery = not args.urls_file and not args.from_cache
 
-    print(f"Window: since {cutoff.isoformat()} UTC", flush=True)
     print(f"Delay: {args.delay}s + up to {args.jitter}s jitter (sequential)", flush=True)
+    print(
+        f"Lookback peg={args.days}d stored={cache.get('lookback_days') or args.days}d "
+        f"effective={lookback_days}d"
+        + (f" max={args.max_lookback_days}d" if args.max_lookback_days > 0 else " max=none"),
+        flush=True,
+    )
+
+    completed: dict = {} if args.refetch else dict(cache.get("completed") or {})
+    recent: dict[str, str] = {}
+    candidates: list[str] = []
+    cutoff = datetime.now(timezone.utc) - timedelta(days=lookback_days)
 
     if args.urls_file:
         file_urls = [
@@ -761,20 +942,41 @@ def main() -> int:
         candidates = sort_candidates_newest_first(recent.keys(), recent)
         print(f"From cache: {len(candidates)} listing URLs (newest first)", flush=True)
     else:
-        recent = discover_recent_urls(client, cutoff)
+        # Expand within this run while the current window has nothing left to fetch.
+        for _ in range(64):
+            cutoff = datetime.now(timezone.utc) - timedelta(days=lookback_days)
+            print(f"Window: since {cutoff.isoformat()} UTC ({lookback_days}d)", flush=True)
+            recent = discover_recent_urls(client, cutoff)
 
-        if args.skip_search_crawl:
-            candidates = sort_candidates_newest_first(recent.keys(), recent)
-            print(f"Candidates from sitemap only: {len(candidates)} (newest first)", flush=True)
-        else:
-            house_urls = crawl_house_search(client, max_pages=args.max_search_pages)
-            intersection = set(recent) & house_urls
-            candidates = sort_candidates_newest_first(intersection, recent)
+            if args.skip_search_crawl:
+                candidates = sort_candidates_newest_first(recent.keys(), recent)
+                print(f"Candidates from sitemap only: {len(candidates)} (newest first)", flush=True)
+            else:
+                house_urls = crawl_house_search(client, max_pages=args.max_search_pages)
+                intersection = set(recent) & house_urls
+                candidates = sort_candidates_newest_first(intersection, recent)
+                print(
+                    f"Intersection (recent ∩ house search): {len(candidates)} "
+                    f"(recent={len(recent)}, house_search={len(house_urls)}; newest first)",
+                    flush=True,
+                )
+
+            unfinished = unfinished_candidates(candidates, completed, refetch=args.refetch)
+            print(f"Unfinished in window: {len(unfinished)}", flush=True)
+            if unfinished or not expand_discovery:
+                break
+
+            nxt = maybe_expand_lookback(
+                lookback_days, step=args.days, max_lookback_days=args.max_lookback_days
+            )
+            if nxt <= lookback_days:
+                print(f"Lookback capped at {lookback_days}d with no unfinished work.", flush=True)
+                break
             print(
-                f"Intersection (recent ∩ house search): {len(candidates)} "
-                f"(recent={len(recent)}, house_search={len(house_urls)}; newest first)",
+                f"No unfinished in {lookback_days}d window; expanding to {nxt}d this run.",
                 flush=True,
             )
+            lookback_days = nxt
 
     listings: list[Listing] = []
     listing_fields = asdict(Listing(url="")).keys()
@@ -792,35 +994,84 @@ def main() -> int:
         data["url"] = row.get("url") or data.get("url") or ""
         return Listing(**data)
 
-    # Keep previously completed listings still in window (skip on full refetch)
-    if not args.refetch:
-        candidate_set = set(candidates)
+    def absorb_cached_listings(active_cutoff: datetime, active_candidates: list[str]) -> None:
+        if args.refetch:
+            return
+        candidate_set = set(active_candidates)
+        seen = {item.url for item in listings}
         for row in cache.get("listings", []):
+            url = row.get("url") or ""
+            if not url or url in seen:
+                continue
             dt = parse_dt(row.get("date_published") or row.get("lastmod"))
-            if dt and dt >= cutoff:
-                # urls-file / from-cache resumes should retain prior enriched rows
-                if (
-                    args.urls_file
-                    or args.from_cache
-                    or args.skip_search_crawl
-                    or row.get("url") in candidate_set
-                ):
-                    cached = listing_from_row(row)
-                    if has_usable_images(cached):
-                        listings.append(cached)
+            if not (dt and dt >= active_cutoff):
+                continue
+            if (
+                args.urls_file
+                or args.from_cache
+                or args.skip_search_crawl
+                or url in candidate_set
+            ):
+                cached = listing_from_row(row)
+                if has_usable_images(cached):
+                    listings.append(cached)
+                    seen.add(url)
 
-    completed: dict = {} if args.refetch else cache.get("completed", {})
+    def discover_for_lookback(days: int) -> tuple[datetime, dict[str, str], list[str]]:
+        active_cutoff = datetime.now(timezone.utc) - timedelta(days=days)
+        print(f"Window: since {active_cutoff.isoformat()} UTC ({days}d)", flush=True)
+        active_recent = discover_recent_urls(client, active_cutoff)
+        if args.skip_search_crawl:
+            active_candidates = sort_candidates_newest_first(active_recent.keys(), active_recent)
+            print(f"Candidates from sitemap only: {len(active_candidates)} (newest first)", flush=True)
+        else:
+            house_urls = crawl_house_search(client, max_pages=args.max_search_pages)
+            intersection = set(active_recent) & house_urls
+            active_candidates = sort_candidates_newest_first(intersection, active_recent)
+            print(
+                f"Intersection (recent ∩ house search): {len(active_candidates)} "
+                f"(recent={len(active_recent)}, house_search={len(house_urls)}; newest first)",
+                flush=True,
+            )
+        unfinished = unfinished_candidates(active_candidates, completed, refetch=args.refetch)
+        print(f"Unfinished in window: {len(unfinished)}", flush=True)
+        return active_cutoff, active_recent, active_candidates
+
+    # Initial discovery (urls-file / from-cache already set candidates above).
+    if expand_discovery and not candidates:
+        for _ in range(64):
+            cutoff, recent, candidates = discover_for_lookback(lookback_days)
+            unfinished = unfinished_candidates(candidates, completed, refetch=args.refetch)
+            if unfinished:
+                break
+            nxt = maybe_expand_lookback(
+                lookback_days, step=args.days, max_lookback_days=args.max_lookback_days
+            )
+            if nxt <= lookback_days:
+                print(f"Lookback capped at {lookback_days}d with no unfinished work.", flush=True)
+                break
+            print(
+                f"No unfinished in {lookback_days}d window; expanding to {nxt}d this run.",
+                flush=True,
+            )
+            lookback_days = nxt
+
+    absorb_cached_listings(cutoff, candidates)
+
     if args.refetch:
         print("Refetch mode: re-downloading every candidate detail page.", flush=True)
     fetched = 0
+    hit_detail_cap = False
 
-    try:
-        for url in candidates:
+    def fetch_unfinished(active_cutoff: datetime, active_recent: dict[str, str], active_candidates: list[str]) -> None:
+        nonlocal fetched, hit_detail_cap, lookback_days
+        for url in active_candidates:
             if url in completed and completed[url].get("ok") and not args.refetch:
                 continue
             if args.max_details and fetched >= args.max_details:
                 print(f"Reached --max-details={args.max_details}; stopping detail phase.", flush=True)
-                break
+                hit_detail_cap = True
+                return
 
             try:
                 html = client.get(url).decode("utf-8", errors="replace")
@@ -828,7 +1079,7 @@ def main() -> int:
                 completed[url] = {"ok": False, "reason": f"http_{err.code}"}
                 print(f"  skip: HTTP {err.code} {url}", flush=True)
                 continue
-            listing = parse_listing(url, html, lastmod=recent.get(url, ""))
+            listing = parse_listing(url, html, lastmod=active_recent.get(url, ""))
             fetched += 1
 
             if not listing:
@@ -836,7 +1087,7 @@ def main() -> int:
                 continue
 
             published = parse_dt(listing.date_published) or parse_dt(listing.lastmod)
-            if published and published < cutoff:
+            if published and published < active_cutoff:
                 completed[url] = {"ok": True, "kept": False, "reason": "too_old"}
                 continue
 
@@ -855,22 +1106,50 @@ def main() -> int:
                 flush=True,
             )
 
-            cache = {
-                "completed": completed,
-                "listings": [asdict(x) for x in listings],
-                "updated_at": datetime.now(timezone.utc).isoformat(),
-            }
-            save_cache(cache_path, cache)
+            save_cache(
+                cache_path,
+                cache_snapshot(completed, [asdict(x) for x in listings], lookback_days),
+            )
+
+    try:
+        # Fetch current window; if cleared with budget left, expand and keep digging.
+        while True:
+            fetch_unfinished(cutoff, recent, candidates)
+            if hit_detail_cap or not expand_discovery:
+                break
+
+            remaining = unfinished_candidates(candidates, completed, refetch=args.refetch)
+            if remaining:
+                print(
+                    f"Unfinished remaining in window: {len(remaining)} "
+                    f"(lookback stays {lookback_days}d)",
+                    flush=True,
+                )
+                break
+
+            nxt = maybe_expand_lookback(
+                lookback_days, step=args.days, max_lookback_days=args.max_lookback_days
+            )
+            if nxt <= lookback_days:
+                print(f"Window cleared; lookback stays at {lookback_days}d (cap reached).", flush=True)
+                break
+
+            print(
+                f"Window cleared with detail budget left; expanding to {nxt}d and continuing.",
+                flush=True,
+            )
+            lookback_days = nxt
+            cutoff, recent, candidates = discover_for_lookback(lookback_days)
+            absorb_cached_listings(cutoff, candidates)
+            if not unfinished_candidates(candidates, completed, refetch=args.refetch):
+                # Newly expanded window also empty — loop will expand again.
+                continue
 
     except KeyboardInterrupt:
         print("\nInterrupted — saving progress.", flush=True)
         save_cache(
             cache_path,
-            {
-                "completed": completed,
-                "listings": [asdict(x) for x in listings],
-                "updated_at": datetime.now(timezone.utc).isoformat(),
-            },
+            cache_snapshot(completed, [asdict(x) for x in listings], lookback_days),
         )
         return 130
 
@@ -882,13 +1161,9 @@ def main() -> int:
     write_outputs(final_rows, args.out_dir, stamp)
     save_cache(
         cache_path,
-        {
-            "completed": completed,
-            "listings": [asdict(x) for x in final_rows],
-            "updated_at": datetime.now(timezone.utc).isoformat(),
-        },
+        cache_snapshot(completed, [asdict(x) for x in final_rows], lookback_days),
     )
-    print(f"Done. Requests made: {client.request_count}", flush=True)
+    print(f"Done. Requests made: {client.request_count} lookback_days={lookback_days}", flush=True)
     return 0
 
 

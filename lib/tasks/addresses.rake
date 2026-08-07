@@ -117,6 +117,31 @@ namespace :addresses do
     puts apply ? "Applied lat/lng updates." : "Dry-run only. Re-run with APPLY=1 to write."
   end
 
+  desc <<~DESC.gsub(/\s+/, " ").strip
+    Reconcile missing / city-centroid pins via Photon, Nominatim, Overpass street-in-bbox,
+    AI query forge, optional Google. Dry-run default.
+    APPLY=1 LIMIT=20 SOURCE=deep|public_deep|public|auto BOK_ID= BOK_ONLY=1
+  DESC
+  task reconcile_coords: :environment do
+    apply = ENV["APPLY"].to_s.match?(/\A(1|true|yes)\z/i)
+    limit = ENV["LIMIT"].presence&.then { |v| Integer(v) }
+    sources = ENV.fetch("SOURCE", "deep")
+    scope = Property.order(:id)
+    scope = scope.where.not(bok_id: [ nil, "" ]) if ENV.fetch("BOK_ONLY", "1").to_s.match?(/\A(1|true|yes)\z/i)
+    scope = scope.where(bok_id: ENV["BOK_ID"]) if ENV["BOK_ID"].present?
+
+    proposals = PropertyCoordReconciler.new.call(scope, limit: limit, apply: apply, sources: sources)
+    counts = proposals.group_by(&:action).transform_values(&:size)
+    proposals.each do |row|
+      puts "#{row.bok_id || row.property_id}  #{row.action}  #{row.source}  conf=#{row.confidence}"
+      next unless row.after && row.before
+
+      puts "  #{row.before[:latitude]},#{row.before[:longitude]} → #{row.after[:latitude]},#{row.after[:longitude]}"
+    end
+    puts "Summary: #{counts.inspect}"
+    puts apply ? "Applied." : "Dry-run only. Re-run with APPLY=1 to write."
+  end
+
   desc "Score only (no Google calls). LIMIT=10 BOK_ID= optional"
   task rank: :environment do
     unless OpenaiClient.new.configured?

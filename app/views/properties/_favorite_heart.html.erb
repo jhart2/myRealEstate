@@ -1,0 +1,52 @@
+<%# locals: (property:, variant: "carousel") %>
+<% favorited = authenticated? && current_user.favorited?(property) %>
+<% variant = variant.to_s == "card" ? "card" : "carousel" %>
+<% base =
+     if variant == "card"
+       "absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-white/90"
+     else
+       "absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.45)]"
+     end %>
+<% saved_color = variant == "card" ? "text-trinidad" : "text-[#e11d48]" %>
+<% idle_color = variant == "card" ? "text-ink-2" : "text-white" %>
+
+<div id="<%= dom_id(property, :favorite_heart) %>" class="contents" data-favorite-variant="<%= variant %>">
+  <% if authenticated? %>
+    <% if favorited %>
+      <%= button_to property_favorite_path(property),
+            method: :delete,
+            class: "#{base} #{saved_color}",
+            form: { class: "contents", data: { turbo_stream: true } },
+            params: { variant: variant },
+            aria: { label: "Remove favorite" } do %>
+        <svg class="h-[18px] w-[18px]" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+        </svg>
+      <% end %>
+    <% else %>
+      <%= button_to property_favorite_path(property),
+            method: :post,
+            class: "#{base} #{idle_color}",
+            form: { class: "contents", data: { turbo_stream: true } },
+            params: { variant: variant },
+            aria: { label: "Save property" } do %>
+        <svg class="h-[18px] w-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+        </svg>
+      <% end %>
+    <% end %>
+  <% else %>
+    <button
+      type="button"
+      class="<%= base %> <%= idle_color %>"
+      aria-label="Sign in to save"
+      data-action="auth-modal#open"
+      data-auth-modal-mode-param="login"
+      data-auth-modal-intent-param="save"
+    >
+      <svg class="h-[18px] w-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+      </svg>
+    </button>
+  <% end %>
+</div>
