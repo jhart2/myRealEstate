@@ -108,7 +108,15 @@ class Property < ApplicationRecord
     scope = scope.where(property_type: types) if types.any?
 
     # Map viewport bounds win over text location (Zillow-style area search).
-    if params.values_at(:north, :south, :east, :west).all?(&:present?)
+    # Ignore degenerate / uninitialized Leaflet bounds (0,0 box, NaN, inverted)
+    # so a zero-size map cannot wipe the result list.
+    if params.values_at(:north, :south, :east, :west).all?(&:present?) &&
+        usable_map_bounds?(
+          north: params[:north],
+          south: params[:south],
+          east: params[:east],
+          west: params[:west]
+        )
       scope = scope.in_bounds(
         north: params[:north].to_f,
         south: params[:south].to_f,
@@ -195,6 +203,20 @@ class Property < ApplicationRecord
 
   def self.in_bounds(north:, south:, east:, west:)
     where(latitude: south..north, longitude: west..east)
+  end
+
+  def self.usable_map_bounds?(north:, south:, east:, west:)
+    values = [ north, south, east, west ].map { |v| Float(v) }
+    n, s, e, w = values
+    return false unless values.all?(&:finite?)
+    return false if s >= n || w >= e
+    return false if (n - s) < 1.0e-8 || (e - w) < 1.0e-8
+    # Uninitialized Leaflet often reports a 0×0 box at the null island.
+    return false if values.all? { |v| v.abs < 1.0e-9 }
+
+    true
+  rescue ArgumentError, TypeError
+    false
   end
 
   def self.in_region(key_or_slug)

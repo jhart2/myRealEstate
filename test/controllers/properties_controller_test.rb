@@ -179,4 +179,11 @@ class PropertiesControllerTest < ActionDispatch::IntegrationTest
     open_market = JSON.parse(response.body)["buckets"]
     assert_operator open_market.sum, :>, 0
   end
+
+  test "results ignores degenerate map bounds so filters stay intact" do
+    get results_properties_path(north: 0, south: 0, east: 0, west: 0, intent: "sale"), as: :json
+    assert_response :success
+    body = JSON.parse(response.body)
+    assert_operator body["totalCount"], :>, 0
+  end
 end

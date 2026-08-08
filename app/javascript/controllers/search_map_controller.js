@@ -292,12 +292,20 @@ export default class extends Controller {
 
         if (this._suppressViewportReload) {
           this._suppressViewportReload = false
-          // After the initial frame settles, sync list + pins to the visible map.
-          this.scheduleViewportReload({ force: true })
+          // Only clamp the list to the map when this visit already came with an area.
+          // Island-wide / filter-only loads must keep SSR results — forcing a reload from a
+          // zero-size (mobile list-first) or zoom-14 pin frame was wiping counts to 0.
+          if (this.startedWithAreaSearch()) {
+            this.scheduleViewportReload({ force: true })
+          } else if (!this.listingsValue?.length) {
+            this.reloadMarkersForFilters().catch((error) => console.error("Marker load failed", error))
+          }
           return
         }
 
         if (this._programmaticFrame) return
+        // Resize/invalidateSize fires moveend too — only clamp when the user panned/zoomed.
+        if (!this.userMovedMap) return
         this.scheduleViewportReload()
       })
 
@@ -685,27 +693,33 @@ export default class extends Controller {
   centerOnTopListing({ zoom = 14 } = {}) {
     if (!this.map) return
 
-    const listing = this.listingsValue.find((item) => {
-      const lat = Number(item.lat)
-      const lng = Number(item.lng)
-      return Number.isFinite(lat) && Number.isFinite(lng)
-    })
-    if (!listing) {
+    const points = this.listingsValue
+      .filter((item) => {
+        const lat = Number(item.lat)
+        const lng = Number(item.lng)
+        return Number.isFinite(lat) && Number.isFinite(lng)
+      })
+      .map((item) => [Number(item.lat), Number(item.lng)])
+
+    if (points.length === 0) {
       this.withProgrammaticFrame(() => this.map.setView(TRINIDAD_CENTER, 10))
       return
     }
 
-    const lat = Number(listing.lat)
-    const lng = Number(listing.lng)
-
-    try {
-      this.withProgrammaticFrame(() => {
-        this.map.setView([lat, lng], zoom, { animate: false })
-      })
-    } catch (error) {
-      console.warn("centerOnTopListing failed", error)
-      this.fitToListings()
+    if (points.length === 1) {
+      try {
+        this.withProgrammaticFrame(() => {
+          this.map.setView(points[0], zoom, { animate: false })
+        })
+      } catch (error) {
+        console.warn("centerOnTopListing failed", error)
+        this.fitToListings()
+      }
+      return
     }
+
+    // Many pins: frame Trinidad inventory instead of zooming onto the first card.
+    this.fitToListings()
   }
 
   fitToListings() {
@@ -716,30 +730,49 @@ export default class extends Controller {
     if (!this.map) return
 
     if (points.length === 0) {
-      this.map.setView(TRINIDAD_CENTER, 10)
+      this.withProgrammaticFrame(() => this.map.setView(TRINIDAD_CENTER, 10))
       return
     }
 
     if (points.length === 1) {
-      this.map.setView(points[0], 13)
+      this.withProgrammaticFrame(() => this.map.setView(points[0], 13))
       return
     }
 
-    this.map.fitBounds(points, { padding: [48, 48], maxZoom: 12 })
+    this.withProgrammaticFrame(() => {
+      this.map.fitBounds(points, { padding: [48, 48], maxZoom: 12 })
+    })
   }
 
   syncBoundsFields() {
-    if (!this.map) return
+    if (!this.map) return false
+    const size = this.map.getSize?.()
+    if (!size || size.x < 40 || size.y < 40) return false
+
     const bounds = this.map.getBounds()
-    this.northTarget.value = bounds.getNorth().toFixed(6)
-    this.southTarget.value = bounds.getSouth().toFixed(6)
-    this.eastTarget.value = bounds.getEast().toFixed(6)
-    this.westTarget.value = bounds.getWest().toFixed(6)
+    const north = bounds.getNorth()
+    const south = bounds.getSouth()
+    const east = bounds.getEast()
+    const west = bounds.getWest()
+    if (![north, south, east, west].every(Number.isFinite)) return false
+    if (south >= north || west >= east) return false
+    if ((north - south) < 1e-8 || (east - west) < 1e-8) return false
+    if ([north, south, east, west].every((value) => Math.abs(value) < 1e-9)) return false
+
+    this.northTarget.value = north.toFixed(6)
+    this.southTarget.value = south.toFixed(6)
+    this.eastTarget.value = east.toFixed(6)
+    this.westTarget.value = west.toFixed(6)
+    return true
+  }
+
+  startedWithAreaSearch() {
+    return ["boundary", "viewport", "url"].includes(this.initialFrame)
   }
 
   searchArea(event) {
     event.preventDefault()
-    this.syncBoundsFields()
+    if (!this.syncBoundsFields()) return
 
     const location = this.formTarget.querySelector('[name="location"]')
     if (location) location.value = ""
@@ -799,10 +832,35 @@ export default class extends Controller {
     return params
   }
 
+  async reloadMarkersForFilters() {
+    if (this._destroyed || !this.hasFormTarget) return
+
+    this._viewportAbort?.abort()
+    this._viewportAbort = new AbortController()
+    const { signal } = this._viewportAbort
+
+    const params = this.queryParamsFromForm({ page: 1 })
+    ;["north", "south", "east", "west"].forEach((key) => params.delete(key))
+
+    const markersRes = await fetch(`/properties/map_markers?${params.toString()}`, {
+      headers: { Accept: "application/json" },
+      signal,
+      credentials: "same-origin"
+    })
+    if (!markersRes.ok) throw new Error(`map_markers HTTP ${markersRes.status}`)
+    const listings = await markersRes.json()
+    if (this._destroyed) return
+
+    this.listingsValue = Array.isArray(listings) ? listings : []
+    this.renderMarkers()
+    if (this.initialFrame === "top" && !this.userMovedMap) {
+      this.centerOnTopListing()
+    }
+  }
+
   async reloadForViewport() {
     if (!this.map || this._destroyed) return
-
-    this.syncBoundsFields()
+    if (!this.syncBoundsFields()) return
 
     const location = this.formTarget?.querySelector?.('[name="location"]')
     if (location) location.value = ""
