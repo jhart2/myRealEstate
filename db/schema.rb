@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_08_180500) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_08_183000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -115,6 +115,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_08_180500) do
     t.string "location_raw"
     t.decimal "longitude"
     t.integer "lot_sqft"
+    t.boolean "possible_duplicate", default: false, null: false
     t.bigint "price_cents"
     t.string "price_label"
     t.string "property_type"
@@ -132,6 +133,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_08_180500) do
     t.index ["bok_id"], name: "index_properties_on_bok_id", unique: true
     t.index ["copy_needs_review"], name: "index_properties_on_copy_needs_review"
     t.index ["latitude", "longitude"], name: "index_properties_on_latitude_and_longitude"
+    t.index ["possible_duplicate"], name: "index_properties_on_possible_duplicate"
     t.index ["slug"], name: "index_properties_on_slug", unique: true
     t.index ["source_url"], name: "index_properties_on_source_url", unique: true
     t.index ["status", "beds"], name: "index_properties_on_status_beds"

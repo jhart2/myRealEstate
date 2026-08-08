@@ -9,9 +9,18 @@ default: &default
   max_connections: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   timeout: 5000
 
+# Local default is SQLite. Set DATABASE_URL (e.g. via scripts/dev_against_staging.sh)
+# to point development at Postgres (Cloud SQL through the Auth Proxy).
 development:
+<% if ENV["DATABASE_URL"].present? %>
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  url: <%= ENV.fetch("DATABASE_URL").dump %>
+<% else %>
   <<: *default
   database: storage/development.sqlite3
+<% end %>
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".

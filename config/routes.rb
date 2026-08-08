@@ -40,6 +40,7 @@ Rails.application.routes.draw do
     resources :agents, except: :show
     resources :inquiries, only: %i[index show update]
     resources :copy_reviews, only: %i[index show update]
+    resources :duplicates, only: %i[index show update]
   end
 
   get "up" => "rails/health#show", as: :rails_health_check

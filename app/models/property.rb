@@ -50,6 +50,8 @@ class Property < ApplicationRecord
   scope :by_type, ->(type) { where(property_type: type) if type.present? }
   scope :residential, -> { where(property_type: RESIDENTIAL_TYPES) }
   scope :copy_needs_review, -> { where(copy_needs_review: true) }
+  scope :possible_duplicates, -> { where(possible_duplicate: true) }
+  scope :excluding_possible_duplicates, -> { where(possible_duplicate: false) }
 
   validates :title, :address, :city, :state, :price_cents, :tag, :property_type, presence: true
   validates :tag, inclusion: { in: TAGS }
@@ -91,7 +93,7 @@ class Property < ApplicationRecord
 
   def self.search(params = {})
     params = normalize_search_params(params)
-    scope = active
+    scope = active.excluding_possible_duplicates
 
     if params[:intent].to_s == "new"
       # "New Homes" means recently listed (sale or rent), not the construction `tag: new`.
@@ -232,6 +234,7 @@ class Property < ApplicationRecord
 
   def self.homepage_region_rows(per_region: 12)
     by_region = active
+      .excluding_possible_duplicates
       .residential
       .includes(:agent, image_attachment: :blob)
       .with_attached_gallery_images

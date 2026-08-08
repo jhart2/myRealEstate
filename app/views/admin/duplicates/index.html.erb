@@ -1,0 +1,51 @@
+<% content_for :title, "Possible duplicates" %>
+
+<div class="flex items-end justify-between gap-4">
+  <div>
+    <h1 class="font-display text-3xl font-light">Possible duplicates</h1>
+    <p class="mt-1 text-sm text-ink-3">
+      Strong near-matches (≥3 of title, price, location, features). Flagged listings are hidden from public search until reconciled.
+    </p>
+  </div>
+  <p class="text-sm text-ink-3"><%= @pair_count %> pairs · <%= @flagged_count %> flagged</p>
+</div>
+
+<div class="mt-6 overflow-hidden rounded-xl border border-border bg-panel">
+  <% if @pairs.empty? %>
+    <p class="px-4 py-8 text-sm text-ink-3">No strong duplicate pairs detected.</p>
+  <% else %>
+    <table class="w-full text-left text-sm">
+      <thead class="border-b border-border bg-panel-warm text-xs uppercase tracking-wider text-ink-3">
+        <tr>
+          <th class="px-4 py-3">Score</th>
+          <th class="px-4 py-3">Signals</th>
+          <th class="px-4 py-3">Listing A</th>
+          <th class="px-4 py-3">Listing B</th>
+          <th class="px-4 py-3"></th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-border">
+        <% @pairs.each do |pair| %>
+          <% left = @properties_by_id[pair.left_id] %>
+          <% right = @properties_by_id[pair.right_id] %>
+          <% next unless left && right %>
+          <tr>
+            <td class="px-4 py-3 font-medium"><%= pair.score %>/4</td>
+            <td class="px-4 py-3 text-ink-3"><%= pair.signals.join(", ") %></td>
+            <td class="px-4 py-3">
+              <p class="font-medium"><%= left.title %></p>
+              <p class="text-ink-3"><%= left.slug %> · <%= number_to_currency(left.price_cents / 100.0, precision: 0) %></p>
+            </td>
+            <td class="px-4 py-3">
+              <p class="font-medium"><%= right.title %></p>
+              <p class="text-ink-3"><%= right.slug %> · <%= number_to_currency(right.price_cents / 100.0, precision: 0) %></p>
+            </td>
+            <td class="px-4 py-3 text-right">
+              <%= link_to "Reconcile", admin_duplicate_path(left, peer: right.to_param), class: "text-trinidad hover:underline" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
+</div>
