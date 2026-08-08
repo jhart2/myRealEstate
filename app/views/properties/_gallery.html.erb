@@ -160,18 +160,32 @@
         </div>
 
         <div class="listing-gallery-viewer-stage">
-          <button type="button" class="listing-gallery-nav listing-gallery-nav--prev" data-action="listing-gallery#prev" aria-label="Previous photo">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
-          </button>
-          <img
-            src="<%= urls.first %>"
-            alt="<%= property.title %>"
-            class="listing-gallery-viewer-hero"
-            data-listing-gallery-target="hero"
+          <div
+            class="listing-gallery-viewer-track"
+            data-listing-gallery-target="viewerTrack"
+            data-action="scroll->listing-gallery#onViewerTrackScroll"
+            role="list"
+            aria-label="Photo slideshow"
+            tabindex="0"
           >
-          <button type="button" class="listing-gallery-nav listing-gallery-nav--next" data-action="listing-gallery#next" aria-label="Next photo">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
-          </button>
+            <% urls.each_with_index do |url, index| %>
+              <div
+                class="listing-gallery-viewer-slide<%= " is-active" if index.zero? %>"
+                role="listitem"
+                data-listing-gallery-target="viewerSlide"
+                data-index="<%= index %>"
+                data-src="<%= url %>"
+              >
+                <img
+                  src="<%= url %>"
+                  alt="<%= index.zero? ? property.title : "" %>"
+                  class="listing-gallery-viewer-hero"
+                  loading="<%= index < 2 ? "eager" : "lazy" %>"
+                  draggable="false"
+                >
+              </div>
+            <% end %>
+          </div>
         </div>
 
         <div class="listing-gallery-viewer-thumbs" role="list" aria-label="All photos">

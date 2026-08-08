@@ -85,6 +85,7 @@ agents = agents_data.map do |attrs|
   Agent.create!(attrs.merge(active: true, show_on_homepage: false, listings_count: 0, user: user))
 end
 
+# 2–3 Unsplash sources per listing; cover is image_url (also first of image_urls).
 properties = [
   {
     tag: "sale", property_type: "Villa", title: "Meridian House",
@@ -92,6 +93,11 @@ properties = [
     latitude: 10.7015, longitude: -61.5278,
     price_cents: 475_000_000, beds: 5, baths: 4, sqft: 5820, featured: true, agent: agents[0],
     image_url: "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=1200&h=800&fit=crop&auto=format",
+    image_urls: [
+      "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=1200&h=800&fit=crop&auto=format",
+      "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&h=800&fit=crop&auto=format",
+      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&h=800&fit=crop&auto=format"
+    ],
     description: "A sculptural villa on a quiet Maraval rise. Floor-to-ceiling glass, a private courtyard, and an upper terrace with Northern Range light from morning until dusk."
   },
   {
@@ -100,6 +106,11 @@ properties = [
     latitude: 10.6628, longitude: -61.5185,
     price_cents: 820_000_000, beds: 4, baths: 3, sqft: 4100, featured: true, agent: agents[1],
     image_url: "https://images.unsplash.com/photo-1630699144035-c0f6311ec482?w=800&h=560&fit=crop&auto=format",
+    image_urls: [
+      "https://images.unsplash.com/photo-1630699144035-c0f6311ec482?w=800&h=560&fit=crop&auto=format",
+      "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1200&h=800&fit=crop&auto=format",
+      "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=1200&h=800&fit=crop&auto=format"
+    ],
     description: "Full-floor penthouse above Woodbrook with wraparound terrace, chef kitchen, and museum-quality finishes. Gulf and city views with deeded parking."
   },
   {
@@ -108,6 +119,10 @@ properties = [
     latitude: 10.2820, longitude: -61.4585,
     price_cents: 640_000, beds: 3, baths: 2, sqft: 2340, featured: false, agent: agents[2],
     image_url: "https://images.unsplash.com/photo-1724582586529-62622e50c0b3?w=800&h=560&fit=crop&auto=format",
+    image_urls: [
+      "https://images.unsplash.com/photo-1724582586529-62622e50c0b3?w=800&h=560&fit=crop&auto=format",
+      "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=1200&h=800&fit=crop&auto=format"
+    ],
     description: "Converted warehouse loft near the San Fernando waterfront with original timber beams, polished concrete, and a south-facing wall of light."
   },
   {
@@ -116,6 +131,11 @@ properties = [
     latitude: 10.6885, longitude: -61.6382,
     price_cents: 610_000_000, beds: 6, baths: 5, sqft: 7200, featured: false, agent: agents[0],
     image_url: "https://images.unsplash.com/photo-1783125127082-3fb6c1bccd72?w=800&h=560&fit=crop&auto=format",
+    image_urls: [
+      "https://images.unsplash.com/photo-1783125127082-3fb6c1bccd72?w=800&h=560&fit=crop&auto=format",
+      "https://images.unsplash.com/photo-1613977257363-707ba9348227?w=1200&h=800&fit=crop&auto=format",
+      "https://images.unsplash.com/photo-1605146769289-440113cc3d00?w=1200&h=800&fit=crop&auto=format"
+    ],
     description: "Coast-adjacent modern estate with infinity pool, guest pavilion, and tropical gardens opening toward the Bocas."
   },
   {
@@ -124,6 +144,10 @@ properties = [
     latitude: 10.6755, longitude: -61.5585,
     price_cents: 420_000, beds: 2, baths: 2, sqft: 1580, featured: false, agent: agents[1],
     image_url: "https://images.unsplash.com/photo-1688646953306-5ec93eab8c06?w=800&h=560&fit=crop&auto=format",
+    image_urls: [
+      "https://images.unsplash.com/photo-1688646953306-5ec93eab8c06?w=800&h=560&fit=crop&auto=format",
+      "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=1200&h=800&fit=crop&auto=format"
+    ],
     description: "Bright corner residence overlooking the waterfront canopy. Custom millwork, soaking tub, and reserved garage parking."
   },
   {
@@ -132,6 +156,11 @@ properties = [
     latitude: 10.6850, longitude: -61.5120,
     price_cents: 345_000_000, beds: 4, baths: 3, sqft: 4600, featured: false, agent: agents[3],
     image_url: "https://images.unsplash.com/photo-1783125127094-ea962d41ba42?w=800&h=560&fit=crop&auto=format",
+    image_urls: [
+      "https://images.unsplash.com/photo-1783125127094-ea962d41ba42?w=800&h=560&fit=crop&auto=format",
+      "https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=1200&h=800&fit=crop&auto=format",
+      "https://images.unsplash.com/photo-1600573472592-401b489a3cdc?w=1200&h=800&fit=crop&auto=format"
+    ],
     description: "Hillside villa with tiled courtyards, a wine cellar, and sunset views across Port of Spain and the gulf."
   },
   {
@@ -140,6 +169,10 @@ properties = [
     latitude: 10.6505, longitude: -61.5300,
     price_cents: 189_000_000, beds: 3, baths: 3, sqft: 2400, featured: true, agent: agents[2],
     image_url: "https://images.unsplash.com/photo-1566908829550-e6551b00979b?w=800&h=560&fit=crop&auto=format",
+    image_urls: [
+      "https://images.unsplash.com/photo-1566908829550-e6551b00979b?w=800&h=560&fit=crop&auto=format",
+      "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=1200&h=800&fit=crop&auto=format"
+    ],
     description: "Brand-new waterfront townhome on Invaders Bay with rooftop deck, EV charging, and harbor-facing glass."
   },
   {
@@ -148,12 +181,26 @@ properties = [
     latitude: 10.6495, longitude: -61.5110,
     price_cents: 520_000_000, beds: 0, baths: 2, sqft: 6800, featured: false, agent: agents[3],
     image_url: "https://images.unsplash.com/photo-1770622006495-86de934162b5?w=800&h=560&fit=crop&auto=format",
+    image_urls: [
+      "https://images.unsplash.com/photo-1770622006495-86de934162b5?w=800&h=560&fit=crop&auto=format",
+      "https://images.unsplash.com/photo-1497366216548-37526070297c?w=1200&h=800&fit=crop&auto=format",
+      "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=1200&h=800&fit=crop&auto=format"
+    ],
     description: "Flagship-ready commercial floor facing Independence Square with restored façade, freight access, and fully renewed MEP systems."
   }
 ]
 
-properties.each do |attrs|
+created_properties = properties.map do |attrs|
   Property.create!(attrs.merge(status: "active"))
+end
+
+puts "Ingesting gallery images into Active Storage…"
+created_properties.each do |property|
+  result = PropertyGalleryIngestor.call(property)
+  errors = Array(result[:errors])
+  puts "  #{property.title}: attached=#{result[:attached]} skipped=#{result[:skipped]}" \
+       "#{errors.any? ? " errors=#{errors.size}" : ""}"
+  errors.first(2).each { |err| puts "    · #{err}" }
 end
 
 Agent.find_each { |agent| Agent.reset_counters(agent.id, :properties) }
@@ -176,3 +223,4 @@ puts "Admin: admin@estate.realty / password123"
 puts "Agent: catherine@estate.realty / password123 (portal at /portal)"
 puts "Buyer: buyer@estate.realty / password123"
 puts "Properties: #{Property.count}, Agents: #{Agent.count}"
+puts "Gallery blobs: #{ActiveStorage::Attachment.where(name: "gallery_images").count}"
