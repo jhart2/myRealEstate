@@ -13,6 +13,7 @@ module Admin
     end
 
     def show
+      assign_queue_navigation
     end
 
     def update
@@ -59,6 +60,29 @@ module Admin
 
       @signals = PropertyDuplicateDetector.signals_between(@left, @right)
       @score = @signals.size
+    end
+
+    def assign_queue_navigation
+      pairs = queued_pairs
+      index = pairs.index { |pair| same_pair?(pair, @left.id, @right.id) }
+      @queue_total = pairs.size
+      @queue_position = index&.+(1)
+
+      if index
+        @previous_duplicate_path = path_for_pair(pairs[index - 1]) if index.positive?
+        @next_duplicate_path = path_for_pair(pairs[index + 1]) if index < pairs.size - 1
+      elsif pairs.any?
+        @next_duplicate_path = path_for_pair(pairs.first)
+      end
+    end
+
+    def path_for_pair(pair)
+      return if pair.blank?
+
+      left = Property.find_by(id: pair.left_id)
+      return if left.blank? || pair.right_slug.blank?
+
+      admin_duplicate_path(left, peer: pair.right_slug)
     end
 
     def peer_from_queue(property)
