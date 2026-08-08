@@ -6,6 +6,10 @@ Rails.application.routes.draw do
   root "home#index"
 
   resources :properties, only: %i[index show] do
+    collection do
+      get :results
+      get :map_markers
+    end
     member do
       get "photos/:index/download", action: :photo_download, as: :photo_download, constraints: { index: /\d+/ }
     end

@@ -1,6 +1,6 @@
 <% search_heading = property_search_heading(@location) %>
 <% content_for :title, search_heading %>
-<% content_for :meta_description, property_search_meta_description(location: @location, count: @properties.size) %>
+<% content_for :meta_description, property_search_meta_description(location: @location, count: @total_count) %>
 <% content_for :hide_footer, "1" %>
 
 <section
@@ -482,28 +482,42 @@
         <h1 class="search-title text-[0.95rem] font-semibold leading-snug tracking-tight text-ink sm:text-base">
           <%= search_heading %>
         </h1>
-        <p class="text-sm text-ink-3">
-          <%= pluralize(@properties.size, "result") %>
+        <p class="text-sm text-ink-3" data-search-map-target="resultsCount">
+          <%= pluralize(@total_count, "result") %>
         </p>
       </div>
 
       <div class="min-h-0 flex-1 overflow-y-auto" data-search-map-target="listScroll">
-        <% if @properties.any? %>
-          <div class="divide-y divide-border">
-            <% @properties.each do |property| %>
-              <%= render "properties/search_card", property: property %>
-            <% end %>
-          </div>
-        <% else %>
-          <div class="p-10 text-center">
-            <p class="font-display text-2xl text-ink">No homes match</p>
-            <p class="mt-2 text-sm text-ink-3">Try clearing filters or searching a wider area.</p>
-            <%= link_to "Clear search", properties_path,
-                  class: "btn-primary mt-6",
-                  data: { turbo: false },
-                  onclick: "try{localStorage.removeItem('tt-realty-search-filters')}catch(e){}" %>
-          </div>
-        <% end %>
+        <div
+          class="divide-y divide-border<%= " hidden" unless @properties.any? %>"
+          data-search-map-target="resultsList"
+          data-page="<%= @page %>"
+          data-total-pages="<%= @total_pages %>"
+        >
+          <% @properties.each do |property| %>
+            <%= render "properties/search_card", property: property %>
+          <% end %>
+        </div>
+
+        <div
+          class="p-10 text-center<%= " hidden" if @properties.any? %>"
+          data-search-map-target="listEmpty"
+        >
+          <p class="font-display text-2xl text-ink">No homes match</p>
+          <p class="mt-2 text-sm text-ink-3">Try clearing filters or searching a wider area.</p>
+          <%= link_to "Clear search", properties_path,
+                class: "btn-primary mt-6",
+                data: { turbo: false },
+                onclick: "try{localStorage.removeItem('tt-realty-search-filters')}catch(e){}" %>
+        </div>
+
+        <div
+          class="flex h-10 items-center justify-center<%= " hidden" unless @page < @total_pages %>"
+          data-search-map-target="listSentinel"
+          aria-hidden="true"
+        >
+          <span class="text-xs text-ink-3" data-search-map-target="listLoading" hidden>Loading more…</span>
+        </div>
       </div>
     </aside>
 

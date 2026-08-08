@@ -1,46 +1,46 @@
 class PropertiesController < ApplicationController
-  allow_unauthenticated_access only: %i[index show photo_download]
+  allow_unauthenticated_access only: %i[index show photo_download results map_markers]
+
+  PER_PAGE = 48
+  MAP_MARKERS_CAP = 3_000
 
   def index
-    @intent = normalize_intent(params[:intent])
-    @sort = params[:sort].presence || (@intent == "new" ? "newest" : "featured")
-    @days_max = params[:days_max].presence
-    @days_max ||= Property.new_listing_days.to_s if @intent == "new"
-
-    query = index_search_params
-    # Index cards/map use listing_cover_url (CDN columns) — do not preload every
-    # gallery blob (that plus per-listing .includes(:blob) caused ~12k SQL queries).
-    @properties = Property.search(query).includes(:agent)
-    @location = params[:location]
-    @property_types = Array(params[:property_types]).map(&:presence).compact
-    if @property_types.empty? && params[:property_type].present? && params[:property_type] != "Any Type"
-      @property_types = [ params[:property_type] ]
-    end
-    @property_types &= Property::PROPERTY_TYPES
-    @property_type = @property_types.first
-    @budget = params[:budget]
-    @price_min = params[:price_min].presence
-    @price_max = params[:price_max].presence
-    if @price_min.blank? && @price_max.blank? && (bounds = budget_to_price_bounds(@budget))
-      @price_min, @price_max = bounds.map { |v| v&.to_s }
-    end
-    @beds = params[:beds]
-    @baths = params[:baths]
-    @sqft_min = params[:sqft_min].presence
-    @sqft_max = params[:sqft_max].presence
-    @acres_min = params[:acres_min].presence
-    @featured_only = params[:featured].to_s.in?(%w[1 true])
-    @map_listings = @properties.select(&:mappable?).map(&:as_map_json)
-    @map_boundary = GeoBoundaryLookup.find(@location)
-    @map_viewport = MapViewport.for(
-      location: @location,
-      north: params[:north],
-      south: params[:south],
-      east: params[:east],
-      west: params[:west]
-    ) unless @map_boundary
-    @price_histogram = Property.price_histogram(query)
+    prepare_index_search!
     @hide_footer = true
+  end
+
+  # HTML fragment / JSON used by continuous scroll + viewport list refresh.
+  def results
+    prepare_index_search!
+
+    html = render_to_string(
+      partial: "properties/search_card",
+      collection: @properties,
+      as: :property,
+      formats: [ :html ]
+    )
+
+    render json: {
+      totalCount: @total_count,
+      page: @page,
+      totalPages: @total_pages,
+      hasMore: @page < @total_pages,
+      html: html
+    }
+  end
+
+  # All mappable listings in the current filter (+ viewport bounds when present).
+  def map_markers
+    prepare_index_search!
+
+    listings =
+      @search_scope
+        .where.not(latitude: nil)
+        .where.not(longitude: nil)
+        .limit(MAP_MARKERS_CAP)
+        .map(&:as_map_json)
+
+    render json: listings
   end
 
   def show
@@ -77,7 +77,6 @@ class PropertiesController < ApplicationController
     raise ActiveRecord::RecordNotFound if url.blank?
 
     if url.start_with?("/")
-      # Relative Active Storage URL without a hosted attachment mapping — follow and re-send.
       absolute = "#{request.base_url}#{url}"
       payload = PropertyGalleryIngestor.download(absolute)
       send_data payload[:io].read,
@@ -98,6 +97,60 @@ class PropertiesController < ApplicationController
 
   private
 
+  def prepare_index_search!
+    @intent = normalize_intent(params[:intent])
+    @sort = params[:sort].presence || (@intent == "new" ? "newest" : "featured")
+    @days_max = params[:days_max].presence
+    @days_max ||= Property.new_listing_days.to_s if @intent == "new"
+
+    query = index_search_params
+    # CDN cover URLs only on search cards/map — do not preload gallery blobs.
+    @search_scope = Property.search(query)
+    @total_count = @search_scope.except(:order).count
+    @per_page = PER_PAGE
+    @total_pages = [ (@total_count.to_f / @per_page).ceil, 1 ].max
+    @page = [ [ params[:page].to_i, 1 ].max, @total_pages ].min
+    @properties = @search_scope.offset((@page - 1) * @per_page).limit(@per_page)
+
+    @location = params[:location]
+    @property_types = Array(params[:property_types]).map(&:presence).compact
+    if @property_types.empty? && params[:property_type].present? && params[:property_type] != "Any Type"
+      @property_types = [ params[:property_type] ]
+    end
+    @property_types &= Property::PROPERTY_TYPES
+    @property_type = @property_types.first
+    @budget = params[:budget]
+    @price_min = params[:price_min].presence
+    @price_max = params[:price_max].presence
+    if @price_min.blank? && @price_max.blank? && (bounds = budget_to_price_bounds(@budget))
+      @price_min, @price_max = bounds.map { |v| v&.to_s }
+    end
+    @beds = params[:beds]
+    @baths = params[:baths]
+    @sqft_min = params[:sqft_min].presence
+    @sqft_max = params[:sqft_max].presence
+    @acres_min = params[:acres_min].presence
+    @featured_only = params[:featured].to_s.in?(%w[1 true])
+
+    # Initial map pins: same filtered set, capped. Viewport reloads refine via JS.
+    @map_listings =
+      @search_scope
+        .where.not(latitude: nil)
+        .where.not(longitude: nil)
+        .limit(MAP_MARKERS_CAP)
+        .map(&:as_map_json)
+
+    @map_boundary = GeoBoundaryLookup.find(@location)
+    @map_viewport = MapViewport.for(
+      location: @location,
+      north: params[:north],
+      south: params[:south],
+      east: params[:east],
+      west: params[:west]
+    ) unless @map_boundary
+    @price_histogram = Property.price_histogram(query)
+  end
+
   def normalize_intent(raw)
     intent = raw.to_s
     return intent if %w[sale rent new all].include?(intent)
@@ -117,7 +170,7 @@ class PropertiesController < ApplicationController
     params.permit(
       :intent, :location, :region, :property_type, :budget, :price_min, :price_max,
       :beds, :baths, :sort, :sqft_min, :sqft_max, :acres_min, :days_max, :featured,
-      :north, :south, :east, :west,
+      :north, :south, :east, :west, :page,
       property_types: []
     )
   end

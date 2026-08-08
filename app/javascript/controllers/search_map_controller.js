@@ -58,7 +58,8 @@ const BASEMAPS = {
 export default class extends Controller {
   static targets = [
     "map", "listPane", "mapPane", "listTab", "mapTab", "card", "listScroll",
-    "form", "north", "south", "east", "west", "areaButton", "spinner", "basemapButton"
+    "form", "north", "south", "east", "west", "areaButton", "spinner", "basemapButton",
+    "resultsCount", "resultsList", "listEmpty", "listSentinel", "listLoading"
   ]
   static values = { listings: Array, boundary: Object, viewport: Object }
 
@@ -69,6 +70,11 @@ export default class extends Controller {
     this.userMovedMap = false
     this._destroyed = false
     this._programmaticFrame = false
+    this._viewportReloadTimer = null
+    this._viewportAbort = null
+    this._listAbort = null
+    this._loadingMore = false
+    this._suppressViewportReload = true
 
     this.onCurrencyChanged = this.onCurrencyChanged.bind(this)
     document.addEventListener("currency:changed", this.onCurrencyChanged)
@@ -79,6 +85,7 @@ export default class extends Controller {
       this.showList()
     }
 
+    this.setupInfiniteScroll()
     this.bootMap()
   }
 
@@ -119,6 +126,16 @@ export default class extends Controller {
       this._resizeObserver.disconnect()
       this._resizeObserver = null
     }
+    if (this._listObserver) {
+      this._listObserver.disconnect()
+      this._listObserver = null
+    }
+    if (this._viewportReloadTimer) {
+      window.clearTimeout(this._viewportReloadTimer)
+      this._viewportReloadTimer = null
+    }
+    this._viewportAbort?.abort()
+    this._listAbort?.abort()
     this.teardownMap()
   }
 
@@ -255,6 +272,7 @@ export default class extends Controller {
       this.renderMarkers()
 
       this.suppressAreaButton = true
+      this._suppressViewportReload = true
       this.clearSearchBoundary()
       this.applyInitialFrame()
 
@@ -271,6 +289,16 @@ export default class extends Controller {
         if (this.suppressAreaButton) {
           this.suppressAreaButton = false
         }
+
+        if (this._suppressViewportReload) {
+          this._suppressViewportReload = false
+          // After the initial frame settles, sync list + pins to the visible map.
+          this.scheduleViewportReload({ force: true })
+          return
+        }
+
+        if (this._programmaticFrame) return
+        this.scheduleViewportReload()
       })
 
       this.watchSize()
@@ -713,7 +741,6 @@ export default class extends Controller {
     event.preventDefault()
     this.syncBoundsFields()
 
-    // Bounds become the search — don't also AND with a leftover location string
     const location = this.formTarget.querySelector('[name="location"]')
     if (location) location.value = ""
 
@@ -722,7 +749,171 @@ export default class extends Controller {
       this.areaButtonTarget.disabled = true
     }
 
-    this.formTarget.requestSubmit()
+    this.reloadForViewport()
+      .catch((error) => console.error("Search this area failed", error))
+      .finally(() => {
+        if (!this.hasAreaButtonTarget) return
+        this.areaButtonTarget.textContent = "Search this area"
+        this.areaButtonTarget.disabled = false
+        this.areaButtonTarget.classList.add("hidden")
+      })
+  }
+
+  setupInfiniteScroll() {
+    if (!this.hasListSentinelTarget || !this.hasListScrollTarget) return
+    if (typeof IntersectionObserver === "undefined") return
+
+    this._listObserver = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return
+        this.loadNextPage()
+      },
+      { root: this.listScrollTarget, rootMargin: "120px", threshold: 0 }
+    )
+    this._listObserver.observe(this.listSentinelTarget)
+  }
+
+  scheduleViewportReload({ force = false } = {}) {
+    if (this._destroyed) return
+    if (this._viewportReloadTimer) window.clearTimeout(this._viewportReloadTimer)
+    const delay = force ? 40 : 320
+    this._viewportReloadTimer = window.setTimeout(() => {
+      this._viewportReloadTimer = null
+      this.reloadForViewport().catch((error) => console.error("Viewport reload failed", error))
+    }, delay)
+  }
+
+  queryParamsFromForm({ page = null, clearLocation = false } = {}) {
+    if (!this.hasFormTarget) return new URLSearchParams()
+
+    const formData = new FormData(this.formTarget)
+    if (clearLocation) formData.delete("location")
+    formData.delete("page")
+    if (page != null) formData.set("page", String(page))
+
+    const params = new URLSearchParams()
+    for (const [key, value] of formData.entries()) {
+      if (value == null || String(value).trim() === "") continue
+      params.append(key, value)
+    }
+    return params
+  }
+
+  async reloadForViewport() {
+    if (!this.map || this._destroyed) return
+
+    this.syncBoundsFields()
+
+    const location = this.formTarget?.querySelector?.('[name="location"]')
+    if (location) location.value = ""
+
+    const params = this.queryParamsFromForm({ page: 1, clearLocation: true })
+    this.replaceListUrl(params)
+
+    this._viewportAbort?.abort()
+    this._viewportAbort = new AbortController()
+    const { signal } = this._viewportAbort
+
+    const markersUrl = `/properties/map_markers?${params.toString()}`
+    const resultsUrl = `/properties/results?${params.toString()}`
+
+    const [markersRes, resultsRes] = await Promise.all([
+      fetch(markersUrl, { headers: { Accept: "application/json" }, signal, credentials: "same-origin" }),
+      fetch(resultsUrl, { headers: { Accept: "application/json" }, signal, credentials: "same-origin" })
+    ])
+
+    if (!markersRes.ok) throw new Error(`map_markers HTTP ${markersRes.status}`)
+    if (!resultsRes.ok) throw new Error(`results HTTP ${resultsRes.status}`)
+
+    const listings = await markersRes.json()
+    const results = await resultsRes.json()
+    if (this._destroyed) return
+
+    this.listingsValue = Array.isArray(listings) ? listings : []
+    this.renderMarkers()
+    this.replaceResultsList(results)
+  }
+
+  replaceResultsList(results) {
+    if (!this.hasResultsListTarget) return
+
+    const total = Number(results.totalCount) || 0
+    const page = Number(results.page) || 1
+    const totalPages = Number(results.totalPages) || 1
+    const html = results.html || ""
+
+    if (this.hasResultsCountTarget) {
+      this.resultsCountTarget.textContent = `${total.toLocaleString()} ${total === 1 ? "result" : "results"}`
+    }
+
+    this.resultsListTarget.innerHTML = html
+    this.resultsListTarget.dataset.page = String(page)
+    this.resultsListTarget.dataset.totalPages = String(totalPages)
+    this.resultsListTarget.classList.toggle("hidden", total === 0 || !html.trim())
+
+    if (this.hasListEmptyTarget) {
+      this.listEmptyTarget.classList.toggle("hidden", total > 0)
+    }
+
+    if (this.hasListSentinelTarget) {
+      this.listSentinelTarget.classList.toggle("hidden", page >= totalPages)
+    }
+
+    if (this.hasListScrollTarget) {
+      this.listScrollTarget.scrollTop = 0
+    }
+
+    this._loadingMore = false
+  }
+
+  async loadNextPage() {
+    if (this._loadingMore || this._destroyed || !this.hasResultsListTarget) return
+
+    const page = Number(this.resultsListTarget.dataset.page || 1)
+    const totalPages = Number(this.resultsListTarget.dataset.totalPages || 1)
+    if (page >= totalPages) return
+
+    this._loadingMore = true
+    if (this.hasListLoadingTarget) this.listLoadingTarget.hidden = false
+
+    this._listAbort?.abort()
+    this._listAbort = new AbortController()
+
+    try {
+      const nextPage = page + 1
+      const params = this.queryParamsFromForm({ page: nextPage, clearLocation: true })
+      const response = await fetch(`/properties/results?${params.toString()}`, {
+        headers: { Accept: "application/json" },
+        signal: this._listAbort.signal,
+        credentials: "same-origin"
+      })
+      if (!response.ok) throw new Error(`results HTTP ${response.status}`)
+      const results = await response.json()
+      if (this._destroyed) return
+
+      this.resultsListTarget.insertAdjacentHTML("beforeend", results.html || "")
+      this.resultsListTarget.dataset.page = String(results.page || nextPage)
+      this.resultsListTarget.dataset.totalPages = String(results.totalPages || totalPages)
+
+      if (this.hasListSentinelTarget) {
+        const done = Number(results.page || nextPage) >= Number(results.totalPages || totalPages)
+        this.listSentinelTarget.classList.toggle("hidden", done)
+      }
+    } catch (error) {
+      if (error?.name !== "AbortError") console.error("Load more failed", error)
+    } finally {
+      this._loadingMore = false
+      if (this.hasListLoadingTarget) this.listLoadingTarget.hidden = true
+    }
+  }
+
+  replaceListUrl(params) {
+    try {
+      const url = `${window.location.pathname}?${params.toString()}`
+      window.history.replaceState(window.history.state, "", url)
+    } catch (_) {
+      /* ignore */
+    }
   }
 
   highlightCard(event) {

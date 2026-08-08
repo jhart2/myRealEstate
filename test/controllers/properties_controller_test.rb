@@ -93,4 +93,67 @@ class PropertiesControllerTest < ActionDispatch::IntegrationTest
     get photo_download_property_path(property, 99)
     assert_response :not_found
   end
+
+  test "index shows total result count and pages the list" do
+    get properties_path
+    assert_response :success
+    assert_match(/12 results/, response.body)
+    assert_select "[data-search-map-target='resultsList']"
+  end
+
+  test "results returns paginated html and accurate total" do
+    40.times do |i|
+      Property.create!(
+        agent: @agent,
+        title: "Extra Home #{i}",
+        slug: "extra-home-#{i}-#{SecureRandom.hex(2)}",
+        tag: "sale",
+        property_type: "House",
+        status: "active",
+        address: "#{i} Extra St",
+        city: "San Fernando",
+        state: "Trinidad",
+        zip: "",
+        price_cents: 200_000_00 + i,
+        latitude: 10.28 + (i * 0.001),
+        longitude: -61.46 - (i * 0.001),
+        image_url: "https://cdn.example.com/extra-#{i}.jpg",
+        image_urls: [ "https://cdn.example.com/extra-#{i}.jpg" ]
+      )
+    end
+
+    get results_properties_path, as: :json
+    assert_response :success
+    body = JSON.parse(response.body)
+    assert_equal 52, body["totalCount"]
+    assert_equal 1, body["page"]
+    assert_equal 2, body["totalPages"]
+    assert_equal true, body["hasMore"]
+    assert_includes body["html"], "listing-"
+
+    get results_properties_path(page: 2), as: :json
+    page2 = JSON.parse(response.body)
+    assert_equal 2, page2["page"]
+    assert_equal false, page2["hasMore"]
+  end
+
+  test "map_markers returns listings inside viewport bounds" do
+    get map_markers_properties_path(
+      north: 10.665,
+      south: 10.659,
+      east: -61.505,
+      west: -61.515
+    ), as: :json
+
+    assert_response :success
+    body = JSON.parse(response.body)
+    assert body.is_a?(Array)
+    assert body.any?
+    body.each do |listing|
+      assert listing["lat"] <= 10.665
+      assert listing["lat"] >= 10.659
+      assert listing["lng"] <= -61.505
+      assert listing["lng"] >= -61.515
+    end
+  end
 end
