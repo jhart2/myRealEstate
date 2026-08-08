@@ -2594,7 +2594,19 @@ html.lightbox-open body {
   pointer-events: auto;
 }
 
-.listing-show-media:has(.listing-gallery-viewer:not(.hidden)) .listing-show-media-tabs {
+.listing-show-media-tools {
+  justify-content: flex-end;
+  z-index: 20;
+  pointer-events: none;
+}
+
+.listing-show-media-tools .property-lightbox-media-actions,
+.listing-show-media-tools .property-lightbox-media-actions * {
+  pointer-events: auto;
+}
+
+.listing-show-media:has(.listing-gallery-viewer:not(.hidden)) .listing-show-media-tabs,
+.listing-show-media:has(.listing-gallery-viewer:not(.hidden)) .listing-show-media-tools {
   display: none;
 }
 

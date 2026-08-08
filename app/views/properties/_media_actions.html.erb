@@ -1,0 +1,21 @@
+<%# locals: (property:) %>
+<% share_url = "#{request.base_url}#{property_path(property)}" %>
+<div class="property-lightbox-media-actions" data-controller="listing-share">
+  <%= render "properties/lightbox_favorite", property: property %>
+
+  <button
+    type="button"
+    class="property-lightbox-icon-btn"
+    data-action="listing-share#share"
+    data-share-url="<%= share_url %>"
+    data-share-title="<%= property.title %>"
+    aria-label="Share listing"
+  >
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+      <path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"/>
+      <path d="M12 3v12"/>
+      <path d="M8 7l4-4 4 4"/>
+    </svg>
+  </button>
+  <span class="property-lightbox-share-note hidden" data-listing-share-target="note"></span>
+</div>

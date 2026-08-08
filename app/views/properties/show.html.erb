@@ -10,6 +10,12 @@
       data-controller="property-media"
     <% end %>
   >
+    <% if has_photos || has_map %>
+      <div class="property-lightbox-media-tools listing-show-media-tools">
+        <%= render "properties/media_actions", property: @property %>
+      </div>
+    <% end %>
+
     <% if has_photos %>
       <div
         data-media-panel="photos"
@@ -64,54 +70,7 @@
 <section class="mx-auto max-w-7xl px-6 py-12">
   <div class="grid gap-12 lg:grid-cols-3">
     <div class="lg:col-span-2">
-      <div class="flex flex-wrap items-center gap-3">
-        <span class="rounded px-2.5 py-1 text-xs font-semibold text-white <%= @property.tag == 'sale' ? 'bg-trinidad' : 'bg-ink-2' %>"><%= @property.tag_label %></span>
-        <span class="text-xs font-medium uppercase tracking-wide text-ink-3"><%= @property.property_type %></span>
-      </div>
-      <h1 class="font-display mt-3 text-4xl font-light text-ink md:text-5xl"><%= @property.title %></h1>
-      <p class="mt-2 text-ink-3"><%= @property.full_address %></p>
-      <p class="font-display mt-6 text-3xl font-semibold text-ink"><%= property_money(@property) %></p>
-
-      <% if property_spec_present?(@property.beds) || property_spec_present?(@property.baths) || property_spec_present?(@property.sqft) %>
-        <div class="mt-8 flex flex-wrap gap-8 border-y border-border py-6 text-sm text-ink-2">
-          <% if property_spec_present?(@property.beds) %>
-            <div><span class="block font-display text-2xl font-semibold text-ink"><%= @property.beds %></span> Bedrooms</div>
-          <% end %>
-          <% if property_spec_present?(@property.baths) %>
-            <div><span class="block font-display text-2xl font-semibold text-ink"><%= @property.baths %></span> Bathrooms</div>
-          <% end %>
-          <% if property_spec_present?(@property.sqft) %>
-            <div><span class="block font-display text-2xl font-semibold text-ink"><%= number_with_delimiter(@property.sqft) %></span> Sq Ft</div>
-          <% end %>
-        </div>
-      <% end %>
-
-      <div class="property-lightbox-stats-wrap mt-5">
-        <dl class="property-lightbox-stats">
-          <div class="property-lightbox-stat">
-            <dt class="sr-only">Time on market</dt>
-            <dd>
-              <strong><%= @property.days_on_estate %></strong>
-              <%= @property.days_on_estate == 1 ? "day" : "days" %> on
-              <span class="property-lightbox-stat-tip" title="Calendar days since this listing was published on TT Realty">TT</span>
-            </dd>
-          </div>
-          <div class="property-lightbox-stat">
-            <dt class="sr-only">Views</dt>
-            <dd>
-              <strong><%= number_with_delimiter(@property.views_count) %></strong>
-              <span class="property-lightbox-stat-tip" title="Unique sessions that opened this listing">views</span>
-            </dd>
-          </div>
-          <div class="property-lightbox-stat">
-            <dt class="sr-only">Saves</dt>
-            <dd>
-              <strong><%= number_with_delimiter(@property.saves_count) %></strong>
-              <span class="property-lightbox-stat-tip" title="Buyers who saved this home to favorites">saves</span>
-            </dd>
-          </div>
-        </dl>
-      </div>
+      <%= render "properties/listing_lead", property: @property %>
 
       <div class="mt-10">
         <h2 class="font-display text-2xl font-semibold text-ink">About this property</h2>
