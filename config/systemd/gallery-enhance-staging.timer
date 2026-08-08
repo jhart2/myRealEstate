@@ -1,0 +1,14 @@
+[Unit]
+Description=Staging gallery enhance timer (every 2h at :30, daytime + evening)
+After=network-online.target
+
+[Timer]
+# Local wall clock. Staggered :30 past the hour so bok-listings-sync (:00 hourly) can finish.
+OnCalendar=*-*-* 09,11,13,15,17,19,21:30:00
+# Do not pile up catches after a long backlog run or downtime.
+Persistent=false
+AccuracySec=3min
+Unit=gallery-enhance-staging.service
+
+[Install]
+WantedBy=timers.target

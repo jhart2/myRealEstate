@@ -57,6 +57,23 @@ class BokListingsImporterTest < ActiveSupport::TestCase
     assert property.image_url.present?
   end
 
+  test "BOK_SKIP_GALLERY_INGEST skips PropertyImageIngestJob enqueue" do
+    prev = ENV["BOK_SKIP_GALLERY_INGEST"]
+    ENV["BOK_SKIP_GALLERY_INGEST"] = "1"
+    path = write_feed([ good_row.merge("bok_id" => "BOK-SKIP-INGEST", "url" => "https://mybunchofkeys.com/property/skip-ingest/") ])
+
+    assert_no_enqueued_jobs(only: PropertyImageIngestJob) do
+      result = BokListingsImporter.import!(path, agent: @agent)
+      assert_equal 1, result.created
+    end
+  ensure
+    if prev.nil?
+      ENV.delete("BOK_SKIP_GALLERY_INGEST")
+    else
+      ENV["BOK_SKIP_GALLERY_INGEST"] = prev
+    end
+  end
+
   test "does not re-reconcile addresses on existing listings" do
     imgs = good_row["images"]
     property = Property.create!(

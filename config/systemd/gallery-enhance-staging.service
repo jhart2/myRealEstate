@@ -1,0 +1,34 @@
+[Unit]
+Description=TT Realty staging gallery enhance (ONLY_NEEDED → GCS + ESRGAN)
+Documentation=file:///home/javon/Desktop/Real%20Estate%20Website%20Builder/scripts/gallery_enhance_staging_once.sh
+After=network-online.target
+Wants=network-online.target
+# Do not stack with a BOK sync that is still scraping/importing — wait, don't kill.
+After=bok-listings-sync.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/home/javon/Desktop/Real Estate Website Builder
+EnvironmentFile=-/home/javon/Desktop/Real\x20Estate\x20Website\x20Builder/.env
+Environment=STAGING_GCP_PROJECT=tt-realty-staging
+Environment=STAGING_CLOUDSQL_CONNECTION=tt-realty-staging:us-east1:tt-realty-stg-db
+Environment=STAGING_SQL_PROXY_PORT=5433
+Environment=GALLERY_ENHANCE=1
+Environment=GALLERY_ENHANCE_ESRGAN=1
+Environment=ESRGAN_SCHEDULE=speed
+Environment=ESRGAN_SLOTS=bosgame:0,zephyrus:1,zephyrus:0,gpdwin:0,ayaneo:0,jays-mbp:0
+Environment=GALLERY_PREP_CONCURRENCY=24
+Environment=GALLERY_UPLOAD_CONCURRENCY=6
+Environment=RAILS_MAX_THREADS=64
+Environment=ONLY_NEEDED=1
+Environment=PATH=/home/javon/.local/share/google-cloud-sdk/bin:/home/javon/.local/share/mise/shims:/home/javon/.local/bin:/usr/local/bin:/usr/bin:/bin
+Environment=HOME=/home/javon
+# Nice below interactive work on the X13 host.
+Nice=10
+# ~65 imgs/min → 2h covers a large backlog; steady-state only_needed finishes much sooner.
+TimeoutStartSec=2h30min
+TimeoutStopSec=3min
+ExecStart=/home/javon/Desktop/Real\x20Estate\x20Website\x20Builder/scripts/gallery_enhance_staging_once.sh
+
+[Install]
+WantedBy=default.target

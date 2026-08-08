@@ -10,6 +10,18 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+
+# One enhance/backfill process at a time (timer + manual restart share this lock).
+if [[ "${GALLERY_ENHANCE:-0}" =~ ^(1|true|yes)$ && "${GALLERY_ENHANCE_LOCKED:-}" != "1" ]]; then
+  LOCK="${GALLERY_ENHANCE_LOCK:-/tmp/gallery-enhance-staging.lock}"
+  export GALLERY_ENHANCE_LOCKED=1
+  if ! flock -n "$LOCK" "$0" "$@"; then
+    echo "$(date -Is) gallery backfill skipped — another enhance holds $LOCK" >&2
+    exit 0
+  fi
+  exit $?
+fi
+
 PROJECT_ID="${STAGING_GCP_PROJECT:-tt-realty-staging}"
 CONNECTION_NAME="${STAGING_CLOUDSQL_CONNECTION:-tt-realty-staging:us-east1:tt-realty-stg-db}"
 SECRET_NAME="${STAGING_DATABASE_URL_SECRET:-database-url}"

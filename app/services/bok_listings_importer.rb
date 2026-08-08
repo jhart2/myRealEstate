@@ -381,8 +381,13 @@ class BokListingsImporter
   # Fire-and-forget gallery_ingest job (host originals). Never blocks listing publish/save.
   def enqueue_gallery_ingest!(property)
     return unless property&.persisted?
+    return if self.class.skip_gallery_ingest?
 
     property.enqueue_gallery_ingest!
+  end
+
+  def self.skip_gallery_ingest?
+    ENV["BOK_SKIP_GALLERY_INGEST"].to_s.match?(/\A(1|true|yes)\z/i)
   end
 
   # Dual sale/rent pages often scrape the monthly USD tip price as "For Sale".

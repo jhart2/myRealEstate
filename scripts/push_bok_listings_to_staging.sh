@@ -99,11 +99,20 @@ unset RAW_URL
 echo "Importing $(basename "$JSON_PATH") into staging Postgres…"
 cd "$ROOT"
 # Isolated Rails boot against staging DB (do not recurse into another staging push).
+# CRITICAL: production defaults ACTIVE_STORAGE_SERVICE to local — without google, async
+# gallery_ingest writes service_name=local into Cloud SQL (broken on Cloud Run).
+# Skip enqueue here; gallery-enhance timer / backfill hosts+enhances to GCS with ONLY_NEEDED.
+GCS_BUCKET="${GCS_BUCKET:-tt-realty-staging-activestorage}"
 env -u BOK_SYNC_PUSH_STAGING \
   RAILS_ENV=production \
   DATABASE_URL="$TCP_URL" \
   SECRET_KEY_BASE="${SECRET_KEY_BASE:-staging-push-$(printf 'x%.0s' {1..48})}" \
   BOK_SYNC_PUSH_STAGING=0 \
+  BOK_SKIP_GALLERY_INGEST=1 \
+  GALLERY_ENHANCE=0 \
+  ACTIVE_STORAGE_SERVICE=google \
+  GCS_PROJECT="${GCS_PROJECT:-$PROJECT_ID}" \
+  GCS_BUCKET="$GCS_BUCKET" \
   bin/rails "bok:import[${JSON_PATH}]"
 
 echo "Staging DB push complete."
