@@ -3,8 +3,19 @@
 @import "tailwindcss";
 
 @theme {
+  /* Rich black family — base #010203 with fanned companions (not flattened) */
+  --color-rich-black: #010203;
+  --color-rich-black-light: #020203;
+  --color-rich-black-dark: #010202;
+  --color-rich-black-gray: #020202;
+  --color-vampire-black: #080808;
+  --color-smoky-black: #100c08;
+  --color-chinese-black: #141414;
+  --color-fogra-black: #010b13;
+  --color-ink-inverted: #fefdfc;
+
   --color-ground: #f5f3ef;
-  --color-ink: #1a1714;
+  --color-ink: #141414; /* Chinese black — primary text / UI ink */
   --color-ink-2: #4a4440;
   /* Darkened for WCAG AA 4.5:1 on ground/panel/panel-warm */
   --color-ink-3: #6b635c;
@@ -13,13 +24,13 @@
   --color-stone-light: #e8dfd1;
   --color-trinidad: hsl(353 85% 44%);
   --color-trinidad-dark: hsl(353 85% 38%);
-  /* Brighter brand red for dark surfaces (ink/deep) — AA on #13110f / #1a1714 */
+  /* Brighter brand red for dark surfaces (deep/chinese) — AA on #010203 / #141414 */
   --color-trinidad-bright: #e85a6a;
   --color-trinidad-soft: hsl(353 70% 96%);
   --color-panel: #ffffff;
   --color-panel-warm: #faf8f5;
   --color-border: #e0d9d0;
-  --color-deep: #13110f;
+  --color-deep: #010203; /* rich black — deepest shells / heroes */
   --font-display: "Fraunces", Georgia, serif;
   --font-sans: "DM Sans", system-ui, sans-serif;
 }
@@ -40,7 +51,7 @@ body {
 }
 
 .btn-primary {
-  @apply inline-flex items-center justify-center rounded-lg bg-ink px-4 py-2.5 text-sm font-medium text-ground transition-colors hover:bg-[#2e2825];
+  @apply inline-flex items-center justify-center rounded-lg bg-ink px-4 py-2.5 text-sm font-medium text-ground transition-colors hover:bg-smoky-black;
 }
 
 .btn-accent {
@@ -156,7 +167,7 @@ body {
   background: transparent;
   font-family: var(--font-sans);
   font-size: 0.9rem;
-  color: #1f1a17;
+  color: var(--color-ink);
 }
 
 .mobile-nav-search-input::placeholder {
@@ -197,7 +208,7 @@ body {
 }
 
 .mobile-nav-search-submit:hover {
-  color: #1f1a17;
+  color: var(--color-ink);
   background: #f3f0eb;
 }
 
@@ -1098,12 +1109,12 @@ aside.bg-ink .text-trinidad {
 }
 
 .estate-basemap-btn:hover {
-  color: #1f1a17;
+  color: var(--color-ink);
   background: rgba(245, 243, 239, 0.9);
 }
 
 .estate-basemap-btn.is-active {
-  color: #1f1a17;
+  color: var(--color-ink);
   background: #f0ebe3;
 }
 
@@ -1453,12 +1464,12 @@ html.lightbox-open body {
 
 .property-lightbox-media {
   position: relative;
-  background: #1a1714;
+  background: var(--color-smoky-black);
 }
 
 .property-lightbox-hero {
   /* Height + layout owned by gallery rules later in this file */
-  background: #2a2622;
+  background: var(--color-chinese-black);
 }
 
 .property-lightbox-media-tools {
@@ -1541,7 +1552,7 @@ html.lightbox-open body {
   border: 0;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.94);
-  color: #1f1a17;
+  color: var(--color-ink);
   padding: 0;
   overflow: visible;
   line-height: 0;
@@ -1578,7 +1589,7 @@ html.lightbox-open body {
   top: calc(100% + 0.4rem);
   padding: 0.3rem 0.55rem;
   border-radius: 0.35rem;
-  background: #1f1a17;
+  background: var(--color-ink);
   color: #fff;
   font-size: 0.7rem;
   white-space: nowrap;
@@ -1733,7 +1744,7 @@ html.lightbox-open body {
   background: transparent;
   font-family: var(--font-sans);
   font-size: 0.9rem;
-  color: #1f1a17;
+  color: var(--color-ink);
 }
 
 .travel-times-input::placeholder {
@@ -1808,7 +1819,7 @@ html.lightbox-open body {
   gap: 0.35rem;
   min-width: 0;
   font-size: 0.85rem;
-  color: #2a2622;
+  color: var(--color-chinese-black);
 }
 
 .travel-times-card-mode strong {
@@ -1968,7 +1979,7 @@ html.lightbox-open body {
   font-weight: 700;
   letter-spacing: -0.03em;
   line-height: 1.1;
-  color: #1f1a17;
+  color: var(--color-ink);
 }
 
 .property-lightbox-title {
@@ -1978,7 +1989,7 @@ html.lightbox-open body {
   font-weight: 600;
   letter-spacing: -0.02em;
   line-height: 1.3;
-  color: #1f1a17;
+  color: var(--color-ink);
 }
 
 .property-lightbox-address {
@@ -2007,7 +2018,7 @@ html.lightbox-open body {
   font-weight: 700;
   letter-spacing: -0.03em;
   line-height: 1.1;
-  color: #1f1a17;
+  color: var(--color-ink);
 }
 
 .property-lightbox-spec-label {
@@ -2057,7 +2068,7 @@ html.lightbox-open body {
 
 .property-lightbox-payment-est strong {
   font-weight: 700;
-  color: #1f1a17;
+  color: var(--color-ink);
 }
 
 .property-lightbox-payment-abbr {
@@ -2105,7 +2116,7 @@ html.lightbox-open body {
   padding: 0.55rem 0.75rem;
   border-radius: 0.55rem;
   background: #f3f0eb;
-  color: #2a2622;
+  color: var(--color-chinese-black);
   font-size: 0.875rem;
   font-weight: 500;
 }
@@ -2297,7 +2308,7 @@ html.lightbox-open body {
   font-family: var(--font-display);
   font-size: 1.05rem;
   font-weight: 600;
-  color: var(--color-ink, #1a1714);
+  color: var(--color-ink);
   line-height: 1.25;
 }
 
@@ -2385,7 +2396,7 @@ html.lightbox-open body {
   padding: 0.5rem 0.7rem;
   border-radius: 0.4rem;
   background: rgba(255, 255, 255, 0.96);
-  color: #1f1a17;
+  color: var(--color-ink);
   font-family: var(--font-sans);
   font-size: 0.8rem;
   font-weight: 650;
@@ -2402,7 +2413,7 @@ html.lightbox-open body {
   height: 100%;
   min-height: 0;
   overflow: hidden;
-  background: #1a1714;
+  background: var(--color-smoky-black);
 }
 
 .listing-gallery-track {
@@ -2433,7 +2444,7 @@ html.lightbox-open body {
   padding: 0;
   border: 0;
   border-radius: 0;
-  background: #2a2622;
+  background: var(--color-chinese-black);
   scroll-snap-align: start;
   scroll-snap-stop: always;
   cursor: pointer;
@@ -2537,7 +2548,7 @@ html.lightbox-open body {
   width: 100%;
   margin: 0;
   padding: 0;
-  background: #13110f;
+  background: var(--color-deep);
 }
 
 .listing-show-media {
@@ -2615,7 +2626,7 @@ html.lightbox-open body {
   display: block;
   overflow: hidden;
   padding: 0;
-  background: #13110f;
+  background: var(--color-deep);
   /* Contain Leaflet pane z-indexes (200–1000) so media tools/tabs stay clickable */
   position: relative;
   z-index: 0;
@@ -2636,7 +2647,7 @@ html.lightbox-open body {
 }
 
 .property-lightbox-media {
-  background: #13110f;
+  background: var(--color-deep);
 }
 
 .property-lightbox-media-tools {
@@ -2703,7 +2714,7 @@ html.gallery-viewer-open .listing-gallery-viewer {
   margin: auto;
   overflow: hidden;
   border-radius: 0.75rem;
-  background: #111;
+  background: var(--color-chinese-black);
   box-shadow: 0 18px 48px rgba(0, 0, 0, 0.4);
 }
 
@@ -2718,7 +2729,7 @@ html.gallery-viewer-open .listing-gallery-viewer {
   color: #fff;
   position: relative;
   z-index: 3;
-  background: #111;
+  background: var(--color-chinese-black);
 }
 
 .listing-gallery-viewer-toolbar-start {
@@ -2777,7 +2788,7 @@ html.gallery-viewer-open .listing-gallery-viewer {
   flex: 1 1 auto;
   min-height: 0;
   overflow: hidden;
-  background: #0b0b0b;
+  background: var(--color-vampire-black);
 }
 
 .listing-gallery-viewer-track {
@@ -2832,7 +2843,7 @@ html.gallery-viewer-open .listing-gallery-viewer {
   flex: 0 0 auto;
   padding: 0.7rem 0.75rem max(0.85rem, env(safe-area-inset-bottom, 0px));
   scrollbar-width: thin;
-  background: #111;
+  background: var(--color-chinese-black);
   position: relative;
   z-index: 3;
 }
@@ -2845,7 +2856,7 @@ html.gallery-viewer-open .listing-gallery-viewer {
   overflow: hidden;
   border: 2px solid transparent;
   border-radius: 0.3rem;
-  background: #2a2622;
+  background: var(--color-chinese-black);
   cursor: pointer;
   opacity: 0.7;
 }
@@ -2895,11 +2906,11 @@ html.gallery-viewer-open .listing-gallery-viewer {
   .property-lightbox-hero {
     height: min(42vh, 360px);
     padding: 0;
-    background: #1a1714;
+    background: var(--color-smoky-black);
   }
 
   .property-lightbox-media {
-    background: #1a1714;
+    background: var(--color-smoky-black);
   }
 
   /* Leave room for All photos (left) + dots (center) */
@@ -2962,7 +2973,7 @@ html.gallery-viewer-open .listing-gallery-viewer {
   background:
     radial-gradient(ellipse 80% 55% at 15% 20%, hsl(353 85% 44% / 0.18), transparent 55%),
     radial-gradient(ellipse 60% 50% at 90% 75%, hsl(40 40% 55% / 0.12), transparent 50%),
-    linear-gradient(165deg, #1a1714 0%, #13110f 55%, #0e0c0b 100%);
+    linear-gradient(165deg, var(--color-smoky-black) 0%, var(--color-deep) 55%, var(--color-vampire-black) 100%);
 }
 
 .error-status-atmosphere::after {
