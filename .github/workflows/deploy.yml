@@ -1,14 +1,17 @@
-# Deploy latest main → Cloud Run (staging today).
+# Deploy latest main → Cloud Run (staging — only GCP env that exists).
 #
-# Target (only GCP env that exists):
+# Target:
 #   Project:  tt-realty-staging
 #   Service:  tt-realty-staging
 #   Region:   us-east1
 #   Image:    us-east1-docker.pkg.dev/tt-realty-staging/tt-realty/web:staging
 #   Port:     8080 + ENTRYPOINT /rails/bin/docker-entrypoint
+#   Storage:  gs://tt-realty-staging-activestorage (Active Storage / GCS)
+#             Runtime SA: 903013674950-compute@developer.gserviceaccount.com
+#             needs roles/storage.objectAdmin on that bucket.
 #
-# There is no production GCP project yet (no tt-realty / tt-realty-prod).
-# When prod exists, fork this job or add a second environment matrix.
+# There is no production GCP project yet. When prod exists, add a second
+# matrix/env (separate bucket + secrets) — do not overload this staging job.
 #
 # --- GitHub secrets (Workload Identity Federation — preferred) ---
 #   GCP_WORKLOAD_IDENTITY_PROVIDER
@@ -118,7 +121,7 @@ jobs:
             --timeout=300 \
             --add-cloudsql-instances="${CLOUDSQL_INSTANCE}" \
             --update-secrets="RAILS_MASTER_KEY=rails-master-key:latest,DATABASE_URL=database-url:latest" \
-            --set-env-vars="RAILS_ENV=production,RAILS_LOG_LEVEL=info,APP_HOST=${APP_HOST}" \
+            --set-env-vars="RAILS_ENV=production,RAILS_LOG_LEVEL=info,APP_HOST=${APP_HOST},ACTIVE_STORAGE_SERVICE=google,GCS_PROJECT=${PROJECT_ID},GCS_BUCKET=tt-realty-staging-activestorage" \
             --project="${PROJECT_ID}" \
             --quiet
 
