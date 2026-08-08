@@ -8,7 +8,9 @@ class PropertiesController < ApplicationController
     @days_max ||= Property.new_listing_days.to_s if @intent == "new"
 
     query = index_search_params
-    @properties = Property.search(query).includes(:agent, image_attachment: :blob).with_attached_gallery_images
+    # Index cards/map use listing_cover_url (CDN columns) — do not preload every
+    # gallery blob (that plus per-listing .includes(:blob) caused ~12k SQL queries).
+    @properties = Property.search(query).includes(:agent)
     @location = params[:location]
     @property_types = Array(params[:property_types]).map(&:presence).compact
     if @property_types.empty? && params[:property_type].present? && params[:property_type] != "Any Type"

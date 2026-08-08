@@ -113,7 +113,7 @@ jobs:
             --port=8080 \
             --command=/rails/bin/docker-entrypoint \
             --args=./bin/rails,server,-b,0.0.0.0,-p,8080 \
-            --memory=1Gi \
+            --memory=4Gi \
             --cpu=1 \
             --min-instances=0 \
             --max-instances=2 \
@@ -121,7 +121,7 @@ jobs:
             --timeout=300 \
             --add-cloudsql-instances="${CLOUDSQL_INSTANCE}" \
             --update-secrets="RAILS_MASTER_KEY=rails-master-key:latest,DATABASE_URL=database-url:latest" \
-            --set-env-vars="RAILS_ENV=production,RAILS_LOG_LEVEL=info,APP_HOST=${APP_HOST},ACTIVE_STORAGE_SERVICE=google,GCS_PROJECT=${PROJECT_ID},GCS_BUCKET=tt-realty-staging-activestorage,GALLERY_ENHANCE=1,GALLERY_DISPLAY_MODE=enhanced_or_cdn" \
+            --set-env-vars="RAILS_ENV=production,RAILS_LOG_LEVEL=info,APP_HOST=${APP_HOST},ACTIVE_STORAGE_SERVICE=google,GCS_PROJECT=${PROJECT_ID},GCS_BUCKET=tt-realty-staging-activestorage,GALLERY_DISPLAY_MODE=enhanced_or_cdn" \
             --project="${PROJECT_ID}" \
             --quiet
 

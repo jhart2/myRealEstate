@@ -467,17 +467,62 @@ def crawl_house_search(client: GentleClient, max_pages: int) -> set[str]:
     return urls
 
 
+def _inner_html_for_open_tag(html: str, open_match) -> str:
+    """Return inner HTML for a possibly nested element opened by open_match."""
+    start = open_match.end()
+    tag = open_match.group(1).lower()
+    i = start
+    depth = 1
+    lower = html.lower()
+    open_pat = f"<{tag}"
+    close_pat = f"</{tag}>"
+    while i < len(html) and depth > 0:
+        nxt_open = lower.find(open_pat, i)
+        nxt_close = lower.find(close_pat, i)
+        if nxt_close < 0:
+            return html[start:]
+        # Only count real tag opens ("<div" / "<div " / "<div>"), not substrings.
+        real_open = -1
+        while nxt_open >= 0 and nxt_open < nxt_close:
+            ch = lower[nxt_open + len(open_pat) : nxt_open + len(open_pat) + 1]
+            if ch in ("", ">", " ", "\n", "\t", "/"):
+                real_open = nxt_open
+                break
+            nxt_open = lower.find(open_pat, nxt_open + len(open_pat))
+        if real_open >= 0:
+            depth += 1
+            i = real_open + len(open_pat)
+            continue
+        depth -= 1
+        if depth == 0:
+            return html[start:nxt_close]
+        i = nxt_close + len(close_pat)
+    return html[start:]
+
+
+def extract_element_inner(html: str, pattern: str) -> str:
+    """First match of an opening tag pattern, with nested tag balance."""
+    m = re.search(pattern, html, flags=re.I | re.S)
+    if not m:
+        return ""
+    return _inner_html_for_open_tag(html, m)
+
+
 def parse_description(html: str) -> str:
-    """Full listing copy from #description, plus optional About the Region."""
+    """Full listing copy from #description, plus optional About the Region.
+
+    Never truncates the body. Nested <div>s inside #description / .region-desc
+    are handled via balanced extraction (naive non-greedy </div> cuts mid-copy).
+    """
     parts: list[str] = []
 
-    desc = first_match(r'<div id=["\']description["\']>(.*?)</div>', html, re.I | re.S)
+    desc = extract_element_inner(html, r'<(div)\b[^>]*\bid=["\']description["\'][^>]*>')
     if desc:
         text = strip_tags(desc)
         if text:
             parts.append(text)
 
-    region = first_match(r'<div class=["\']region-desc["\']>(.*?)</div>', html, re.I | re.S)
+    region = extract_element_inner(html, r'<(div)\b[^>]*\bclass=["\'][^"\']*\bregion-desc\b[^"\']*["\'][^>]*>')
     if region:
         region_text = strip_tags(region)
         region_text = re.sub(r"View More\s+.+\s+Listings\s*$", "", region_text, flags=re.I).strip()
@@ -495,7 +540,11 @@ def parse_description(html: str) -> str:
         html,
         re.I | re.S,
     )
-    return strip_tags(about) if about else ""
+    text = strip_tags(about) if about else ""
+    # Meta/og excerpts often end with "..." — never prefer them as body copy.
+    if text and re.search(r"(?:\.\.\.|…)\s*$", text):
+        return ""
+    return text
 
 
 def parse_listing(url: str, html: str, lastmod: str = "") -> Listing | None:

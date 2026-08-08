@@ -49,6 +49,7 @@ class PropertyGalleryDisplayTest < ActiveSupport::TestCase
 
     assert_equal [ @cdn_a, @cdn_b ], @property.display_gallery_image_urls
     assert_equal @cdn_a, @property.display_image_url
+    assert_equal @cdn_a, @property.listing_cover_url
     assert @property.image_present?
 
     raw = ActiveStorage::Blob.create_and_upload!(
@@ -72,6 +73,35 @@ class PropertyGalleryDisplayTest < ActiveSupport::TestCase
     urls = @property.reload.display_gallery_image_urls
     assert_match(%r{\A/rails/active_storage/}, urls.first)
     assert_equal @cdn_b, urls.second
+    # Index/map covers stay on CDN even when an enhanced blob exists.
+    assert_equal @cdn_a, @property.listing_cover_url
+    assert_equal @cdn_a, @property.as_map_json[:image]
+  end
+
+  test "listing_cover_url and as_map_json avoid gallery attachment queries" do
+    ENV["GALLERY_DISPLAY_MODE"] = "enhanced_or_cdn"
+    5.times do |i|
+      blob = ActiveStorage::Blob.create_and_upload!(
+        io: StringIO.new("bytes-#{i}"),
+        filename: "img-#{i}.jpg",
+        content_type: "image/jpeg",
+        metadata: { "source_url" => @cdn_a, "source_urls" => [ @cdn_a ], "enhanced" => true }
+      )
+      @property.gallery_images_attachments.create!(blob_id: blob.id)
+    end
+    @property.reload
+
+    queries = []
+    counter = ->(*, payload) { queries << payload[:sql] if payload[:sql] !~ /SCHEMA|TRANSACTION/i }
+    ActiveSupport::Notifications.subscribed(counter, "sql.active_record") do
+      cover = @property.listing_cover_url
+      json = @property.as_map_json
+      assert_equal @cdn_a, cover
+      assert_equal @cdn_a, json[:image]
+    end
+
+    attachment_queries = queries.count { |sql| sql.match?(/active_storage_attachments|active_storage_blobs/i) }
+    assert_equal 0, attachment_queries, "expected no Active Storage queries, got:\n#{queries.join("\n")}"
   end
 
   test "enhanced_only hides unenhanced hosted blobs" do
@@ -86,5 +116,35 @@ class PropertyGalleryDisplayTest < ActiveSupport::TestCase
 
     assert_empty @property.reload.display_gallery_image_urls
     assert_nil @property.display_image_url
+  end
+
+  test "gallery_image_urls percent-encodes unicode spaces in CDN paths" do
+    ENV["GALLERY_DISPLAY_MODE"] = "enhanced_or_cdn"
+    nbsp_url = "https://cdn.example.com/Screenshot-at-9.34.23\u202fam.png"
+    @property.update!(image_url: nbsp_url, image_urls: [ nbsp_url ])
+
+    urls = @property.reload.gallery_image_urls
+    assert_equal 1, urls.size
+    assert_includes urls.first, "%E2%80%AF"
+    assert_equal urls.first, @property.display_gallery_image_urls.first
+  end
+
+  test "enhanced_or_cdn skips non-configured service blobs and falls back to CDN" do
+    ENV["GALLERY_DISPLAY_MODE"] = "enhanced_or_cdn"
+    configured = Rails.configuration.active_storage.service.to_s
+    other = configured == "local" ? "google" : "local"
+
+    blob = ActiveStorage::Blob.create_and_upload!(
+      io: StringIO.new("local-bytes"),
+      filename: "DJI_0088.jpg",
+      content_type: "image/jpeg",
+      metadata: { "source_url" => @cdn_a, "source_urls" => [ @cdn_a ], "enhanced" => true }
+    )
+    blob.update_columns(service_name: other)
+    @property.gallery_images_attachments.create!(blob_id: blob.id)
+
+    assert_equal [ @cdn_a, @cdn_b ], @property.reload.display_gallery_image_urls
+    assert_equal @cdn_a, @property.display_image_url
+    assert_empty @property.enhanced_gallery_images
   end
 end

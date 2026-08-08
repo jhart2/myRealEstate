@@ -8,8 +8,13 @@ local:
 
 # Staging GCS (tt-realty-staging). Cloud Run uses ADC via its runtime SA —
 # do not check in a keyfile. Set GCS_BUCKET (+ optional GCS_PROJECT).
+# iam: true → sign Blob URLs via IAM Credentials API (needs
+# roles/iam.serviceAccountTokenCreator on the runtime SA for itself).
 google:
   service: GCS
   project: <%= ENV.fetch("GCS_PROJECT") { ENV.fetch("GOOGLE_CLOUD_PROJECT", "tt-realty-staging") } %>
   bucket: <%= ENV.fetch("GCS_BUCKET", "tt-realty-staging-activestorage") %>
+  iam: true
+  # optional override; otherwise fetched from GCE/Cloud Run metadata
+  # gsa_email: <%= ENV["GCS_SIGNED_URL_ISSUER"] %>
   # credentials: omitted → Application Default Credentials (Cloud Run / gcloud auth)

@@ -1,17 +1,22 @@
-# Polishes a downloaded listing image before Active Storage upload.
-# Pipeline: analyze → darktable style → adaptive ImageMagick → Real-ESRGAN (bosgame) → JPEG.
+# Optional listing-image polish (darktable + ImageMagick + Real-ESRGAN).
+# Not part of BOK sync / PropertyGalleryIngestor — run separately when ready
+# (e.g. scripts/listing_image_enhance_dry.sh, or a future gallery:enhance task).
+#
+# Pipeline: analyze → darktable style → adaptive ImageMagick → Real-ESRGAN → JPEG.
+# Real-ESRGAN is dispatched through EsrganGpuFanout (multi-host GPU slots).
 #
 # Env:
-#   GALLERY_ENHANCE=0           disable entirely (pass-through)
-#   GALLERY_ENHANCE_ESRGAN=0    skip Real-ESRGAN step
+#   GALLERY_ENHANCE=1           opt-in polish (default off — BOK sync must never enable this)
+#   GALLERY_ENHANCE_ESRGAN=0    skip Real-ESRGAN step when enhance is on
 #   GALLERY_ENHANCE_MAX_EDGE    long-edge cap before ESRGAN (default 1280)
-#   SSH_HOST                    Real-ESRGAN host (default bosgame)
+#   ESRGAN_SLOTS                host:gpu slots (see EsrganGpuFanout::DEFAULT_SLOTS)
 #   ESRGAN_MODEL / ESRGAN_SCALE / ESRGAN_TILE
 require "open3"
 require "json"
 require "stringio"
 require "tmpdir"
 require "fileutils"
+
 class PropertyGalleryEnhancer
   class Error < StandardError; end
 
@@ -19,14 +24,31 @@ class PropertyGalleryEnhancer
   TARGET_MEAN = 0.48
   DEFAULT_MAX_EDGE = 1280
 
-  def self.enabled?
-    return false if Rails.env.test? && ENV["GALLERY_ENHANCE"].nil?
+  # CPU-staged image ready for ESRGAN (caller owns cleanup! via #cleanup!).
+  StagedPrep = Struct.new(
+    :work_dir, :esrgan_in, :im_out, :analysis, :filename, :prep_ms, :skip_esrgan,
+    keyword_init: true
+  ) do
+    def cleanup!
+      FileUtils.remove_entry_secure(work_dir) if work_dir && Dir.exist?(work_dir)
+    rescue StandardError
+      nil
+    end
+  end
 
-    ENV["GALLERY_ENHANCE"].to_s !~ /\A(0|false|no|off)\z/i
+  def self.enabled?
+    ENV["GALLERY_ENHANCE"].to_s.match?(/\A(1|true|yes|on)\z/i)
   end
 
   def self.esrgan_enabled?
+    return false unless enabled?
+
     ENV["GALLERY_ENHANCE_ESRGAN"].to_s !~ /\A(0|false|no|off)\z/i
+  end
+
+  # GPU slots for parallel Real-ESRGAN (delegates to EsrganGpuFanout).
+  def self.esrgan_slots
+    EsrganGpuFanout.slots
   end
 
   # payload: { io:, filename:, content_type: } → same shape (JPEG when enhanced)
@@ -39,53 +61,119 @@ class PropertyGalleryEnhancer
     payload
   end
 
+  # CPU-only prep for pipeline ingest. Returns StagedPrep (must #cleanup!).
+  def self.stage_cpu!(payload)
+    new.stage_cpu!(payload)
+  end
+
+  # After ESRGAN (or skip): JPEG + metadata payload. Always cleans staged work dir.
+  def self.finalize_staged!(staged, esrgan_png: nil, esrgan_ms: nil, queue_wait_ms: nil)
+    new.finalize_staged!(staged, esrgan_png: esrgan_png, esrgan_ms: esrgan_ms, queue_wait_ms: queue_wait_ms)
+  end
+
   def enhance_payload(payload)
+    staged = stage_cpu!(payload)
+    esrgan_png = nil
+    esrgan_ms = nil
+    begin
+      if self.class.esrgan_enabled? && !staged.skip_esrgan
+        esrgan_path = Pathname(staged.work_dir).join("03_esrgan.png")
+        t0 = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+        if run_esrgan!(staged.esrgan_in, esrgan_path)
+          esrgan_png = esrgan_path
+        end
+        esrgan_ms = ((Process.clock_gettime(Process::CLOCK_MONOTONIC) - t0) * 1000).round
+      end
+      finalize_staged!(staged, esrgan_png: esrgan_png, esrgan_ms: esrgan_ms, queue_wait_ms: 0)
+    rescue StandardError
+      staged.cleanup!
+      raise
+    end
+  end
+
+  def stage_cpu!(payload)
     io = payload.fetch(:io)
     filename = payload.fetch(:filename).to_s
     bytes = io.respond_to?(:read) ? (io.rewind rescue nil; io.read) : io.to_s
     raise Error, "empty image" if bytes.blank?
 
-    Dir.mktmpdir("tt_gallery_enhance_") do |dir|
-      work = Pathname.new(dir)
-      src = work.join("00_src.jpg")
-      write_normalized_jpeg!(bytes, src)
+    work_dir = Dir.mktmpdir("tt_gallery_enhance_")
+    work = Pathname.new(work_dir)
+    t0 = Process.clock_gettime(Process::CLOCK_MONOTONIC)
 
-      analysis = analyze!(src, work)
-      dt_out = work.join("01_darktable.jpg")
-      run_darktable!(src, dt_out, work)
+    src = work.join("00_src.jpg")
+    write_normalized_jpeg!(bytes, src)
 
-      im_out = work.join("02_imagemagick.jpg")
-      run_imagemagick_adaptive!(dt_out, im_out, analysis)
+    analysis = analyze!(src, work)
+    dt_out = work.join("01_darktable.jpg")
+    run_darktable!(src, dt_out, work)
 
-      final = work.join("03_final.jpg")
-      if self.class.esrgan_enabled?
-        esrgan_in = work.join("02b_esrgan_in.jpg")
-        resize_max_edge!(im_out, esrgan_in, max_edge)
-        esrgan_png = work.join("03_esrgan.png")
-        if run_esrgan!(esrgan_in, esrgan_png, work)
-          encode_jpeg!(esrgan_png, final)
-        else
-          FileUtils.cp(im_out, final)
-        end
-      else
-        FileUtils.cp(im_out, final)
-      end
+    im_out = work.join("02_imagemagick.jpg")
+    run_imagemagick_adaptive!(dt_out, im_out, analysis)
 
-      out_name = filename.sub(/\.[^.]+\z/, "")
-      out_name = "image" if out_name.blank?
-      {
-        io: StringIO.new(File.binread(final)),
-        filename: "#{out_name}.jpg",
-        content_type: "image/jpeg",
-        metadata: {
-          enhanced: true,
-          enhance_pipeline: PIPELINE_VERSION,
-          enhance_analysis: analysis.slice(
-            "mean", "stddev", "exposure_ev", "wb_gains", "contrast", "sharpen_radius", "notes"
-          )
-        }
-      }
+    skip_esrgan = !self.class.esrgan_enabled?
+    esrgan_in = work.join("02b_esrgan_in.jpg")
+    if skip_esrgan
+      FileUtils.cp(im_out, esrgan_in)
+    else
+      resize_max_edge!(im_out, esrgan_in, max_edge)
     end
+
+    prep_ms = ((Process.clock_gettime(Process::CLOCK_MONOTONIC) - t0) * 1000).round
+    out_name = filename.sub(/\.[^.]+\z/, "")
+    out_name = "image" if out_name.blank?
+
+    StagedPrep.new(
+      work_dir: work_dir,
+      esrgan_in: esrgan_in,
+      im_out: im_out,
+      analysis: analysis,
+      filename: "#{out_name}.jpg",
+      prep_ms: prep_ms,
+      skip_esrgan: skip_esrgan
+    )
+  rescue StandardError
+    FileUtils.remove_entry_secure(work_dir) if work_dir && Dir.exist?(work_dir)
+    raise
+  end
+
+  def finalize_staged!(staged, esrgan_png: nil, esrgan_ms: nil, queue_wait_ms: nil)
+    work = Pathname.new(staged.work_dir)
+    final = work.join("03_final.jpg")
+    used_esrgan = false
+
+    if esrgan_png && File.size?(esrgan_png)
+      encode_jpeg!(esrgan_png, final)
+      used_esrgan = true
+    else
+      FileUtils.cp(staged.im_out, final)
+    end
+
+    Rails.logger.info(
+      "[gallery_enhance] timing prep_ms=#{staged.prep_ms} queue_wait_ms=#{queue_wait_ms || "-"} " \
+      "esrgan_ms=#{esrgan_ms || "-"} esrgan=#{used_esrgan} file=#{staged.filename}"
+    )
+
+    {
+      io: StringIO.new(File.binread(final)),
+      filename: staged.filename,
+      content_type: "image/jpeg",
+      metadata: {
+        enhanced: true,
+        enhance_pipeline: PIPELINE_VERSION,
+        enhance_analysis: staged.analysis.slice(
+          "mean", "stddev", "exposure_ev", "wb_gains", "contrast", "sharpen_radius", "notes"
+        ),
+        enhance_timing: {
+          prep_ms: staged.prep_ms,
+          queue_wait_ms: queue_wait_ms,
+          esrgan_ms: esrgan_ms,
+          esrgan: used_esrgan
+        }.compact
+      }
+    }
+  ensure
+    staged.cleanup!
   end
 
   private
@@ -104,22 +192,6 @@ class PropertyGalleryEnhancer
 
   def max_edge
     Integer(ENV.fetch("GALLERY_ENHANCE_MAX_EDGE", DEFAULT_MAX_EDGE))
-  end
-
-  def ssh_host
-    ENV.fetch("SSH_HOST", "bosgame")
-  end
-
-  def esrgan_model
-    ENV.fetch("ESRGAN_MODEL", "realesr-animevideov3")
-  end
-
-  def esrgan_scale
-    ENV.fetch("ESRGAN_SCALE", "2")
-  end
-
-  def esrgan_tile
-    ENV.fetch("ESRGAN_TILE", "64")
   end
 
   def which(cmd)
@@ -211,10 +283,11 @@ class PropertyGalleryEnhancer
   end
 
   def install_style!
-    installer = Rails.root.join("scripts/image_enhance/install_style.py")
-    return unless installer.file?
+    return if self.class.instance_variable_get(:@style_installed)
 
-    system("python3", installer.to_s, out: File::NULL, err: File::NULL)
+    installer = Rails.root.join("scripts/image_enhance/install_style.py")
+    system("python3", installer.to_s, out: File::NULL, err: File::NULL) if installer.file?
+    self.class.instance_variable_set(:@style_installed, true)
   end
 
   def run_imagemagick_adaptive!(src, dst, analysis)
@@ -252,52 +325,15 @@ class PropertyGalleryEnhancer
     raise Error, "jpeg encode failed" unless ok && File.size?(dst)
   end
 
-  def run_esrgan!(src, dst, work)
-    return false unless ssh_available?
+  def run_esrgan!(src, dst)
+    result = EsrganGpuFanout.enhance!(src, dst, raise_on_error: false)
+    return true if result&.ok
 
-    lock_path = Rails.root.join("tmp/gallery_esrgan.lock")
-    FileUtils.mkdir_p(lock_path.dirname)
-    File.open(lock_path, File::RDWR | File::CREAT, 0o644) do |lock|
-      locked = lock.flock(File::LOCK_EX | File::LOCK_NB)
-      unless locked
-        Rails.logger.info("[gallery_enhance] ESRGAN busy — waiting for FIFO slot")
-        lock.flock(File::LOCK_EX)
-      end
-
-      remote_in = "#{ssh_host}:AppData/Local/Temp/tt_enhance_in.jpg"
-      ps1 = Rails.root.join("scripts/image_enhance/tt_enhance_once.ps1")
-      return false unless system("scp", "-q", "-o", "BatchMode=yes", src.to_s, remote_in,
-                                  out: File::NULL, err: File::NULL)
-      return false unless system("scp", "-q", "-o", "BatchMode=yes", ps1.to_s,
-                                  "#{ssh_host}:tools/realesrgan-ncnn-vulkan/tt_enhance_once.ps1",
-                                  out: File::NULL, err: File::NULL)
-
-      log = work.join("esrgan_remote.log").to_s
-      cmd = [
-        "ssh", "-o", "BatchMode=yes", ssh_host,
-        "powershell -NoProfile -ExecutionPolicy Bypass -File %USERPROFILE%\\tools\\realesrgan-ncnn-vulkan\\tt_enhance_once.ps1 " \
-        "-Model #{esrgan_model} -Scale #{esrgan_scale} -Tile #{esrgan_tile}"
-      ]
-      out, status = Open3.capture2e(*cmd)
-      File.write(log, out.to_s)
-      unless system("scp", "-q", "-o", "BatchMode=yes",
-                    "#{ssh_host}:AppData/Local/Temp/tt_enhance_out.png", dst.to_s,
-                    out: File::NULL, err: File::NULL)
-        return false
-      end
-      return false unless File.size?(dst)
-
-      Rails.logger.info("[gallery_enhance] ESRGAN ok model=#{esrgan_model} scale=#{esrgan_scale} rc=#{status.exitstatus}")
-      true
-    end
-  rescue StandardError => e
+    Rails.logger.warn("[gallery_enhance] ESRGAN skipped — #{result&.error || "unknown"}")
+    false
+  rescue EsrganGpuFanout::Error => e
     Rails.logger.warn("[gallery_enhance] ESRGAN error: #{e.message}")
     false
-  end
-
-  def ssh_available?
-    system("ssh", "-o", "BatchMode=yes", "-o", "ConnectTimeout=8", ssh_host, "echo", "ok",
-           out: File::NULL, err: File::NULL)
   end
 
   def capture!(*cmd)

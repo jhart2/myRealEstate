@@ -3,10 +3,9 @@ default: &default
     - polling_interval: 1
       batch_size: 500
   workers:
-    # FIFO listing gallery ingest+enhance (download → polish → ESRGAN → attach).
-    # One thread so jobs drain in enqueue order; ESRGAN flock serializes GPU use.
-    - queues: "gallery_enhance"
-      threads: 1
+    # Hosting-only gallery ingest (download → Active Storage). Enhance runs separately.
+    - queues: "gallery_ingest"
+      threads: <%= Integer(ENV.fetch("GALLERY_INGEST_THREADS", 2)) %>
       processes: 1
       polling_interval: 1
     - queues: "default"

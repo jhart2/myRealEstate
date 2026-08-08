@@ -1,6 +1,8 @@
 namespace :bok do
   desc "Import BOK house listings JSON into properties. Usage: bin/rails \"bok:import[path/to.json]\" or FILE=path bin/rails bok:import"
   task :import, [ :file ] => :environment do |_t, args|
+    # Ingest may attach originals via async jobs; never polish on the sync/import path.
+    ENV["GALLERY_ENHANCE"] = "0"
     path = args[:file].presence || ENV["FILE"].presence
     puts "Importing from #{path || "db/data/bok_listings.json (or latest sync file)"}…"
     result = BokListingsImporter.import!(path)
@@ -17,6 +19,8 @@ namespace :bok do
 
   desc "Scrape up to BOK_SYNC_MAX_DETAILS (default 250) newest unfinished BOK houses, then import (and push changes to staging)"
   task sync: :environment do
+    # Gallery enhance is a separate backfill — keep it off for scrape/import jobs.
+    ENV["GALLERY_ENHANCE"] = "0"
     puts "Starting BOK sync (newest first, lookback #{ENV.fetch("BOK_SYNC_DAYS", "7")} days)…"
     # Surface external stops clearly (systemctl stop/kill). Without this, Ruby often
     # raises SignalException deep inside OpenaiClient during address-brain work.
@@ -49,6 +53,57 @@ namespace :bok do
     puts "Pushing #{path} to staging…"
     StagingListingsPusher.push!(path)
     puts "Done."
+  end
+
+  desc "Find truncated (… / ~1200 mid-cut) descriptions, refetch BOK full body, enhance copy, inplace update. APPLY=1 to write. LIMIT= N BOK_ID= ENHANCE=0 REFETCH=0 (list only)."
+  task repair_truncated_descriptions: :environment do
+    $stdout.sync = true
+    apply = ENV["APPLY"].to_s.match?(/\A(1|true|yes)\z/i)
+    enhance = !ENV["ENHANCE"].to_s.match?(/\A(0|false|no)\z/i)
+    refetch = !ENV["REFETCH"].to_s.match?(/\A(0|false|no)\z/i)
+    limit = ENV["LIMIT"].presence&.then { |v| Integer(v) }
+    bok_id = ENV["BOK_ID"].presence
+
+    puts "#{apply ? 'Applying' : 'Dry-running'} truncated description repair…"
+    puts "  refetch=#{refetch} enhance=#{enhance ? 'ListingCopyApplier + rich HTML' : 'off'} limit=#{limit || 'all'} bok_id=#{bok_id || '—'}"
+
+    result = TruncatedDescriptionRepair.call(
+      apply: apply,
+      enhance: enhance,
+      refetch: refetch,
+      limit: limit,
+      bok_id: bok_id
+    )
+
+    out = Rails.root.join(
+      "tmp",
+      "repair_truncated_descriptions_#{Time.now.utc.strftime('%Y%m%d%H%M%S')}.json"
+    )
+    out.write(JSON.pretty_generate({
+      apply: apply,
+      enhance: enhance,
+      refetch: refetch,
+      candidates: result.candidates,
+      refetched: result.refetched,
+      updated: result.updated,
+      enhanced: result.enhanced,
+      skipped: result.skipped,
+      errors: result.errors,
+      json_path: result.json_path,
+      rows: result.rows
+    }))
+
+    puts
+    puts "Candidates: #{result.candidates}"
+    puts "Refetched rows: #{result.refetched}"
+    puts "Updated: #{result.updated}"
+    puts "Enhanced: #{result.enhanced}"
+    puts "Skipped: #{result.skipped}"
+    puts "Errors: #{result.errors.size}"
+    result.errors.first(20).each { |msg| puts "  - #{msg}" }
+    puts "JSON: #{result.json_path}" if result.json_path
+    puts "Report: #{out}"
+    puts "Dry-run only. Re-run with APPLY=1 to write." unless apply
   end
 
   desc "Re-fetch full descriptions for every Property with a BOK source_url (updates description only)"

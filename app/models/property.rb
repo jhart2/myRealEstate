@@ -261,7 +261,8 @@ class Property < ApplicationRecord
       propertyType: property_type,
       lat: latitude&.to_f,
       lng: longitude&.to_f,
-      image: display_image_url,
+      # CDN / scraped cover — never Active Storage on search/map (avoids N+1 signing).
+      image: listing_cover_url,
       url: Rails.application.routes.url_helpers.property_path(self)
     }
   end
@@ -359,26 +360,65 @@ class Property < ApplicationRecord
   end
 
   def gallery_image_urls
-    urls = Array(image_urls).map { |u| u.to_s.strip }.reject(&:blank?)
-    primary = self[:image_url].presence
+    urls = Array(image_urls).filter_map { |u| self.class.normalize_gallery_url(u) }
+    primary = self.class.normalize_gallery_url(self[:image_url]).presence
     urls = [ primary ] if urls.empty? && primary
     urls = ([ primary ] + urls).compact if primary && !urls.include?(primary)
     urls.uniq
   end
 
+  # Percent-encode path (e.g. U+202F in BOK screenshot filenames) for valid HTTP URLs.
+  def self.normalize_gallery_url(url)
+    raw = url.to_s.strip
+    return "" if raw.blank?
+
+    uri = Addressable::URI.parse(raw)
+    return raw if uri.nil? || uri.scheme.blank?
+
+    uri.normalize.to_s
+  rescue Addressable::URI::InvalidURIError, ArgumentError, TypeError
+    raw
+  end
+
+  # Identity key for matching CDN URLs to blob source_url metadata.
+  def self.gallery_url_identity(url)
+    normalized = normalize_gallery_url(url)
+    Addressable::URI.unescape(normalized).to_s
+      .strip
+      .downcase
+      .sub(/\?.*\z/, "")
+      .delete_suffix("/")
+  rescue Addressable::URI::InvalidURIError, ArgumentError, TypeError
+    url.to_s.strip.downcase.sub(/\?.*\z/, "").delete_suffix("/")
+  end
+
+  # Only serve blobs that live on the configured Active Storage service
+  # (skip local-disk leftovers that 404 on Cloud Run).
+  def self.blob_displayable?(blob)
+    return false unless blob
+
+    blob.service_name.to_s == Rails.configuration.active_storage.service.to_s
+  end
+
+  # Cover for search index / map markers: column CDN URLs only (no Active Storage).
+  # Show/lightbox still use display_image_url / display_gallery_image_urls for enhanced blobs.
+  def listing_cover_url
+    gallery_image_urls.first.presence || self[:image_url].presence
+  end
+
   # Hosted gallery blobs ordered to match scraper's gallery URL list.
   # Falls back to attachment order when metadata mapping is incomplete.
   def hosted_gallery_images
-    attachments = gallery_images_attachments.includes(:blob).to_a
+    attachments = gallery_attachments_with_blobs.select { |img| self.class.blob_displayable?(img.blob) }
     return [] if attachments.empty?
 
     by_source = {}
     attachments.each do |img|
       PropertyGalleryIngestor.source_urls_for(img.blob).each do |src|
-        by_source[src] ||= img
+        by_source[self.class.gallery_url_identity(src)] ||= img
       end
     end
-    ordered = gallery_image_urls.filter_map { |url| by_source[url] }.uniq
+    ordered = gallery_image_urls.filter_map { |url| by_source[self.class.gallery_url_identity(url)] }.uniq
     ordered.presence || attachments
   end
 
@@ -416,9 +456,9 @@ class Property < ApplicationRecord
   def display_image_url
     case self.class.gallery_display_mode
     when "cdn"
-      gallery_image_urls.first.presence || self[:image_url].presence
+      listing_cover_url
     when "enhanced_or_cdn"
-      display_gallery_image_urls.first
+      enhanced_or_cdn_cover_url
     when "enhanced_only"
       cover = enhanced_gallery_images.first
       return gallery_blob_path(cover) if cover
@@ -443,7 +483,7 @@ class Property < ApplicationRecord
     urls = gallery_image_urls
     return false if urls.empty?
 
-    hosted = gallery_images_attachments.includes(:blob).flat_map { |img| PropertyGalleryIngestor.source_urls_for(img.blob) }
+    hosted = gallery_attachments_with_blobs.flat_map { |img| PropertyGalleryIngestor.source_urls_for(img.blob) }
     return true if hosted.empty?
 
     self.class.images_fingerprint(urls) != self.class.images_fingerprint(hosted)
@@ -452,14 +492,14 @@ class Property < ApplicationRecord
   def enqueue_gallery_ingest!
     return false unless gallery_ingest_needed?
 
-    # Async FIFO queue — sync/import never waits on download or enhance.
+    # Async gallery_ingest — sync/import never waits on download.
     PropertyImageIngestJob.perform_later(id)
     true
   end
 
   def self.images_fingerprint(urls)
     Array(urls)
-      .map { |url| url.to_s.strip.downcase.sub(/\?.*\z/, "").delete_suffix("/") }
+      .map { |url| gallery_url_identity(url) }
       .reject(&:blank?)
       .uniq
       .sort
@@ -679,17 +719,48 @@ class Property < ApplicationRecord
 
   private
 
-  def enhanced_or_cdn_gallery_urls
-    attachments = gallery_images_attachments.includes(:blob).to_a
-    by_source = {}
+  # Prefer preloaded attachments; never chain `.includes` on a loaded association
+  # (that builds a fresh scope and re-queries once per listing — the index N+1).
+  def gallery_attachments_with_blobs
+    scope = gallery_images_attachments
+    return scope.to_a if scope.loaded?
+
+    scope.includes(:blob).to_a
+  end
+
+  def gallery_attachment_by_source_url
+    attachments = gallery_attachments_with_blobs.select { |img| self.class.blob_displayable?(img.blob) }
+    key = attachments.map(&:id)
+    return @gallery_attachment_by_source_url if @gallery_attachment_by_source_url_key == key
+
+    map = {}
     attachments.each do |img|
       PropertyGalleryIngestor.source_urls_for(img.blob).each do |src|
-        by_source[src] ||= img
+        map[self.class.gallery_url_identity(src)] ||= img
       end
     end
+    @gallery_attachment_by_source_url_key = key
+    @gallery_attachment_by_source_url = map
+  end
+
+  def enhanced_or_cdn_cover_url
+    urls = gallery_image_urls
+    return self.class.normalize_gallery_url(self[:image_url]).presence if urls.empty?
+
+    first = urls.first
+    img = gallery_attachment_by_source_url[self.class.gallery_url_identity(first)]
+    if img && self.class.blob_enhanced?(img.blob)
+      gallery_blob_path(img)
+    else
+      first
+    end
+  end
+
+  def enhanced_or_cdn_gallery_urls
+    by_source = gallery_attachment_by_source_url
 
     gallery_image_urls.map do |url|
-      img = by_source[url]
+      img = by_source[self.class.gallery_url_identity(url)]
       if img && self.class.blob_enhanced?(img.blob)
         gallery_blob_path(img)
       else

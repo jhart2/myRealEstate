@@ -25,7 +25,7 @@ MAGICK_BIN="${MAGICK_BIN:-$(command -v magick || true)}"
 IDENTIFY_BIN="${IDENTIFY_BIN:-$(command -v identify || true)}"
 DT_BIN="${DT_BIN:-$(command -v darktable-cli || true)}"
 SSH_HOST="${SSH_HOST:-bosgame}"
-ESRGAN_REMOTE_DIR="${ESRGAN_REMOTE_DIR:-C:/Users/javon/tools/realesrgan-ncnn-vulkan}"
+ESRGAN_REMOTE_DIR="${ESRGAN_REMOTE_DIR:-%USERPROFILE%/tools/realesrgan-ncnn-vulkan}"
 # VRAM-safe on bosgame Radeon iGPU (realesrgan-x4plus OOMs there).
 ESRGAN_MODEL="${ESRGAN_MODEL:-realesr-animevideov3}"
 ESRGAN_SCALE="${ESRGAN_SCALE:-2}"
@@ -232,19 +232,26 @@ run_esrgan_bosgame() {
     return 0
   fi
 
-  scp -q -o BatchMode=yes "$src" "${SSH_HOST}:AppData/Local/Temp/tt_enhance_in.jpg"
-  scp -q -o BatchMode=yes "$ROOT/scripts/image_enhance/tt_enhance_once.ps1" \
+  local job_id="dry_${SSH_HOST}_g${ESRGAN_GPU:-0}_$$_$(date +%s)"
+  local remote_in="tt_enhance_in_${job_id}.jpg"
+  local remote_out="tt_enhance_out_${job_id}.png"
+  scp -q -o BatchMode=yes -o ConnectTimeout=8 "$src" \
+    "${SSH_HOST}:AppData/Local/Temp/${remote_in}"
+  scp -q -o BatchMode=yes -o ConnectTimeout=8 "$ROOT/scripts/image_enhance/tt_enhance_once.ps1" \
     "${SSH_HOST}:tools/realesrgan-ncnn-vulkan/tt_enhance_once.ps1"
 
   set +e
-  ssh -o BatchMode=yes "$SSH_HOST" \
-    "powershell -NoProfile -ExecutionPolicy Bypass -File %USERPROFILE%\\tools\\realesrgan-ncnn-vulkan\\tt_enhance_once.ps1 -Model ${ESRGAN_MODEL} -Scale ${ESRGAN_SCALE} -Tile ${ESRGAN_TILE}" \
+  ssh -o BatchMode=yes -o ConnectTimeout=8 "$SSH_HOST" \
+    "powershell -NoProfile -ExecutionPolicy Bypass -File %USERPROFILE%\\tools\\realesrgan-ncnn-vulkan\\tt_enhance_once.ps1 -Model ${ESRGAN_MODEL} -Scale ${ESRGAN_SCALE} -Tile ${ESRGAN_TILE} -Gpu ${ESRGAN_GPU:-0} -In %TEMP%\\${remote_in} -Out %TEMP%\\${remote_out}" \
     | tee "$WORK/esrgan_remote.log"
   local rc=${PIPESTATUS[0]}
   set -e
 
   set +e
-  scp -q -o BatchMode=yes "${SSH_HOST}:AppData/Local/Temp/tt_enhance_out.png" "$dst"
+  scp -q -o BatchMode=yes -o ConnectTimeout=8 \
+    "${SSH_HOST}:AppData/Local/Temp/${remote_out}" "$dst"
+  ssh -o BatchMode=yes -o ConnectTimeout=5 "$SSH_HOST" \
+    "del /q %TEMP%\\${remote_in} %TEMP%\\${remote_out} 2>nul" >/dev/null 2>&1 || true
   set -e
 
   if [[ -s "$dst" ]]; then

@@ -191,7 +191,7 @@ class BokListingsImporterTest < ActiveSupport::TestCase
       beds: 3,
       baths: 2,
       sqft: 2000,
-      description: "<h2>#{heading}</h2><p>Site polished copy.</p>",
+      description: "<h2>#{heading}</h2><p>Site polished copy that ends properly.</p>",
       image_url: imgs.first,
       image_urls: imgs
     )
@@ -211,10 +211,44 @@ class BokListingsImporterTest < ActiveSupport::TestCase
       assert_equal 0, calls
       assert_equal 0, result.copy_applied
       assert_equal 1, result.updated
+      assert_includes property.reload.description_html, "Site polished copy"
     ensure
       ListingCopyApplier.define_singleton_method(:call, original)
       ENV.delete("BOK_APPLY_LISTING_COPY")
     end
+  end
+
+  test "skips truncated scrape description when existing body is complete" do
+    imgs = good_row["images"]
+    property = Property.create!(
+      agent: @agent,
+      bok_id: "BOK-GOOD",
+      source_url: good_row["url"],
+      title: "Archer Street Belmont Home",
+      slug: "archer-street-belmont-#{SecureRandom.hex(3)}",
+      tag: "sale",
+      property_type: "House",
+      status: "active",
+      address: "99 Kept Street",
+      city: "Belmont",
+      state: "Trinidad",
+      zip: "",
+      price_cents: 1_200_000_00,
+      beds: 3,
+      baths: 2,
+      sqft: 2000,
+      description: "Full listing copy with a complete ending and plenty of detail about the home.",
+      image_url: imgs.first,
+      image_urls: imgs
+    )
+
+    truncated = ("word " * 240).strip[0, 1195] + " cool"
+    path = write_feed([ good_row.merge("price" => "$1,250,000", "description" => truncated) ])
+    result = BokListingsImporter.import!(path, agent: @agent)
+
+    assert_equal 1, result.updated
+    assert_includes property.reload.description_plain, "complete ending"
+    assert result.errors.any? { |msg| msg.match?(/truncated BOK description/i) }
   end
 
   test "maps apartment for rent from BOK style and price" do

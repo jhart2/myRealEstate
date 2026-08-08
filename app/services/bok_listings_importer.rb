@@ -151,7 +151,7 @@ class BokListingsImporter
     result.touched_bok_ids |= Array(dup_summary[:kept_bok_ids])
     BokSyncProgress.say("import deduped=#{result.deduped}") if result.deduped.positive?
 
-    touched_agent_ids.each { |id| Agent.reset_counters(id, :properties) }
+    touched_agent_ids.each { |id| ::Agent.reset_counters(id, :properties) }
     result
   end
 
@@ -260,7 +260,7 @@ class BokListingsImporter
   # Feed-level agent retained as fallback when a row has no listing agent,
   # and as the explicit association when callers pass `agent:`.
   def import_feed_agent
-    Agent.find_or_create_by!(email: "import@mybunchofkeys.com") do |a|
+    ::Agent.find_or_create_by!(email: "import@mybunchofkeys.com") do |a|
       a.name = "My Bunch of Keys"
       a.title = "Listing Feed"
       a.bio = "Listings synced from mybunchofkeys.com"
@@ -280,9 +280,9 @@ class BokListingsImporter
     image = row["agent_image"].to_s.strip.presence
     email = import_email_for(name)
 
-    agent = Agent.find_by(email: email)
-    agent ||= Agent.find_by("LOWER(name) = ? AND phone = ?", name.downcase, phone) if phone.present?
-    agent ||= Agent.find_by("LOWER(name) = ?", name.downcase)
+    agent = ::Agent.find_by(email: email)
+    agent ||= ::Agent.find_by("LOWER(name) = ? AND phone = ?", name.downcase, phone) if phone.present?
+    agent ||= ::Agent.find_by("LOWER(name) = ?", name.downcase)
 
     if agent
       updates = {}
@@ -293,7 +293,7 @@ class BokListingsImporter
       agent.update!(updates) if updates.any?
       agent
     else
-      Agent.create!(
+      ::Agent.create!(
         name: name,
         title: agency,
         email: email,
@@ -348,8 +348,7 @@ class BokListingsImporter
       row, agent, price_cents, image_urls,
       result: result, existing: property, tag: offer[:tag]
     )
-    # Keep site-polished rich HTML; BOK scrape copy must not flatten it.
-    attrs = attrs.except(:description) if property && polished_rich_description?(property)
+    attrs = protect_description_from_truncation!(attrs, property, result, label: bok_id || source_url)
     attrs = prefer_newer_identity(attrs, property, bok_id, source_url)
 
     if property
@@ -379,7 +378,7 @@ class BokListingsImporter
     result.skipped += 1
   end
 
-  # Fire-and-forget FIFO gallery_enhance job. Never blocks listing publish/save.
+  # Fire-and-forget gallery_ingest job (host originals). Never blocks listing publish/save.
   def enqueue_gallery_ingest!(property)
     return unless property&.persisted?
 
@@ -510,6 +509,35 @@ class BokListingsImporter
       }
 
     false
+  end
+
+  # Keep polished HTML / good bodies, but never lock in (or accept) truncated scrape copy.
+  def protect_description_from_truncation!(attrs, property, result, label:)
+    incoming = attrs[:description].to_s
+    incoming_truncated = TruncatedDescription.suspect?(incoming)
+    existing_truncated = property && TruncatedDescription.suspect_property?(property)
+    polished = property && polished_rich_description?(property)
+
+    if incoming_truncated && property && !existing_truncated
+      result.errors << "#{label}: skipped truncated BOK description (kept existing)"
+      return attrs.except(:description)
+    end
+
+    if incoming_truncated && property.nil?
+      result.errors << "#{label}: imported description looks truncated (ends with … or ~1200 mid-cut)"
+    end
+
+    # Polished rich HTML wins unless the site copy itself is still truncated — then
+    # allow a fuller scrape through so repair / sync can heal it.
+    if polished && !existing_truncated
+      attrs.except(:description)
+    elsif polished && existing_truncated && !incoming_truncated && TruncatedDescription.better_replacement?(TruncatedDescription.plain_for(property), incoming)
+      attrs
+    elsif polished && existing_truncated && incoming_truncated
+      attrs.except(:description)
+    else
+      attrs
+    end
   end
 
   # After create/update: OpenAI clean → apply if clean, else flag.
@@ -893,7 +921,7 @@ class BokListingsImporter
 
   def normalize_image_urls(raw)
     Array(raw).flat_map { |item| item.is_a?(String) ? item.split(/\s*;\s*/) : item }
-      .map { |item| item.to_s.strip }
+      .map { |item| Property.normalize_gallery_url(item) }
       .reject(&:blank?)
       .reject { |url| placeholder_image?(url) }
       .uniq
