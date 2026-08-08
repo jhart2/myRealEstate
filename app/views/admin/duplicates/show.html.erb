@@ -15,13 +15,36 @@
   <%= render "panel", property: @right, side: "B" %>
 </div>
 
-<%= form_with url: admin_duplicate_path(@left, peer: @right.to_param), method: :patch, class: "mt-6 rounded-xl border border-border bg-panel p-6" do %>
-  <p class="text-sm text-ink-3">Choose how to resolve this pair. After you submit, the next flagged pair loads automatically. Keeping one disables the other and clears flags; keep both clears flags so both stay in search.</p>
+<div class="mt-6 rounded-xl border border-border bg-panel p-6">
+  <p class="text-sm text-ink-3">
+    Resolve this pair, then the next both-flagged pair loads. Keeping one disables the other.
+    Keep both clears flags without disabling. Cleared listings leave the queue and will not resurface with other flagged peers.
+  </p>
   <div class="mt-4 flex flex-wrap gap-3">
-    <button type="submit" name="commit" value="keep_left" class="btn-primary cursor-pointer">Keep A, disable B</button>
-    <button type="submit" name="commit" value="keep_right" class="btn-primary cursor-pointer">Keep B, disable A</button>
-    <button type="submit" name="commit" value="keep_both" class="btn-secondary cursor-pointer">Keep both (clear flags)</button>
-    <button type="submit" name="commit" value="clear_left" class="btn-secondary cursor-pointer">Clear flag on A only</button>
-    <button type="submit" name="commit" value="clear_right" class="btn-secondary cursor-pointer">Clear flag on B only</button>
+    <%= button_to "Keep A, disable B",
+          admin_duplicate_path(@left, peer: @right.to_param),
+          method: :patch,
+          params: { reconcile: "keep_left" },
+          class: "btn-primary cursor-pointer" %>
+    <%= button_to "Keep B, disable A",
+          admin_duplicate_path(@left, peer: @right.to_param),
+          method: :patch,
+          params: { reconcile: "keep_right" },
+          class: "btn-primary cursor-pointer" %>
+    <%= button_to "Keep both (clear flags)",
+          admin_duplicate_path(@left, peer: @right.to_param),
+          method: :patch,
+          params: { reconcile: "keep_both" },
+          class: "btn-secondary cursor-pointer" %>
+    <%= button_to "Clear flag on A only",
+          admin_duplicate_path(@left, peer: @right.to_param),
+          method: :patch,
+          params: { reconcile: "clear_left" },
+          class: "btn-secondary cursor-pointer" %>
+    <%= button_to "Clear flag on B only",
+          admin_duplicate_path(@left, peer: @right.to_param),
+          method: :patch,
+          params: { reconcile: "clear_right" },
+          class: "btn-secondary cursor-pointer" %>
   </div>
-<% end %>
+</div>

@@ -98,6 +98,32 @@ class PropertyDuplicateDetectorTest < ActiveSupport::TestCase
     refute stale.reload.possible_duplicate
   end
 
+  test "signals_between compares two listings without a full scan" do
+    a = create_listing!(
+      title: "Spacious 3 Bedroom House Westmoorings",
+      slug: "sig-a-#{SecureRandom.hex(2)}",
+      address: "12 Westmoorings Rd",
+      city: "Westmoorings",
+      price_cents: 2_500_000_00,
+      features: [ "Pool", "Garage", "Security" ],
+      latitude: 10.68,
+      longitude: -61.56
+    )
+    b = create_listing!(
+      title: "Spacious 3 Bedroom House in Westmoorings",
+      slug: "sig-b-#{SecureRandom.hex(2)}",
+      address: "12 Westmoorings Road",
+      city: "Westmoorings",
+      price_cents: 2_500_000_00,
+      features: [ "Pool", "Garage", "Garden" ],
+      latitude: 10.6801,
+      longitude: -61.5601
+    )
+
+    signals = PropertyDuplicateDetector.signals_between(a, b)
+    assert_operator signals.size, :>=, 3
+  end
+
   private
 
   def create_listing!(attrs)

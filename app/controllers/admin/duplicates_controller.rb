@@ -3,8 +3,7 @@ module Admin
     before_action :set_pair, only: %i[show update]
 
     def index
-      detection = PropertyDuplicateDetector.call(dry_run: true, limit_pairs: 2_000)
-      @pairs = queue_pairs(detection.pairs)
+      @pairs = queued_pairs
       @properties_by_id = Property
         .where(id: @pairs.flat_map { |p| [ p.left_id, p.right_id ] }.uniq)
         .includes(:agent, image_attachment: :blob)
@@ -17,7 +16,9 @@ module Admin
     end
 
     def update
-      case params[:commit].to_s
+      action = params[:reconcile].presence || params[:commit].to_s
+
+      case action
       when "keep_both"
         clear_flags!(@left, @right)
         redirect_after_resolve!("Cleared duplicate flags on both listings.")
@@ -42,36 +43,27 @@ module Admin
 
     def set_pair
       @left = Property.find_by(slug: params[:id]) || Property.find(params[:id])
-      detection = PropertyDuplicateDetector.call(dry_run: true, limit_pairs: 5_000)
-
       peer_param = params[:peer].presence
+
       @right =
         if peer_param
           Property.find_by(slug: peer_param) || Property.find_by(id: peer_param)
         else
-          peer_from_detection(@left, detection)
+          peer_from_queue(@left)
         end
 
       raise ActiveRecord::RecordNotFound if @right.blank?
 
-      @signals = signals_from_detection(@left, @right, detection)
+      @signals = PropertyDuplicateDetector.signals_between(@left, @right)
       @score = @signals.size
     end
 
-    def peer_from_detection(property, detection)
-      pair = queue_pairs(detection.pairs).find { |p| p.left_id == property.id || p.right_id == property.id }
+    def peer_from_queue(property)
+      pair = queued_pairs.find { |p| p.left_id == property.id || p.right_id == property.id }
       return nil unless pair
 
       peer_id = pair.left_id == property.id ? pair.right_id : pair.left_id
       Property.find_by(id: peer_id)
-    end
-
-    def signals_from_detection(left, right, detection)
-      pair = detection.pairs.find { |p|
-        (p.left_id == left.id && p.right_id == right.id) ||
-          (p.left_id == right.id && p.right_id == left.id)
-      }
-      pair&.signals || []
     end
 
     def clear_flags!(*properties)
@@ -84,33 +76,39 @@ module Admin
     end
 
     def redirect_after_resolve!(notice)
-      path = next_reconcile_path(after_left: @left, after_right: @right)
-      if path
-        redirect_to path, notice: "#{notice} Loading next pair."
+      pairs = queued_pairs
+      sweep_orphan_flags!(queue: pairs)
+
+      next_pair = pairs.find { |pair| !same_pair?(pair, @left.id, @right.id) }
+      if next_pair && (left = Property.find_by(id: next_pair.left_id)) && next_pair.right_slug.present?
+        redirect_to admin_duplicate_path(left, peer: next_pair.right_slug),
+                    notice: "#{notice} Loading next pair."
       else
         redirect_to admin_duplicates_path, notice: "#{notice} Queue is empty."
       end
     end
 
-    def next_reconcile_path(after_left:, after_right:)
-      detection = PropertyDuplicateDetector.call(dry_run: true, limit_pairs: 5_000)
-      next_pair = queue_pairs(detection.pairs).find { |pair|
-        !same_pair?(pair, after_left.id, after_right.id)
-      }
-      return nil unless next_pair
+    def queued_pairs
+      @queued_pairs ||= begin
+        flagged_ids = Property.possible_duplicates.pluck(:id).to_set
+        return [] if flagged_ids.empty?
 
-      left = Property.find_by(id: next_pair.left_id)
-      right_slug = next_pair.right_slug
-      return nil if left.blank? || right_slug.blank?
-
-      admin_duplicate_path(left, peer: right_slug)
+        # Both sides must still be flagged. Otherwise resolving A↔B still resurfaces
+        # A↔C because C remains flagged.
+        PropertyDuplicateDetector
+          .call(dry_run: true, limit_pairs: 5_000)
+          .pairs
+          .select { |pair| flagged_ids.include?(pair.left_id) && flagged_ids.include?(pair.right_id) }
+      end
     end
 
-    def queue_pairs(pairs)
-      flagged_ids = Property.possible_duplicates.pluck(:id).to_set
-      return [] if flagged_ids.empty?
+    def sweep_orphan_flags!(queue: queued_pairs)
+      flagged_ids = Property.possible_duplicates.pluck(:id)
+      return if flagged_ids.empty?
 
-      pairs.select { |pair| flagged_ids.include?(pair.left_id) || flagged_ids.include?(pair.right_id) }
+      still_needed = queue.flat_map { |p| [ p.left_id, p.right_id ] }.uniq
+      orphans = flagged_ids - still_needed
+      Property.where(id: orphans).update_all(possible_duplicate: false) if orphans.any?
     end
 
     def same_pair?(pair, left_id, right_id)

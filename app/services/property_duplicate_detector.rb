@@ -36,6 +36,14 @@ class PropertyDuplicateDetector
     new(scope: scope, dry_run: dry_run, limit_pairs: limit_pairs).call
   end
 
+  # Compare two listings without scanning the whole catalog.
+  def self.signals_between(left_property, right_property)
+    detector = new(scope: Property.none, dry_run: true, limit_pairs: 1)
+    left = detector.send(:serialize, left_property)
+    right = detector.send(:serialize, right_property)
+    detector.send(:matched_signals, left, right)
+  end
+
   def initialize(scope:, dry_run:, limit_pairs:)
     @scope = scope
     @dry_run = dry_run
