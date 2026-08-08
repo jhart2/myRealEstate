@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_07_140000) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_08_154029) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -131,6 +131,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_07_140000) do
     t.index ["latitude", "longitude"], name: "index_properties_on_latitude_and_longitude"
     t.index ["slug"], name: "index_properties_on_slug", unique: true
     t.index ["source_url"], name: "index_properties_on_source_url", unique: true
+    t.index ["status", "beds"], name: "index_properties_on_status_beds"
+    t.index ["status", "created_at"], name: "index_properties_on_status_created_at"
+    t.index ["status", "featured", "created_at"], name: "index_properties_on_status_featured_created"
+    t.index ["status", "latitude", "longitude"], name: "index_properties_on_status_lat_lng"
+    t.index ["status", "property_type", "price_cents"], name: "index_properties_on_status_type_price"
+    t.index ["status", "tag", "price_cents"], name: "index_properties_on_status_tag_price"
   end
 
   create_table "sessions", force: :cascade do |t|
