@@ -51,8 +51,9 @@ class PropertyDuplicateDetector
   end
 
   def call
+    dismissed = DuplicateDismissal.pair_key_set
     rows = load_rows
-    pairs = find_pairs(rows)
+    pairs = find_pairs(rows).reject { |pair| dismissed_pair?(pair, dismissed) }
     flagged_ids = pairs.flat_map { |p| [ p.left_id, p.right_id ] }.uniq.sort
 
     applied = false
@@ -72,6 +73,10 @@ class PropertyDuplicateDetector
   end
 
   private
+
+  def dismissed_pair?(pair, dismissed)
+    DuplicateDismissal.dismissed?(pair.left_id, pair.right_id, cache: dismissed)
+  end
 
   def load_rows
     @scope

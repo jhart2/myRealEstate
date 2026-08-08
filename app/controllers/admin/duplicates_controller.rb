@@ -21,21 +21,27 @@ module Admin
 
       case action
       when "keep_both"
+        dismiss_current!("keep_both")
         clear_flags!(@left, @right)
         redirect_after_resolve!("Cleared duplicate flags on both listings.")
       when "drop_both"
+        dismiss_current!("drop_both")
         drop_both!(@left, @right)
         redirect_after_resolve!("Disabled both #{@left.slug} and #{@right.slug}.")
       when "keep_left"
+        dismiss_current!("keep_left")
         keep_one!(keep: @left, drop: @right)
         redirect_after_resolve!("Kept #{@left.slug}; disabled #{@right.slug}.")
       when "keep_right"
+        dismiss_current!("keep_right")
         keep_one!(keep: @right, drop: @left)
         redirect_after_resolve!("Kept #{@right.slug}; disabled #{@left.slug}.")
       when "clear_left"
+        dismiss_current!("clear_left")
         @left.update!(possible_duplicate: false)
         redirect_after_resolve!("Cleared flag on #{@left.slug}.")
       when "clear_right"
+        dismiss_current!("clear_right")
         @right.update!(possible_duplicate: false)
         redirect_after_resolve!("Cleared flag on #{@right.slug}.")
       else
@@ -95,6 +101,11 @@ module Admin
 
     def clear_flags!(*properties)
       Property.where(id: properties.map(&:id)).update_all(possible_duplicate: false)
+    end
+
+    def dismiss_current!(action)
+      DuplicateDismissal.dismiss!(@left.id, @right.id, action: action)
+      @queued_pairs = nil
     end
 
     def keep_one!(keep:, drop:)

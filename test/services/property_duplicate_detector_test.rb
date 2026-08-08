@@ -2,6 +2,7 @@ require "test_helper"
 
 class PropertyDuplicateDetectorTest < ActiveSupport::TestCase
   setup do
+    DuplicateDismissal.delete_all
     Property.delete_all
     Agent.delete_all
 
@@ -122,6 +123,39 @@ class PropertyDuplicateDetectorTest < ActiveSupport::TestCase
 
     signals = PropertyDuplicateDetector.signals_between(a, b)
     assert_operator signals.size, :>=, 3
+  end
+
+  test "dismissed pairs are skipped on apply" do
+    a = create_listing!(
+      title: "Duplex Cascade Hills",
+      slug: "dismiss-a-#{SecureRandom.hex(2)}",
+      address: "5 Cascade Hills",
+      city: "Cascade",
+      price_cents: 1_200_000_00,
+      features: [ "Pool", "Garage" ],
+      latitude: 10.69,
+      longitude: -61.53
+    )
+    b = create_listing!(
+      title: "Duplex at Cascade Hills",
+      slug: "dismiss-b-#{SecureRandom.hex(2)}",
+      address: "5 Cascade Hills Rd",
+      city: "Cascade",
+      price_cents: 1_200_000_00,
+      features: [ "Pool", "Garden" ],
+      latitude: 10.6901,
+      longitude: -61.5301
+    )
+
+    DuplicateDismissal.dismiss!(a.id, b.id, action: "keep_both")
+
+    result = PropertyDuplicateDetector.call(dry_run: false)
+    assert result.applied
+    assert_equal 0, result.pair_count
+    refute_includes result.flagged_ids, a.id
+    refute_includes result.flagged_ids, b.id
+    refute a.reload.possible_duplicate
+    refute b.reload.possible_duplicate
   end
 
   private

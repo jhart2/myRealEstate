@@ -39,6 +39,7 @@
   <p class="text-sm text-ink-3">
     Resolve this pair, then the next both-flagged pair loads. Use Previous / Next to skip without changing flags.
     Keeping one disables the other. Drop both disables A and B. Keep both clears flags without disabling.
+    Any resolve action dismisses this pair so the next rake APPLY will not flag it again.
   </p>
   <div class="mt-4 flex flex-wrap gap-3">
     <%= button_to "Keep A, disable B",

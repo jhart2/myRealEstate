@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_08_183000) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_08_200000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -68,6 +68,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_08_183000) do
     t.integer "user_id"
     t.integer "years_experience"
     t.index ["user_id"], name: "index_agents_on_user_id"
+  end
+
+  create_table "duplicate_dismissals", force: :cascade do |t|
+    t.string "action", default: "dismissed", null: false
+    t.datetime "created_at", null: false
+    t.bigint "property_high_id", null: false
+    t.bigint "property_low_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["property_low_id", "property_high_id"], name: "index_duplicate_dismissals_on_pair", unique: true
   end
 
   create_table "favorites", force: :cascade do |t|
@@ -193,6 +202,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_08_183000) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "agents", "users"
+  add_foreign_key "duplicate_dismissals", "properties", column: "property_high_id"
+  add_foreign_key "duplicate_dismissals", "properties", column: "property_low_id"
   add_foreign_key "favorites", "properties"
   add_foreign_key "favorites", "users"
   add_foreign_key "inquiries", "agents"
