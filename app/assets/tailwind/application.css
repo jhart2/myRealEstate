@@ -2656,6 +2656,24 @@ html.gallery-viewer-open {
   overflow: hidden;
 }
 
+/* Viewer is nested under listing media (z-index: 0 + overflow: hidden), which
+   traps stacking — sticky sidebar / nav would paint over the overlay otherwise. */
+html.gallery-viewer-open .listing-show-media,
+html.gallery-viewer-open .property-lightbox-media,
+html.gallery-viewer-open .property-lightbox-hero {
+  z-index: 200;
+  overflow: visible;
+}
+
+html.gallery-viewer-open .listing-show-media-panel {
+  isolation: auto;
+  overflow: visible;
+}
+
+html.gallery-viewer-open .listing-gallery-viewer {
+  z-index: 210;
+}
+
 .listing-gallery-viewer {
   position: fixed;
   inset: 0;

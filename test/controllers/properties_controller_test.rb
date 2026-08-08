@@ -77,4 +77,20 @@ class PropertiesControllerTest < ActionDispatch::IntegrationTest
     assert queries.size < 40,
            "expected few total queries on index, got #{queries.size}"
   end
+
+  test "photo_download sends attachment with clean slug-index filename" do
+    property = Property.first
+    get photo_download_property_path(property, 0)
+
+    assert_response :success
+    assert_equal "attachment", response.headers["Content-Disposition"].to_s[/\A([^;]+)/, 1]
+    assert_includes response.headers["Content-Disposition"], "#{property.slug}-1.jpg"
+    assert_operator response.body.bytesize, :>, 0
+  end
+
+  test "photo_download 404s for out-of-range index" do
+    property = Property.first
+    get photo_download_property_path(property, 99)
+    assert_response :not_found
+  end
 end

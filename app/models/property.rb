@@ -367,6 +367,18 @@ class Property < ApplicationRecord
     urls.uniq
   end
 
+  # Clean download title: "<slug>-<1-based-index>.<ext>"
+  def gallery_download_filename(index)
+    idx = index.to_i
+    ext =
+      if (image = hosted_gallery_images[idx])
+        image.blob.filename.extension.presence
+      end
+    ext = ext.to_s.downcase.presence || "jpg"
+    base = slug.to_s.presence || title.to_s.parameterize.presence || "listing"
+    "#{base}-#{idx + 1}.#{ext}"
+  end
+
   # Percent-encode path (e.g. U+202F in BOK screenshot filenames) for valid HTTP URLs.
   def self.normalize_gallery_url(url)
     raw = url.to_s.strip

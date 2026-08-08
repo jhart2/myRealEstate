@@ -460,33 +460,27 @@ export default class extends Controller {
     document.documentElement.classList.remove("gallery-viewer-open")
   }
 
-  async downloadCurrent(event) {
+  downloadCurrent(event) {
     event?.preventDefault?.()
-    const src =
-      this.viewerSlideTargets[this.indexValue]?.dataset?.src ||
-      this.thumbTargets[this.indexValue]?.dataset?.src ||
-      this.slideTargets[this.indexValue]?.dataset?.src
-    if (!src) return
+    event?.stopPropagation?.()
+
+    const slide = this.viewerSlideTargets[this.indexValue]
+    const path =
+      slide?.dataset?.downloadPath ||
+      (this.slugValue ? `/properties/${this.slugValue}/photos/${this.indexValue}/download` : null)
+    if (!path) return
 
     const filename = `${this.slugValue || "listing"}-${this.indexValue + 1}.jpg`
 
-    try {
-      const response = await fetch(src, { mode: "cors" })
-      if (!response.ok) throw new Error(`HTTP ${response.status}`)
-      const blob = await response.blob()
-      const objectUrl = URL.createObjectURL(blob)
-      this.#triggerDownload(objectUrl, filename)
-      window.setTimeout(() => URL.revokeObjectURL(objectUrl), 2_000)
-    } catch (_) {
-      // Cross-origin without CORS: open the asset so the user can save it.
-      window.open(src, "_blank", "noopener")
-    }
+    // Synchronous click keeps the user gesture (required on mobile Safari).
+    // Server streams the image with Content-Disposition: attachment; filename="<slug>-<n>.jpg".
+    this.#triggerDownload(path, filename)
   }
 
   #triggerDownload(href, filename) {
     const link = document.createElement("a")
     link.href = href
-    link.download = filename
+    if (filename) link.setAttribute("download", filename)
     link.rel = "noopener"
     document.body.appendChild(link)
     link.click()

@@ -6,6 +6,9 @@ Rails.application.routes.draw do
   root "home#index"
 
   resources :properties, only: %i[index show] do
+    member do
+      get "photos/:index/download", action: :photo_download, as: :photo_download, constraints: { index: /\d+/ }
+    end
     resource :favorite, only: %i[create destroy]
   end
   resources :favorites, only: :index
