@@ -7,6 +7,8 @@ const LEAFLET_CSS_FALLBACK = "https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/le
 const LEAFLET_JS_FALLBACK = "https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"
 const TRINIDAD_CENTER = [10.6549, -61.5019]
 const BASEMAP_STORAGE_KEY = "estate-map-basemap"
+/** Vertical gap (px) between pills that share identical lat/lng. */
+const PIN_STACK_PX = 30
 const BASEMAPS = {
   streets: {
     label: "Streets",
@@ -605,25 +607,38 @@ export default class extends Controller {
     this.markerLayer.clearLayers()
     this.markersById = {}
 
+    // Exact-same coords: stack pills upward so they don't cover each other.
+    const stackIndexByPoint = {}
+
     this.listingsValue.forEach((listing) => {
       if (listing.lat == null || listing.lng == null) return
 
-      // iconSize/iconAnchor 0: wrapper is a point; CSS centers the pill (no oversized colored box)
+      const pointKey = `${listing.lat},${listing.lng}`
+      const stackIndex = stackIndexByPoint[pointKey] || 0
+      stackIndexByPoint[pointKey] = stackIndex + 1
+      const stackPx = stackIndex * PIN_STACK_PX
+
+      // iconSize/iconAnchor 0: wrapper is a point; content overflows (no oversized colored box).
+      // Positive iconAnchor.y moves the pill up — used for shared-point stacking.
       const icon = L.divIcon({
         className: "estate-price-marker",
         html: `<button type="button" class="price-pill" data-id="${listing.id}">${listing.priceLabel}</button>`,
         iconSize: [0, 0],
-        iconAnchor: [0, 0]
+        iconAnchor: [0, stackPx]
       })
 
-      const marker = L.marker([listing.lat, listing.lng], { icon, riseOnHover: true })
+      const marker = L.marker([listing.lat, listing.lng], {
+        icon,
+        riseOnHover: true,
+        zIndexOffset: stackPx
+      })
       marker.listingId = listing.id
 
       marker.bindPopup(this.popupHtml(listing), {
         className: "estate-map-popup",
         maxWidth: 286,
         minWidth: 286,
-        offset: [0, -10],
+        offset: [0, -10 - stackPx],
         autoPanPadding: [24, 24]
       })
 
