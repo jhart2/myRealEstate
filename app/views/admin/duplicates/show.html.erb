@@ -18,7 +18,7 @@
 <div class="mt-6 rounded-xl border border-border bg-panel p-6">
   <p class="text-sm text-ink-3">
     Resolve this pair, then the next both-flagged pair loads. Keeping one disables the other.
-    Keep both clears flags without disabling. Cleared listings leave the queue and will not resurface with other flagged peers.
+    Drop both disables A and B. Keep both clears flags without disabling.
   </p>
   <div class="mt-4 flex flex-wrap gap-3">
     <%= button_to "Keep A, disable B",
@@ -31,6 +31,12 @@
           method: :patch,
           params: { reconcile: "keep_right" },
           class: "btn-primary cursor-pointer" %>
+    <%= button_to "Drop both (disable)",
+          admin_duplicate_path(@left, peer: @right.to_param),
+          method: :patch,
+          params: { reconcile: "drop_both" },
+          class: "btn-primary cursor-pointer",
+          form: { data: { turbo_confirm: "Disable both listings A and B?" } } %>
     <%= button_to "Keep both (clear flags)",
           admin_duplicate_path(@left, peer: @right.to_param),
           method: :patch,

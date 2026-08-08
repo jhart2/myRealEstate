@@ -22,6 +22,9 @@ module Admin
       when "keep_both"
         clear_flags!(@left, @right)
         redirect_after_resolve!("Cleared duplicate flags on both listings.")
+      when "drop_both"
+        drop_both!(@left, @right)
+        redirect_after_resolve!("Disabled both #{@left.slug} and #{@right.slug}.")
       when "keep_left"
         keep_one!(keep: @left, drop: @right)
         redirect_after_resolve!("Kept #{@left.slug}; disabled #{@right.slug}.")
@@ -73,6 +76,10 @@ module Admin
     def keep_one!(keep:, drop:)
       drop.update!(status: "disabled", possible_duplicate: false)
       keep.update!(possible_duplicate: false)
+    end
+
+    def drop_both!(*properties)
+      Property.where(id: properties.map(&:id)).update_all(status: "disabled", possible_duplicate: false)
     end
 
     def redirect_after_resolve!(notice)
