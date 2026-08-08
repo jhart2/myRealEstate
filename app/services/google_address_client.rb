@@ -62,15 +62,16 @@ class GoogleAddressClient
     raise ConfigurationError, "GOOGLE_MAPS_API_KEY is not set" unless configured?
 
     cache_key = [
-      "google_geocode/v1",
+      "google_geocode/v2",
       Digest::SHA1.hexdigest(
         [ query.to_s.strip.downcase, region.to_s.downcase, components.to_s ].join("|")
       )
     ]
 
-    Rails.cache.fetch(cache_key, expires_in: 30.days) do
-      geocode_uncached(query: query, region: region, components: components)
+    cached = fetch_cache_hash(cache_key) do
+      result_to_h(geocode_uncached(query: query, region: region, components: components))
     end
+    result_from_h(cached)
   end
 
   def geocode_uncached(query:, region: nil, components: nil)
@@ -284,5 +285,29 @@ class GoogleAddressClient
     parsed
   rescue JSON::ParserError, Timeout::Error, Errno::ECONNREFUSED, SocketError => e
     raise ApiError, e.message
+  end
+
+  # Cache plain Hashes — Struct Result is not reliably Marshal-able under Zeitwerk.
+  def fetch_cache_hash(cache_key, expires_in: 30.days)
+    Rails.cache.fetch(cache_key, expires_in: expires_in) { yield }
+  rescue TypeError, ArgumentError => e
+    raise unless e.message.match?(/can't be referred to|dump|load|undefined class/i)
+
+    Rails.logger.warn("[GoogleAddressClient] cache #{e.class}: #{e.message}; refetching")
+    Rails.cache.delete(cache_key)
+    yield
+  end
+
+  def result_to_h(result)
+    return nil if result.nil?
+
+    result.to_h
+  end
+
+  def result_from_h(cached)
+    return nil if cached.blank?
+
+    attrs = cached.to_h.transform_keys(&:to_sym)
+    Result.new(**attrs.slice(*Result.members))
   end
 end

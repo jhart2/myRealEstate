@@ -382,20 +382,60 @@ class Property < ApplicationRecord
     ordered.presence || attachments
   end
 
-  # Public UI only — Active Storage paths, never remote CDN hotlinks.
+  def enhanced_gallery_images
+    hosted_gallery_images.select { |img| self.class.blob_enhanced?(img.blob) }
+  end
+
+  # GALLERY_DISPLAY_MODE:
+  #   hosted          — Active Storage only (default)
+  #   enhanced_or_cdn — GCS only when blob metadata enhanced=true; else CDN URL
+  #   enhanced_only   — enhanced Active Storage only (strict cutover)
+  #   cdn             — always remote gallery_image_urls
+  def self.gallery_display_mode
+    ENV.fetch("GALLERY_DISPLAY_MODE", "hosted").to_s.strip.downcase
+  end
+
+  def self.blob_enhanced?(blob)
+    ActiveModel::Type::Boolean.new.cast(blob&.metadata&.[]("enhanced"))
+  end
+
+  # Public UI gallery sources. Prefer hosted/enhanced per GALLERY_DISPLAY_MODE.
   def display_gallery_image_urls
-    hosted_gallery_images.map { |img| gallery_blob_path(img) }
+    case self.class.gallery_display_mode
+    when "cdn"
+      gallery_image_urls
+    when "enhanced_or_cdn"
+      enhanced_or_cdn_gallery_urls
+    when "enhanced_only"
+      enhanced_gallery_images.map { |img| gallery_blob_path(img) }
+    else
+      hosted_gallery_images.map { |img| gallery_blob_path(img) }
+    end
   end
 
   def display_image_url
-    cover = hosted_gallery_images.first
-    return gallery_blob_path(cover) if cover
-    return gallery_blob_path(image) if image.attached?
+    case self.class.gallery_display_mode
+    when "cdn"
+      gallery_image_urls.first.presence || self[:image_url].presence
+    when "enhanced_or_cdn"
+      display_gallery_image_urls.first
+    when "enhanced_only"
+      cover = enhanced_gallery_images.first
+      return gallery_blob_path(cover) if cover
 
-    nil
+      nil
+    else
+      cover = hosted_gallery_images.first
+      return gallery_blob_path(cover) if cover
+      return gallery_blob_path(image) if image.attached?
+
+      nil
+    end
   end
 
   def image_present?
+    return gallery_image_urls.any? || self[:image_url].present? if %w[cdn enhanced_or_cdn].include?(self.class.gallery_display_mode)
+
     gallery_images.attached? || image.attached?
   end
 
@@ -638,6 +678,25 @@ class Property < ApplicationRecord
   private_constant :Taxonomy
 
   private
+
+  def enhanced_or_cdn_gallery_urls
+    attachments = gallery_images_attachments.includes(:blob).to_a
+    by_source = {}
+    attachments.each do |img|
+      PropertyGalleryIngestor.source_urls_for(img.blob).each do |src|
+        by_source[src] ||= img
+      end
+    end
+
+    gallery_image_urls.map do |url|
+      img = by_source[url]
+      if img && self.class.blob_enhanced?(img.blob)
+        gallery_blob_path(img)
+      else
+        url
+      end
+    end
+  end
 
   def gallery_blob_path(attachable)
     Rails.application.routes.url_helpers.rails_blob_path(attachable, only_path: true)

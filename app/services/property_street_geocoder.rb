@@ -125,13 +125,27 @@ class PropertyStreetGeocoder
 
   def cached_resolve(query, region_hint)
     key = [
-      "property_street_geocode/v1",
+      "property_street_geocode/v2",
       Digest::SHA1.hexdigest([ query.to_s.downcase.strip, region_hint.to_s.downcase.strip ].join("|"))
     ]
 
-    Rails.cache.fetch(key, expires_in: CACHE_TTL) do
-      @google.resolve(query: query, region_hint: region_hint.presence || "Trinidad")
+    cached = begin
+      Rails.cache.fetch(key, expires_in: CACHE_TTL) do
+        result = @google.resolve(query: query, region_hint: region_hint.presence || "Trinidad")
+        result&.to_h
+      end
+    rescue TypeError, ArgumentError => e
+      raise unless e.message.match?(/can't be referred to|dump|load|undefined class/i)
+
+      Rails.cache.delete(key)
+      result = @google.resolve(query: query, region_hint: region_hint.presence || "Trinidad")
+      result&.to_h
     end
+
+    return nil if cached.blank?
+
+    attrs = cached.to_h.transform_keys(&:to_sym)
+    GoogleAddressClient::Result.new(**attrs.slice(*GoogleAddressClient::Result.members))
   end
 
   def usable?(resolved)
