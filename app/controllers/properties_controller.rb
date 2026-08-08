@@ -8,7 +8,7 @@ class PropertiesController < ApplicationController
     @days_max ||= Property.new_listing_days.to_s if @intent == "new"
 
     query = index_search_params
-    @properties = Property.search(query).includes(:agent, image_attachment: :blob)
+    @properties = Property.search(query).includes(:agent, image_attachment: :blob).with_attached_gallery_images
     @location = params[:location]
     @property_types = Array(params[:property_types]).map(&:presence).compact
     if @property_types.empty? && params[:property_type].present? && params[:property_type] != "Any Type"
@@ -42,9 +42,9 @@ class PropertiesController < ApplicationController
   end
 
   def show
-    @property = Property.active.includes(:agent, :favorites).find_by!(slug: params[:id])
+    @property = Property.active.includes(:agent, :favorites).with_attached_gallery_images.find_by!(slug: params[:id])
     @inquiry = Inquiry.new(property: @property, name: current_user&.name, email: current_user&.email_address)
-    @related = Property.active.where(property_type: @property.property_type).where.not(id: @property.id).limit(3)
+    @related = Property.active.where(property_type: @property.property_type).where.not(id: @property.id).with_attached_gallery_images.limit(3)
     @property.record_view!(session)
 
     if turbo_frame_request? && turbo_frame_request_id == "property_lightbox"

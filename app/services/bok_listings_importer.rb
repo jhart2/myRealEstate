@@ -359,8 +359,10 @@ class BokListingsImporter
         result.updated += 1
         result.touched_bok_ids << property.bok_id if property.bok_id.present?
         apply_listing_copy!(property, result)
+        enqueue_gallery_ingest!(property)
       else
         result.skipped += 1
+        enqueue_gallery_ingest!(property)
       end
     else
       property = Property.create!(attrs)
@@ -370,10 +372,18 @@ class BokListingsImporter
         result.created_bok_ids << property.bok_id
       end
       apply_listing_copy!(property, result)
+      enqueue_gallery_ingest!(property)
     end
   rescue ActiveRecord::RecordInvalid => e
     result.errors << "#{bok_id || source_url}: #{e.record.errors.full_messages.to_sentence}"
     result.skipped += 1
+  end
+
+  # Fire-and-forget FIFO gallery_enhance job. Never blocks listing publish/save.
+  def enqueue_gallery_ingest!(property)
+    return unless property&.persisted?
+
+    property.enqueue_gallery_ingest!
   end
 
   # Dual sale/rent pages often scrape the monthly USD tip price as "For Sale".
@@ -538,7 +548,8 @@ class BokListingsImporter
   end
 
   # Feed rows with no real listing photos must not stay public.
-  # Existing rows are destroyed (statuses are sales lifecycle only — no draft/unpublished).
+  # Existing rows are destroyed when they fall off the feed.
+  # Status is preserved on update so admin Disabled/Sold/etc. survives sync.
   def handle_unusable_images!(property, label, result)
     if property
       property.destroy!
@@ -656,7 +667,7 @@ class BokListingsImporter
       slug: slug_for(row),
       tag: tag.presence || map_tag(row),
       property_type: map_property_type(row),
-      status: "active",
+      status: existing&.status.presence || "active",
       address: address_attrs[:address],
       city: address_attrs[:city],
       state: address_attrs[:state],

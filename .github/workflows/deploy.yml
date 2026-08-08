@@ -121,7 +121,7 @@ jobs:
             --timeout=300 \
             --add-cloudsql-instances="${CLOUDSQL_INSTANCE}" \
             --update-secrets="RAILS_MASTER_KEY=rails-master-key:latest,DATABASE_URL=database-url:latest" \
-            --set-env-vars="RAILS_ENV=production,RAILS_LOG_LEVEL=info,APP_HOST=${APP_HOST},ACTIVE_STORAGE_SERVICE=google,GCS_PROJECT=${PROJECT_ID},GCS_BUCKET=tt-realty-staging-activestorage" \
+            --set-env-vars="RAILS_ENV=production,RAILS_LOG_LEVEL=info,APP_HOST=${APP_HOST},ACTIVE_STORAGE_SERVICE=google,GCS_PROJECT=${PROJECT_ID},GCS_BUCKET=tt-realty-staging-activestorage,GALLERY_ENHANCE=0" \
             --project="${PROJECT_ID}" \
             --quiet
 

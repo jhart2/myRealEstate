@@ -1,6 +1,6 @@
 class FavoritesController < ApplicationController
   def index
-    @properties = current_user.favorited_properties.includes(:agent).order("favorites.created_at DESC")
+    @properties = current_user.favorited_properties.includes(:agent).with_attached_gallery_images.order("favorites.created_at DESC")
   end
 
   def create

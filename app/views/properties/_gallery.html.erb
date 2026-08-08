@@ -1,5 +1,5 @@
 <%# locals: (property:, variant: "lightbox") %>
-<% urls = property.gallery_image_urls %>
+<% urls = property.display_gallery_image_urls %>
 <% side = urls.drop(1).first(4) %>
 <% use_dots = urls.size.between?(2, 9) %>
 <% if urls.any? %>
@@ -8,6 +8,7 @@
     data-controller="listing-gallery"
     data-listing-gallery-index-value="0"
     data-listing-gallery-count-value="<%= urls.size %>"
+    data-listing-gallery-slug-value="<%= property.slug %>"
   >
     <%# Desktop / tablet mosaic (hero + 2×2). Hidden on mobile via CSS. %>
     <div
@@ -142,10 +143,19 @@
     >
       <div class="listing-gallery-viewer-dialog" data-action="click->listing-gallery#stop" role="dialog" aria-modal="true" aria-label="Photo gallery">
         <div class="listing-gallery-viewer-toolbar">
-          <button type="button" class="listing-gallery-viewer-close" data-action="listing-gallery#closeViewer" aria-label="Close photo gallery">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
-            Close
-          </button>
+          <div class="listing-gallery-viewer-toolbar-start">
+            <button type="button" class="listing-gallery-viewer-close" data-action="listing-gallery#closeViewer" aria-label="Close photo gallery">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
+              Close
+            </button>
+            <button type="button" class="listing-gallery-viewer-download" data-action="listing-gallery#downloadCurrent" aria-label="Download this photo" title="Download this photo">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M12 3v12"/>
+                <path d="m7 10 5 5 5-5"/>
+                <path d="M5 21h14"/>
+              </svg>
+            </button>
+          </div>
           <span class="listing-gallery-viewer-counter" data-listing-gallery-target="counter">1 / <%= urls.size %></span>
         </div>
 

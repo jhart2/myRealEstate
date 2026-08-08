@@ -41,7 +41,7 @@
         <p class="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-ink-3">Status</p>
         <%= link_to "All statuses", admin_properties_path(admin_filter_query(status: nil, page: nil)), class: "block px-3 py-2 text-sm #{params[:status].blank? ? 'bg-panel-warm font-medium text-ink' : 'text-ink-2 hover:bg-panel-warm'}", role: "menuitem" %>
         <% Property::STATUSES.each do |status| %>
-          <%= link_to status.titleize, admin_properties_path(admin_filter_query(status: status, page: nil)), class: "block px-3 py-2 text-sm #{params[:status] == status ? 'bg-panel-warm font-medium text-ink' : 'text-ink-2 hover:bg-panel-warm'}", role: "menuitem" %>
+          <%= link_to Property::STATUS_LABELS.fetch(status, status.titleize), admin_properties_path(admin_filter_query(status: status, page: nil)), class: "block px-3 py-2 text-sm #{params[:status] == status ? 'bg-panel-warm font-medium text-ink' : 'text-ink-2 hover:bg-panel-warm'}", role: "menuitem" %>
         <% end %>
         <div class="my-1 border-t border-border"></div>
         <p class="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-ink-3">Listing type</p>
@@ -110,7 +110,7 @@
             <td class="px-4 py-4">
               <span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium <%= admin_status_badge_class(property.status) %>">
                 <span class="inline-block h-1.5 w-1.5 shrink-0 rounded-full <%= admin_status_dot_class(property.status) %>" aria-hidden="true"></span>
-                <span class="capitalize"><%= property.status %></span>
+                <span class="capitalize"><%= property.status_label %></span>
               </span>
             </td>
             <td class="px-4 py-4 text-right">

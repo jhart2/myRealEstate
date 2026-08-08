@@ -1,6 +1,6 @@
 <%# locals: (property:, inquiry:) %>
 <% share_url = "#{request.base_url}#{property_path(property)}" %>
-<% has_photos = property.gallery_image_urls.any? %>
+<% has_photos = property.display_gallery_image_urls.any? %>
 <% has_map = property.mappable? %>
 <% default_media = has_photos ? "photos" : "map" %>
 <article

@@ -1,5 +1,5 @@
 <% content_for :title, @property.title %>
-<% has_photos = @property.gallery_image_urls.any? %>
+<% has_photos = @property.display_gallery_image_urls.any? %>
 <% has_map = @property.mappable? %>
 <% default_media = has_photos ? "photos" : (has_map ? "map" : nil) %>
 

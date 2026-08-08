@@ -57,11 +57,12 @@
               <%= f.label :status, class: "field-label" do %>Status <span class="text-trinidad">*</span><% end %>
               <div class="admin-status-field">
                 <span class="inline-block h-2 w-2 shrink-0 rounded-full <%= admin_status_led_class(@property.status) %>" data-admin-status-target="led" aria-hidden="true"></span>
-                <%= f.select :status, Property::STATUSES.map { |s| [s.titleize, s] }, {},
+                <%= f.select :status, admin_status_options, {},
                       class: "admin-status-select",
                       required: true,
                       data: { admin_status_target: "select", action: "change->admin-status#sync" } %>
               </div>
+              <p class="mt-1.5 text-xs text-ink-3">Disabled hides the listing from public search and detail pages.</p>
             </div>
             <div class="field-group">
               <%= f.label :agent_id, "Assigned agent", class: "field-label" %>

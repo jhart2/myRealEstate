@@ -188,7 +188,9 @@ class GentleClient:
                     continue
                 print(f"  GET [{self.request_count}] {err.code} {url}", flush=True)
                 raise
-            except urllib.error.URLError as err:
+            except (TimeoutError, urllib.error.URLError) as err:
+                # TimeoutError is raised by socket/ssl reads and is not wrapped
+                # in URLError, so it must be caught explicitly or one hang kills the run.
                 self._last_request_at = time.monotonic()
                 last_err = err
                 backoff = min(60.0, (2 ** attempt) * self.delay)

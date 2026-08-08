@@ -6,6 +6,7 @@ class Property < ApplicationRecord
   has_many :favorited_by_users, through: :favorites, source: :user
   has_many :inquiries, dependent: :destroy
   has_rich_text :description
+  has_many_attached :gallery_images
 
   # Plain text for OpenAI / matching; HTML for public render.
   def description_plain
@@ -24,7 +25,14 @@ class Property < ApplicationRecord
   PROPERTY_TYPES = %w[House Apartment Townhouse Villa Penthouse Commercial Land Modern\ Home].freeze
   NON_RESIDENTIAL_TYPES = %w[Land Commercial].freeze
   RESIDENTIAL_TYPES = (PROPERTY_TYPES - NON_RESIDENTIAL_TYPES).freeze
-  STATUSES = %w[active pending sold rented].freeze
+  STATUSES = %w[active pending sold rented disabled].freeze
+  STATUS_LABELS = {
+    "active" => "Active",
+    "pending" => "Pending",
+    "sold" => "Sold",
+    "rented" => "Rented",
+    "disabled" => "Disabled"
+  }.freeze
   # "New Homes" nav/search intent = listings created within this many days.
   NEW_LISTING_DAYS = 14
   # Full slider spectrum for search price histogram / dual-range control ($0 … $10M+).
@@ -32,6 +40,7 @@ class Property < ApplicationRecord
   PRICE_HISTOGRAM_BUCKETS = 40
 
   scope :active, -> { where(status: "active") }
+  scope :disabled, -> { where(status: "disabled") }
   scope :featured, -> { active.where(featured: true) }
   scope :for_sale, -> { active.where(tag: "sale") }
   scope :for_rent, -> { active.where(tag: "rent") }
@@ -51,6 +60,10 @@ class Property < ApplicationRecord
   before_validation :generate_slug, on: :create
   before_validation :set_price_label
   before_validation :sync_lot_size_fields
+
+  def status_label
+    STATUS_LABELS.fetch(status.to_s, status.to_s.titleize)
+  end
 
   def price_dollars
     return if price_cents.blank?
@@ -197,6 +210,7 @@ class Property < ApplicationRecord
     by_region = active
       .residential
       .includes(:agent, image_attachment: :blob)
+      .with_attached_gallery_images
       .order(featured: :desc, views_count: :desc, created_at: :desc)
       .group_by { |property| property.region.key }
 
@@ -350,6 +364,65 @@ class Property < ApplicationRecord
     urls = [ primary ] if urls.empty? && primary
     urls = ([ primary ] + urls).compact if primary && !urls.include?(primary)
     urls.uniq
+  end
+
+  # Hosted gallery blobs ordered to match scraper's gallery URL list.
+  # Falls back to attachment order when metadata mapping is incomplete.
+  def hosted_gallery_images
+    attachments = gallery_images_attachments.includes(:blob).to_a
+    return [] if attachments.empty?
+
+    by_source = {}
+    attachments.each do |img|
+      PropertyGalleryIngestor.source_urls_for(img.blob).each do |src|
+        by_source[src] ||= img
+      end
+    end
+    ordered = gallery_image_urls.filter_map { |url| by_source[url] }.uniq
+    ordered.presence || attachments
+  end
+
+  # Public UI only — Active Storage paths, never remote CDN hotlinks.
+  def display_gallery_image_urls
+    hosted_gallery_images.map { |img| gallery_blob_path(img) }
+  end
+
+  def display_image_url
+    cover = hosted_gallery_images.first
+    return gallery_blob_path(cover) if cover
+    return gallery_blob_path(image) if image.attached?
+
+    nil
+  end
+
+  def image_present?
+    gallery_images.attached? || image.attached?
+  end
+
+  def gallery_ingest_needed?
+    urls = gallery_image_urls
+    return false if urls.empty?
+
+    hosted = gallery_images_attachments.includes(:blob).flat_map { |img| PropertyGalleryIngestor.source_urls_for(img.blob) }
+    return true if hosted.empty?
+
+    self.class.images_fingerprint(urls) != self.class.images_fingerprint(hosted)
+  end
+
+  def enqueue_gallery_ingest!
+    return false unless gallery_ingest_needed?
+
+    # Async FIFO queue — sync/import never waits on download or enhance.
+    PropertyImageIngestJob.perform_later(id)
+    true
+  end
+
+  def self.images_fingerprint(urls)
+    Array(urls)
+      .map { |url| url.to_s.strip.downcase.sub(/\?.*\z/, "").delete_suffix("/") }
+      .reject(&:blank?)
+      .uniq
+      .sort
   end
 
   def display_price(currency: Current.currency)
@@ -565,6 +638,10 @@ class Property < ApplicationRecord
   private_constant :Taxonomy
 
   private
+
+  def gallery_blob_path(attachable)
+    Rails.application.routes.url_helpers.rails_blob_path(attachable, only_path: true)
+  end
 
   def derived_acres_from_lot
     return nil if lot_sqft.blank? || lot_sqft <= 0

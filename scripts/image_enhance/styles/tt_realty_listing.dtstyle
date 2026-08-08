@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<darktable_style version="1.0">
+  <info>
+    <name>tt_realty_listing</name>
+    <description>TT Realty listing polish (v1): +0.10 EV, tone equalizer fill-in, natural-skin colorfulness, soft clarity, mild sharpen. Tuned on hosted gallery samples (warm interiors + phone/WhatsApp JPEGs). WB / residual EV still handled by adaptive ImageMagick.</description>
+  </info>
+  <style>
+    <plugin>
+      <num>5</num>
+      <module>3</module>
+      <operation>bilat</operation>
+      <op_params>gz02eNpjZEAAruvKdkDKHgAIoAGD</op_params>
+      <enabled>1</enabled>
+      <blendop_params>gz02eNpjYGBgYAFiCQYYOOHEgAZYGTABIwM20GAPwSOVjx1UzLpyAIRx8XGB/0AAogGbGCeh</blendop_params>
+      <blendop_version>13</blendop_version>
+      <multi_priority>0</multi_priority>
+      <multi_name>tt soft clarity</multi_name>
+      <multi_name_hand_edited>0</multi_name_hand_edited>
+    </plugin>
+    <plugin>
+      <num>4</num>
+      <module>5</module>
+      <operation>colorbalancergb</operation>
+      <op_params>gz02eNpjYCAVNNij0ghw9oyPHZDaD2LPmjnTDpvuiW9t7JBpRiAGAKCLClw=</op_params>
+      <enabled>1</enabled>
+      <blendop_params>gz02eNpjYGBgYAFiCQYYOOHEgAZYGTABIwM20GAPwSOVjx1UzLpyAIRx8XGB/0AAogGbGCeh</blendop_params>
+      <blendop_version>13</blendop_version>
+      <multi_priority>0</multi_priority>
+      <multi_name>tt natural color</multi_name>
+      <multi_name_hand_edited>0</multi_name_hand_edited>
+    </plugin>
+    <plugin>
+      <num>3</num>
+      <module>2</module>
+      <operation>toneequal</operation>
+      <op_params>gz02eNpjYGBgmDVT0g6I7Y2NJ9sX2q4C0yA+SJwBDBY4fGbZas/A0GDPgAD7WYAECDMCMQCkbQ6E</op_params>
+      <enabled>1</enabled>
+      <blendop_params>gz02eNpjYGBgYAFiCQYYOOHEgAZYGTABIwM20GAPwSOVjx1UzLpyAIRx8XGB/0AAogGbGCeh</blendop_params>
+      <blendop_version>13</blendop_version>
+      <multi_priority>0</multi_priority>
+      <multi_name>tt fill-in</multi_name>
+      <multi_name_hand_edited>0</multi_name_hand_edited>
+    </plugin>
+    <plugin>
+      <num>2</num>
+      <module>6</module>
+      <operation>exposure</operation>
+      <op_params>gz02eNpjYACBhp1nz5yxZWDwcAKyD4BEAEhIBaY=</op_params>
+      <enabled>1</enabled>
+      <blendop_params>gz02eNpjYGBgYAFiCQYYOOHEgAZYGTABIwM20GAPwSOVjx1UzLpyAIRx8XGB/0AAogGbGCeh</blendop_params>
+      <blendop_version>13</blendop_version>
+      <multi_priority>0</multi_priority>
+      <multi_name>tt +0.10 EV</multi_name>
+      <multi_name_hand_edited>0</multi_name_hand_edited>
+    </plugin>
+    <plugin>
+      <num>1</num>
+      <module>1</module>
+      <operation>sharpen</operation>
+      <op_params>gz02eNozNt5sz3V9sR0DA4M9ABlOA1o=</op_params>
+      <enabled>1</enabled>
+      <blendop_params>gz02eNpjYGBgYAZiCQYYOOHEgAZYGTABIwM20GAPwSOVT13wHwhANABvUh0I</blendop_params>
+      <blendop_version>13</blendop_version>
+      <multi_priority>0</multi_priority>
+      <multi_name>tt mild sharpen</multi_name>
+      <multi_name_hand_edited>0</multi_name_hand_edited>
+    </plugin>
+  </style>
+</darktable_style>

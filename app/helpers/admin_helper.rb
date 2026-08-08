@@ -24,6 +24,7 @@ module AdminHelper
     when "pending" then "bg-amber-400 shadow-[0_0_0_3px_rgba(251,191,36,0.25)]"
     when "sold" then "bg-ink-3 shadow-[0_0_0_3px_rgba(138,127,120,0.2)]"
     when "rented" then "bg-sky-500 shadow-[0_0_0_3px_rgba(14,165,233,0.2)]"
+    when "disabled" then "bg-red-400 shadow-[0_0_0_3px_rgba(248,113,113,0.25)]"
     else "bg-ink-3"
     end
   end
@@ -34,6 +35,7 @@ module AdminHelper
     when "pending" then "bg-amber-50 text-amber-900"
     when "sold" then "bg-[#efece7] text-ink-2"
     when "rented" then "bg-sky-50 text-sky-900"
+    when "disabled" then "bg-red-50 text-red-800"
     else "bg-panel-warm text-ink-2"
     end
   end
@@ -44,8 +46,13 @@ module AdminHelper
     when "pending" then "bg-amber-400"
     when "sold" then "bg-ink-3"
     when "rented" then "bg-sky-500"
+    when "disabled" then "bg-red-400"
     else "bg-ink-3"
     end
+  end
+
+  def admin_status_options
+    Property::STATUSES.map { |status| [ Property::STATUS_LABELS.fetch(status, status.titleize), status ] }
   end
 
   def admin_open_inquiry_count

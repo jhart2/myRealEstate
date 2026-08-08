@@ -16,7 +16,8 @@ export default class extends Controller {
   ]
   static values = {
     index: { type: Number, default: 0 },
-    count: { type: Number, default: 0 }
+    count: { type: Number, default: 0 },
+    slug: { type: String, default: "listing" }
   }
 
   connect() {

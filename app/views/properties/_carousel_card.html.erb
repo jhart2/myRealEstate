@@ -2,11 +2,13 @@
 <article class="group min-w-0" data-carousel-card>
   <div class="relative mb-3 aspect-[20/19] overflow-hidden rounded-xl bg-stone-light">
     <%= link_to property_path(property), class: "block h-full w-full", tabindex: -1 do %>
-      <img
-        src="<%= property.display_image_url %>"
-        alt="<%= property.title %>"
-        class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-        loading="lazy">
+      <% if property.display_image_url.present? %>
+        <img
+          src="<%= property.display_image_url %>"
+          alt="<%= property.title %>"
+          class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+          loading="lazy">
+      <% end %>
     <% end %>
 
     <% if property.featured? %>
