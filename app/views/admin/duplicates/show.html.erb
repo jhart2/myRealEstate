@@ -1,14 +1,34 @@
 <% content_for :title, "Reconcile duplicates" %>
 
 <div class="mb-6 flex flex-wrap items-center justify-between gap-3">
-  <%= link_to "← Possible duplicates", admin_duplicates_path, class: "text-sm text-ink-3 hover:text-ink" %>
-  <p class="text-sm text-ink-3">
-    Match score <%= @score %>/4
-    <% if @signals.any? %>
-      · <%= @signals.join(", ") %>
+  <div class="flex flex-wrap items-center gap-3">
+    <%= link_to "← Possible duplicates", admin_duplicates_path, class: "text-sm text-ink-3 hover:text-ink" %>
+    <% if @queue_position && @queue_total %>
+      <span class="text-sm text-ink-3"><%= @queue_position %> of <%= @queue_total %></span>
+    <% elsif @queue_total %>
+      <span class="text-sm text-ink-3"><%= @queue_total %> in queue</span>
     <% end %>
-  </p>
+  </div>
+  <div class="flex flex-wrap items-center gap-2">
+    <% if @previous_duplicate_path %>
+      <%= link_to "← Previous", @previous_duplicate_path, class: "btn-secondary" %>
+    <% else %>
+      <span class="btn-secondary pointer-events-none opacity-40">← Previous</span>
+    <% end %>
+    <% if @next_duplicate_path %>
+      <%= link_to "Next →", @next_duplicate_path, class: "btn-secondary" %>
+    <% else %>
+      <span class="btn-secondary pointer-events-none opacity-40">Next →</span>
+    <% end %>
+  </div>
 </div>
+
+<p class="mb-6 text-sm text-ink-3">
+  Match score <%= @score %>/4
+  <% if @signals.any? %>
+    · <%= @signals.join(", ") %>
+  <% end %>
+</p>
 
 <div class="grid gap-6 lg:grid-cols-2">
   <%= render "panel", property: @left, side: "A" %>
@@ -17,8 +37,8 @@
 
 <div class="mt-6 rounded-xl border border-border bg-panel p-6">
   <p class="text-sm text-ink-3">
-    Resolve this pair, then the next both-flagged pair loads. Keeping one disables the other.
-    Drop both disables A and B. Keep both clears flags without disabling.
+    Resolve this pair, then the next both-flagged pair loads. Use Previous / Next to skip without changing flags.
+    Keeping one disables the other. Drop both disables A and B. Keep both clears flags without disabling.
   </p>
   <div class="mt-4 flex flex-wrap gap-3">
     <%= button_to "Keep A, disable B",
