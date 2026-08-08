@@ -2729,6 +2729,7 @@ html.gallery-viewer-open .listing-gallery-viewer {
   display: flex;
   flex-direction: column;
   width: min(1100px, 100%);
+  height: calc(100dvh - 1.5rem);
   max-height: calc(100dvh - 1.5rem);
   margin: auto;
   overflow: hidden;
@@ -2846,11 +2847,13 @@ html.gallery-viewer-open .listing-gallery-viewer {
 
 .listing-gallery-viewer-hero {
   display: block;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
   max-width: 100%;
   max-height: 100%;
-  width: auto;
-  height: auto;
   object-fit: contain;
+  object-position: center;
   pointer-events: none;
   user-select: none;
   -webkit-user-drag: none;
@@ -3014,10 +3017,6 @@ html.gallery-viewer-open .listing-gallery-viewer {
   .listing-gallery-viewer-close {
     /* Keep icon + label readable; ensure tap target */
     min-height: 2.4rem;
-  }
-
-  .listing-gallery-viewer-hero {
-    max-height: 100%;
   }
 }
 

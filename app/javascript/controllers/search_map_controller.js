@@ -456,6 +456,13 @@ export default class extends Controller {
       })
       this.map.on("zoomend", () => this.applyPinStackMode())
 
+      // Leaflet autoPan after opening a pin card must not count as a user search-pan.
+      this.map.on("autopanstart", () => {
+        this._skipViewportReloadOnce = true
+        this._programmaticFrame = true
+        window.setTimeout(() => { this._programmaticFrame = false }, 450)
+      })
+
       this.map.on("moveend", () => {
         if (this.suppressAreaButton) {
           this.suppressAreaButton = false
@@ -483,6 +490,8 @@ export default class extends Controller {
         if (this._programmaticFrame) return
         // Resize/invalidateSize fires moveend too — only clamp when the user panned/zoomed.
         if (!this.userMovedMap) return
+        // Inspecting a pin card: let the user nudge the map without wiping selection.
+        if (this.hasOpenListingPopup()) return
         this.showReloadSpinner()
         this.scheduleViewportReload()
       })
@@ -878,12 +887,12 @@ export default class extends Controller {
         maxWidth: 286,
         minWidth: 286,
         offset: [0, -10],
-        autoPan: false,
-        autoPanPadding: [24, 24]
+        autoPan: true,
+        autoPanPadding: [56, 56]
       })
 
-      // Click selects; Leaflet opens the bound popup. Do not pan the map here —
-      // panTo → moveend with userMovedMap reloads the viewport and kills the popup.
+      // Click selects + opens the bound popup. Leaflet autoPan keeps the card on-screen
+      // without treating the pan as a viewport search reload.
       marker.on("click", () => this.activateListing(listing.id, { scroll: true, panMap: false, openPopup: false }))
 
       marker.addTo(this.markerLayer)
@@ -1203,9 +1212,14 @@ export default class extends Controller {
       const results = await resultsRes.json()
       if (this._destroyed) return
 
+      const keepId = this.activeId
+      const keepPopupOpen = this.hasOpenListingPopup()
       this.listingsValue = Array.isArray(listings) ? listings : []
       this.renderMarkers()
       this.replaceResultsList(results)
+      if (keepId && this.markersById[keepId]) {
+        this.activateListing(keepId, { scroll: false, panMap: false, openPopup: keepPopupOpen })
+      }
     } finally {
       if (loadId === this._pinLoadId && !this._destroyed) {
         this.markPinsReady()
@@ -1308,6 +1322,13 @@ export default class extends Controller {
   focusCard(event) {
     const id = event.currentTarget.dataset.listingId
     this.activateListing(id, { scroll: false, openPopup: true })
+  }
+
+  hasOpenListingPopup() {
+    if (!this.activeId) return false
+    const marker = this.markersById[this.activeId]
+    const popup = marker?.getPopup?.()
+    return Boolean(popup?.isOpen?.())
   }
 
   activateListing(id, { scroll = false, panMap = scroll, openPopup = false } = {}) {
