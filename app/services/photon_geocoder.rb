@@ -18,14 +18,14 @@ class PhotonGeocoder
     new.search(query, limit: limit)
   end
 
-  # Best single hit for map framing — Trinidad preferred.
+  # Best single hit for map framing — Trinidad preferred; never return a non-TT place.
   def self.resolve(query)
     new.resolve(query)
   end
 
   def resolve(query)
     hits = search(query, limit: 8)
-    hits.find { |hit| within_tt?(hit[:lat], hit[:lng]) } || hits.first
+    hits.find { |hit| within_tt?(hit[:lat], hit[:lng]) }
   end
 
   def search(query, limit: 8)

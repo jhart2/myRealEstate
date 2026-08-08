@@ -5,12 +5,48 @@ const LEAFLET_CSS = "/vendor/leaflet/leaflet.css"
 const LEAFLET_JS = "/vendor/leaflet/leaflet.js"
 const LEAFLET_CSS_FALLBACK = "https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css"
 const LEAFLET_JS_FALLBACK = "https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"
-const TRINIDAD_CENTER = [10.6549, -61.5019]
+/** Port of Spain — default Buy-page camera. */
+const PORT_OF_SPAIN = [10.6549, -61.5019]
+const DEFAULT_ZOOM = 11
+const MIN_ZOOM = 8
+/**
+ * Trinidad & Tobago region (matches NominatimGeocoder / PhotonGeocoder).
+ * A small pad is applied for maxBounds so edge listings aren't stuck against a hard wall.
+ */
+const TT_REGION = { south: 10.0, north: 11.45, west: -61.95, east: -60.4 }
+const TT_MAX_BOUNDS = {
+  south: TT_REGION.south - 0.35,
+  north: TT_REGION.north + 0.35,
+  west: TT_REGION.west - 0.35,
+  east: TT_REGION.east + 0.35
+}
 const BASEMAP_STORAGE_KEY = "estate-map-basemap"
 /** Vertical gap (px) between pills that share identical lat/lng. */
 const PIN_STACK_PX = 30
 /** At this zoom and above, overlapping pins fan into a vertical stack. */
-const PIN_STACK_MIN_ZOOM = 15
+const PIN_STACK_MIN_ZOOM = 17
+/** Ora "dots" frames — terminal-style spinner. */
+const ORA_DOTS = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]
+/** Short techy real-estate compiler lines — flash rapidly while the map boots. */
+const MAP_BOOT_MESSAGES = [
+  "Compiling listings…",
+  "Resolving parcel graph…",
+  "Indexing Trinidad coords…",
+  "Linking price vectors…",
+  "Hydrating map tiles…",
+  "Bundling neighbourhoods…",
+  "Warming Port of Spain cache…",
+  "Sorting MLS payloads…",
+  "Stencilizing lot boundaries…",
+  "Provisioning pin layer…",
+  "Diffing market inventory…",
+  "Emitting search index…"
+]
+const BOOT_MESSAGE_START_MS = 200
+const BOOT_MESSAGE_END_MS = 80
+const BOOT_FADE_MS = 40
+/** Extra hold after basemap + pins are ready so compiler chrome can flash. */
+const BOOT_EXTRA_HOLD_MS = 500
 const BASEMAPS = {
   streets: {
     label: "Streets",
@@ -62,8 +98,9 @@ const BASEMAPS = {
 export default class extends Controller {
   static targets = [
     "map", "listPane", "mapPane", "listTab", "mapTab", "card", "listScroll",
-    "form", "north", "south", "east", "west", "areaButton", "spinner", "basemapButton",
-    "resultsCount", "resultsList", "listEmpty", "listSentinel", "listLoading"
+    "form", "north", "south", "east", "west", "areaButton", "spinner", "reloadSpinner",
+    "basemapControls", "basemapButton", "resultsCount", "resultsList", "listEmpty",
+    "listSentinel", "listLoading"
   ]
   static values = { listings: Array, boundary: Object, viewport: Object }
 
@@ -79,6 +116,10 @@ export default class extends Controller {
     this._listAbort = null
     this._loadingMore = false
     this._suppressViewportReload = true
+    this._skipViewportReloadOnce = false
+    this._basemapReady = false
+    this._pinsReady = false
+    this._pinLoadId = 0
 
     this.onCurrencyChanged = this.onCurrencyChanged.bind(this)
     document.addEventListener("currency:changed", this.onCurrencyChanged)
@@ -125,6 +166,7 @@ export default class extends Controller {
 
   disconnect() {
     this._destroyed = true
+    this.stopBootChrome()
     document.removeEventListener("currency:changed", this.onCurrencyChanged)
     if (this._resizeObserver) {
       this._resizeObserver.disconnect()
@@ -173,21 +215,130 @@ export default class extends Controller {
     if (!this.hasSpinnerTarget) return
     this.spinnerTarget.classList.remove("hidden")
     this.spinnerTarget.dataset.state = "loading"
-    const label = this.spinnerTarget.querySelector("[data-search-map-spinner-label]")
-    if (label) label.textContent = "Loading map…"
+    this.startBootChrome()
   }
 
   showSpinnerError(message) {
     if (!this.hasSpinnerTarget) return
+    this.stopBootChrome()
     this.spinnerTarget.classList.remove("hidden")
     this.spinnerTarget.dataset.state = "error"
     const label = this.spinnerTarget.querySelector("[data-search-map-spinner-label]")
-    if (label) label.textContent = message
+    if (label) {
+      label.style.opacity = "1"
+      label.textContent = message
+    }
   }
 
   hideSpinner() {
     if (!this.hasSpinnerTarget) return
+    this.stopBootChrome()
     this.spinnerTarget.classList.add("hidden")
+    this.showBasemapControls()
+  }
+
+  showBasemapControls() {
+    if (!this.hasBasemapControlsTarget) return
+    this.basemapControlsTarget.classList.remove("hidden")
+    this.basemapControlsTarget.setAttribute("aria-hidden", "false")
+  }
+
+  startBootChrome() {
+    this.stopBootChrome()
+
+    const ora = this.spinnerTarget.querySelector("[data-search-map-spinner-ora]")
+    const label = this.spinnerTarget.querySelector("[data-search-map-spinner-label]")
+    let frame = 0
+    let messageIndex = 0
+    const lastIndex = Math.max(MAP_BOOT_MESSAGES.length - 1, 1)
+
+    if (ora) ora.textContent = ORA_DOTS[0]
+    if (label) {
+      label.style.opacity = "1"
+      label.style.transition = `opacity ${BOOT_FADE_MS}ms ease`
+      label.textContent = MAP_BOOT_MESSAGES[0]
+    }
+
+    this._oraTimer = window.setInterval(() => {
+      frame = (frame + 1) % ORA_DOTS.length
+      if (ora) ora.textContent = ORA_DOTS[frame]
+    }, 80)
+
+    const advanceMessage = () => {
+      if (!label || this._destroyed) return
+      messageIndex = (messageIndex + 1) % MAP_BOOT_MESSAGES.length
+      label.style.opacity = "0"
+      if (this._bootFadeTimer) window.clearTimeout(this._bootFadeTimer)
+      this._bootFadeTimer = window.setTimeout(() => {
+        if (!label || this._destroyed) return
+        label.textContent = MAP_BOOT_MESSAGES[messageIndex]
+        label.style.opacity = "1"
+      }, BOOT_FADE_MS)
+
+      // Start fast, ramp toward blitz by the last unique line (then stay at end pace).
+      const progress = Math.min(1, messageIndex / lastIndex)
+      const delay = BOOT_MESSAGE_START_MS +
+        (BOOT_MESSAGE_END_MS - BOOT_MESSAGE_START_MS) * progress
+      this._bootMessageTimer = window.setTimeout(advanceMessage, delay)
+    }
+
+    this._bootMessageTimer = window.setTimeout(advanceMessage, BOOT_MESSAGE_START_MS)
+  }
+
+  stopBootChrome() {
+    if (this._oraTimer) {
+      window.clearInterval(this._oraTimer)
+      this._oraTimer = null
+    }
+    if (this._bootMessageTimer) {
+      window.clearInterval(this._bootMessageTimer)
+      this._bootMessageTimer = null
+    }
+    if (this._bootFadeTimer) {
+      window.clearTimeout(this._bootFadeTimer)
+      this._bootFadeTimer = null
+    }
+    if (this._bootHoldTimer) {
+      window.clearTimeout(this._bootHoldTimer)
+      this._bootHoldTimer = null
+    }
+  }
+
+  // Initial overlay stays up until basemap tiles AND pins have both settled.
+  // (SSR ships listings-value="[]"; pins always arrive via async fetch.)
+  markBasemapReady() {
+    this._basemapReady = true
+    this.tryDismissInitialSpinner()
+  }
+
+  markPinsReady() {
+    this._pinsReady = true
+    this.tryDismissInitialSpinner()
+  }
+
+  tryDismissInitialSpinner() {
+    if (!this._basemapReady || !this._pinsReady) return
+    if (this._bootHoldTimer) return
+
+    this._bootHoldTimer = window.setTimeout(() => {
+      this._bootHoldTimer = null
+      if (this._destroyed) return
+      this.hideSpinner()
+    }, BOOT_EXTRA_HOLD_MS)
+  }
+
+  showReloadSpinner() {
+    if (!this.hasReloadSpinnerTarget) return
+    this.reloadSpinnerTarget.classList.remove("hidden")
+    this.reloadSpinnerTarget.classList.add("flex")
+    this.reloadSpinnerTarget.setAttribute("aria-hidden", "false")
+  }
+
+  hideReloadSpinner() {
+    if (!this.hasReloadSpinnerTarget) return
+    this.reloadSpinnerTarget.classList.add("hidden")
+    this.reloadSpinnerTarget.classList.remove("flex")
+    this.reloadSpinnerTarget.setAttribute("aria-hidden", "true")
   }
 
   ensureLeafletCss(href = LEAFLET_CSS) {
@@ -263,8 +414,14 @@ export default class extends Controller {
 
       this.map = L.map(this.mapTarget, {
         zoomControl: false,
-        scrollWheelZoom: true
-      })
+        scrollWheelZoom: true,
+        minZoom: MIN_ZOOM,
+        maxBounds: [
+          [TT_MAX_BOUNDS.south, TT_MAX_BOUNDS.west],
+          [TT_MAX_BOUNDS.north, TT_MAX_BOUNDS.east]
+        ],
+        maxBoundsViscosity: 1.0
+      }).setView(PORT_OF_SPAIN, DEFAULT_ZOOM)
 
       L.control.zoom({ position: "bottomright" }).addTo(this.map)
 
@@ -274,6 +431,15 @@ export default class extends Controller {
 
       this.markerLayer = L.layerGroup().addTo(this.map)
       this.renderMarkers()
+      // Prefer SSR pins when present; otherwise first moveend/fetch marks ready.
+      if (this.listingsValue?.length) {
+        this.markPinsReady()
+      } else {
+        // Don't leave the overlay hung if moveend/bounds never kick off a fetch.
+        window.setTimeout(() => {
+          if (!this._destroyed && !this._pinsReady) this.markPinsReady()
+        }, 10000)
+      }
 
       this.suppressAreaButton = true
       this._suppressViewportReload = true
@@ -295,6 +461,12 @@ export default class extends Controller {
           this.suppressAreaButton = false
         }
 
+        // Listing selection pan — do not reload markers (would close an open popup).
+        if (this._skipViewportReloadOnce) {
+          this._skipViewportReloadOnce = false
+          return
+        }
+
         if (this._suppressViewportReload) {
           this._suppressViewportReload = false
           // Only clamp the list to the map when this visit already came with an area.
@@ -311,6 +483,7 @@ export default class extends Controller {
         if (this._programmaticFrame) return
         // Resize/invalidateSize fires moveend too — only clamp when the user panned/zoomed.
         if (!this.userMovedMap) return
+        this.showReloadSpinner()
         this.scheduleViewportReload()
       })
 
@@ -333,11 +506,13 @@ export default class extends Controller {
       // Geocoded / autocomplete frame — center on the place, not listing coords
       this.fitToViewportBounds()
       this.initialFrame = "viewport"
-    } else if (this.hasUrlBounds()) {
+    } else if (this.urlBounds()) {
       // Viewport search without location text — never invent an outline
       this.fitToViewportBounds(this.urlBounds())
       this.initialFrame = "url"
     } else {
+      // Drop stale / out-of-region N/S/E/W so Buy doesn't reload the world.
+      this.clearBoundsFields()
       this.centerOnTopListing()
       this.initialFrame = "top"
     }
@@ -377,7 +552,7 @@ export default class extends Controller {
 
     const boundaryBounds = this.searchBoundary.getBounds()
     const inside = this.listingsValue.filter((listing) => {
-      if (listing.lat == null || listing.lng == null) return false
+      if (!this.inTtRegion(listing.lat, listing.lng)) return false
       return boundaryBounds.contains([listing.lat, listing.lng])
     })
 
@@ -388,6 +563,16 @@ export default class extends Controller {
       fitTarget = boundaryBounds.extend(listingBounds)
     }
 
+    // Boundary itself must land inside TT; otherwise snap to POS.
+    const south = fitTarget.getSouth()
+    const north = fitTarget.getNorth()
+    const west = fitTarget.getWest()
+    const east = fitTarget.getEast()
+    if (!this.boundsOverlapTt({ south, north, west, east })) {
+      this.focusPortOfSpain()
+      return
+    }
+
     try {
       this.map.fitBounds(fitTarget, {
         padding: [48, 48],
@@ -396,12 +581,53 @@ export default class extends Controller {
       })
     } catch (error) {
       console.warn("fitBounds failed", error)
-      this.fitToListings()
+      this.focusPortOfSpain()
     }
   }
 
   hasViewportBounds() {
     return Boolean(this.normalizedViewport(this.viewportValue))
+  }
+
+  // Reject frames that sit mostly outside Trinidad & Tobago.
+  inTtRegion(lat, lng) {
+    const y = Number(lat)
+    const x = Number(lng)
+    if (!Number.isFinite(y) || !Number.isFinite(x)) return false
+    return y >= TT_REGION.south && y <= TT_REGION.north &&
+      x >= TT_REGION.west && x <= TT_REGION.east
+  }
+
+  boundsOverlapTt(bounds) {
+    if (!bounds) return false
+    return bounds.south < TT_REGION.north &&
+      bounds.north > TT_REGION.south &&
+      bounds.west < TT_REGION.east &&
+      bounds.east > TT_REGION.west
+  }
+
+  clampBoundsToTt(bounds) {
+    if (!bounds) return null
+    if (!this.boundsOverlapTt(bounds)) return null
+    return {
+      south: Math.max(bounds.south, TT_REGION.south),
+      north: Math.min(bounds.north, TT_REGION.north),
+      west: Math.max(bounds.west, TT_REGION.west),
+      east: Math.min(bounds.east, TT_REGION.east)
+    }
+  }
+
+  listingPointsInTt() {
+    return this.listingsValue
+      .filter((item) => this.inTtRegion(item.lat, item.lng))
+      .map((item) => [Number(item.lat), Number(item.lng)])
+  }
+
+  focusPortOfSpain({ zoom = DEFAULT_ZOOM } = {}) {
+    if (!this.map) return
+    this.withProgrammaticFrame(() => {
+      this.map.setView(PORT_OF_SPAIN, zoom, { animate: false })
+    })
   }
 
   normalizedViewport(raw) {
@@ -412,20 +638,27 @@ export default class extends Controller {
     const east = parseFloat(raw.east)
     if ([south, west, north, east].some((n) => Number.isNaN(n))) return null
     if (south >= north || west >= east) return null
-    return { south, west, north, east }
+    return this.clampBoundsToTt({ south, west, north, east })
   }
 
   fitToViewportBounds(bounds = this.normalizedViewport(this.viewportValue) || this.urlBounds()) {
     if (!this.map || !bounds) {
-      this.fitToListings()
+      this.focusPortOfSpain()
       return
     }
+
+    const clamped = this.clampBoundsToTt(bounds)
+    if (!clamped) {
+      this.focusPortOfSpain()
+      return
+    }
+    bounds = clamped
 
     const span = Math.max(bounds.north - bounds.south, bounds.east - bounds.west)
     const center = this.viewportCenter(bounds)
 
     // Named / geocoded place: lock dead-center at a close zoom (don't frame huge pads).
-    if (center) {
+    if (center && this.inTtRegion(center.lat, center.lng)) {
       const zoom = span < 0.04 ? 16 : span < 0.08 ? 15 : span < 0.16 ? 14 : 13
       try {
         this.map.setView([center.lat, center.lng], zoom, { animate: false })
@@ -444,7 +677,7 @@ export default class extends Controller {
       )
     } catch (error) {
       console.warn("fitToViewportBounds failed", error)
-      this.fitToListings()
+      this.focusPortOfSpain()
     }
   }
 
@@ -453,7 +686,9 @@ export default class extends Controller {
     if (raw && typeof raw === "object") {
       const lat = parseFloat(raw.lat)
       const lng = parseFloat(raw.lng)
-      if (!Number.isNaN(lat) && !Number.isNaN(lng)) return { lat, lng }
+      if (!Number.isNaN(lat) && !Number.isNaN(lng) && this.inTtRegion(lat, lng)) {
+        return { lat, lng }
+      }
     }
     if (!bounds) return null
     return {
@@ -463,13 +698,13 @@ export default class extends Controller {
   }
 
   hasUrlBounds() {
-    if (!this.hasNorthTarget) return false
-    return [this.northTarget, this.southTarget, this.eastTarget, this.westTarget]
-      .every((field) => field.value && field.value.trim() !== "")
+    return Boolean(this.urlBounds())
   }
 
   urlBounds() {
-    if (!this.hasUrlBounds()) return null
+    if (!this.hasNorthTarget) return null
+    const fields = [this.northTarget, this.southTarget, this.eastTarget, this.westTarget]
+    if (!fields.every((field) => field.value && field.value.trim() !== "")) return null
 
     const south = parseFloat(this.southTarget.value)
     const west = parseFloat(this.westTarget.value)
@@ -478,7 +713,14 @@ export default class extends Controller {
     if ([south, west, north, east].some((n) => Number.isNaN(n))) return null
     if (south >= north || west >= east) return null
 
-    return { south, west, north, east }
+    return this.clampBoundsToTt({ south, west, north, east })
+  }
+
+  clearBoundsFields() {
+    if (this.hasNorthTarget) this.northTarget.value = ""
+    if (this.hasSouthTarget) this.southTarget.value = ""
+    if (this.hasEastTarget) this.eastTarget.value = ""
+    if (this.hasWestTarget) this.westTarget.value = ""
   }
 
   clearSearchBoundary() {
@@ -527,7 +769,7 @@ export default class extends Controller {
       if (basemapId !== "streets") {
         this.setBasemapLayer("streets", { showSpinner, layerIndex: 0 })
       } else {
-        this.hideSpinner()
+        this.markBasemapReady()
       }
       return
     }
@@ -543,7 +785,8 @@ export default class extends Controller {
     const finish = () => {
       if (settled || this._destroyed) return
       settled = true
-      this.hideSpinner()
+      // Never dismiss the initial overlay on tiles alone — wait for pins too.
+      this.markBasemapReady()
       this.scheduleResize()
     }
 
@@ -612,7 +855,8 @@ export default class extends Controller {
     this.pinGroupsByPoint = this.buildPinGroups()
 
     this.listingsValue.forEach((listing) => {
-      if (listing.lat == null || listing.lng == null) return
+      // Out-of-region pins are ignored so framing / maxBounds stay in TT.
+      if (!this.inTtRegion(listing.lat, listing.lng)) return
 
       const icon = L.divIcon({
         className: "estate-price-marker",
@@ -634,11 +878,13 @@ export default class extends Controller {
         maxWidth: 286,
         minWidth: 286,
         offset: [0, -10],
+        autoPan: false,
         autoPanPadding: [24, 24]
       })
 
-      // Click selects; hover styling is CSS-only (must not set is-active / green)
-      marker.on("click", () => this.activateListing(listing.id, { scroll: true, openPopup: false }))
+      // Click selects; Leaflet opens the bound popup. Do not pan the map here —
+      // panTo → moveend with userMovedMap reloads the viewport and kills the popup.
+      marker.on("click", () => this.activateListing(listing.id, { scroll: true, panMap: false, openPopup: false }))
 
       marker.addTo(this.markerLayer)
       this.markersById[listing.id] = marker
@@ -651,7 +897,7 @@ export default class extends Controller {
   buildPinGroups() {
     const groups = {}
     this.listingsValue.forEach((listing) => {
-      if (listing.lat == null || listing.lng == null) return
+      if (!this.inTtRegion(listing.lat, listing.lng)) return
       const key = `${listing.lat},${listing.lng}`
       ;(groups[key] ||= []).push(listing)
     })
@@ -682,26 +928,38 @@ export default class extends Controller {
 
         const show = stacking || String(listing.id) === visibleId
         const stackPx = stacking ? index * PIN_STACK_PX : 0
+        const layoutKey = `${show}:${stackPx}`
 
-        marker.setIcon(L.divIcon({
-          className: "estate-price-marker",
-          html: `<button type="button" class="price-pill" data-id="${listing.id}">${listing.priceLabel}</button>`,
-          iconSize: [0, 0],
-          iconAnchor: [0, stackPx]
-        }))
-        marker.setZIndexOffset(stackPx + (show ? 0 : -1000))
-        marker.setOpacity(show ? 1 : 0)
-        const el = marker.getElement()
-        if (el) el.style.pointerEvents = show ? "" : "none"
-        const popup = marker.getPopup()
-        if (popup) popup.options.offset = [0, -10 - stackPx]
-
-        // Restore active pill styling after icon rebuild.
-        if (activeId && String(listing.id) === activeId) {
-          el?.querySelector(".price-pill")?.classList.add("is-active")
+        // Skip setIcon when layout is unchanged — rebuilding the icon closes an open popup.
+        if (marker._pinLayoutKey !== layoutKey) {
+          marker._pinLayoutKey = layoutKey
+          marker.setIcon(L.divIcon({
+            className: "estate-price-marker",
+            html: `<button type="button" class="price-pill" data-id="${listing.id}">${listing.priceLabel}</button>`,
+            iconSize: [0, 0],
+            iconAnchor: [0, stackPx]
+          }))
+          marker.setZIndexOffset(stackPx + (show ? 0 : -1000))
+          marker.setOpacity(show ? 1 : 0)
+          const el = marker.getElement()
+          if (el) el.style.pointerEvents = show ? "" : "none"
+          const popup = marker.getPopup()
+          if (popup) popup.options.offset = [0, -10 - stackPx]
         }
+
+        const el = marker.getElement()
+        el?.querySelector(".price-pill")?.classList.toggle("is-active", activeId === String(listing.id))
       })
     })
+  }
+
+  pinNeedsReveal(id) {
+    if (this.stackPinsAtCurrentZoom() || !this.pinGroupsByPoint) return false
+    const marker = this.markersById[String(id)]
+    if (!marker?.pointKey) return false
+    const group = this.pinGroupsByPoint[marker.pointKey]
+    if (!group || group.length < 2) return false
+    return String(group[0].id) !== String(id)
   }
 
   popupHtml(listing) {
@@ -750,56 +1008,30 @@ export default class extends Controller {
     `
   }
 
-  withProgrammaticFrame(fn) {
+  withProgrammaticFrame(fn, { holdMs = 0 } = {}) {
     this._programmaticFrame = true
     try {
       fn()
     } finally {
-      window.setTimeout(() => { this._programmaticFrame = false }, 0)
+      window.setTimeout(() => { this._programmaticFrame = false }, holdMs)
     }
   }
 
-  centerOnTopListing({ zoom = 14 } = {}) {
+  centerOnTopListing({ zoom = DEFAULT_ZOOM } = {}) {
     if (!this.map) return
 
-    const points = this.listingsValue
-      .filter((item) => {
-        const lat = Number(item.lat)
-        const lng = Number(item.lng)
-        return Number.isFinite(lat) && Number.isFinite(lng)
-      })
-      .map((item) => [Number(item.lat), Number(item.lng)])
-
-    if (points.length === 0) {
-      this.withProgrammaticFrame(() => this.map.setView(TRINIDAD_CENTER, 10))
-      return
-    }
-
-    if (points.length === 1) {
-      try {
-        this.withProgrammaticFrame(() => {
-          this.map.setView(points[0], zoom, { animate: false })
-        })
-      } catch (error) {
-        console.warn("centerOnTopListing failed", error)
-        this.fitToListings()
-      }
-      return
-    }
-
-    // Many pins: frame Trinidad inventory instead of zooming onto the first card.
-    this.fitToListings()
+    // Buy page default: Port of Spain — don't fitBounds island-wide inventory
+    // (or bad out-of-region pins), which previously zoomed out to near-world views.
+    this.focusPortOfSpain({ zoom })
   }
 
   fitToListings() {
-    const points = this.listingsValue
-      .filter((l) => l.lat != null && l.lng != null)
-      .map((l) => [l.lat, l.lng])
-
     if (!this.map) return
 
+    const points = this.listingPointsInTt()
+
     if (points.length === 0) {
-      this.withProgrammaticFrame(() => this.map.setView(TRINIDAD_CENTER, 10))
+      this.focusPortOfSpain()
       return
     }
 
@@ -809,7 +1041,7 @@ export default class extends Controller {
     }
 
     this.withProgrammaticFrame(() => {
-      this.map.fitBounds(points, { padding: [48, 48], maxZoom: 12 })
+      this.map.fitBounds(points, { padding: [48, 48], maxZoom: 12, animate: false })
     })
   }
 
@@ -851,6 +1083,7 @@ export default class extends Controller {
       this.areaButtonTarget.disabled = true
     }
 
+    this.showReloadSpinner()
     this.reloadForViewport()
       .catch((error) => console.error("Search this area failed", error))
       .finally(() => {
@@ -904,33 +1137,46 @@ export default class extends Controller {
   async reloadMarkersForFilters() {
     if (this._destroyed || !this.hasFormTarget) return
 
+    const loadId = ++this._pinLoadId
     this._viewportAbort?.abort()
     this._viewportAbort = new AbortController()
     const { signal } = this._viewportAbort
 
-    const params = this.queryParamsFromForm({ page: 1 })
-    ;["north", "south", "east", "west"].forEach((key) => params.delete(key))
+    try {
+      const params = this.queryParamsFromForm({ page: 1 })
+      ;["north", "south", "east", "west"].forEach((key) => params.delete(key))
 
-    const markersRes = await fetch(`/properties/map_markers?${params.toString()}`, {
-      headers: { Accept: "application/json" },
-      signal,
-      credentials: "same-origin"
-    })
-    if (!markersRes.ok) throw new Error(`map_markers HTTP ${markersRes.status}`)
-    const listings = await markersRes.json()
-    if (this._destroyed) return
+      const markersRes = await fetch(`/properties/map_markers?${params.toString()}`, {
+        headers: { Accept: "application/json" },
+        signal,
+        credentials: "same-origin"
+      })
+      if (!markersRes.ok) throw new Error(`map_markers HTTP ${markersRes.status}`)
+      const listings = await markersRes.json()
+      if (this._destroyed) return
 
-    this.listingsValue = Array.isArray(listings) ? listings : []
-    this.renderMarkers()
-    if (this.initialFrame === "top" && !this.userMovedMap) {
-      this.centerOnTopListing()
+      this.listingsValue = Array.isArray(listings) ? listings : []
+      this.renderMarkers()
+      if (this.initialFrame === "top" && !this.userMovedMap) {
+        this.centerOnTopListing()
+      }
+    } finally {
+      // Only the latest in-flight load may dismiss the initial spinner.
+      if (loadId === this._pinLoadId && !this._destroyed) this.markPinsReady()
     }
   }
 
   async reloadForViewport() {
-    if (!this.map || this._destroyed) return
-    if (!this.syncBoundsFields()) return
+    if (!this.map || this._destroyed) {
+      this.hideReloadSpinner()
+      return
+    }
+    if (!this.syncBoundsFields()) {
+      this.hideReloadSpinner()
+      return
+    }
 
+    const loadId = ++this._pinLoadId
     const location = this.formTarget?.querySelector?.('[name="location"]')
     if (location) location.value = ""
 
@@ -941,24 +1187,31 @@ export default class extends Controller {
     this._viewportAbort = new AbortController()
     const { signal } = this._viewportAbort
 
-    const markersUrl = `/properties/map_markers?${params.toString()}`
-    const resultsUrl = `/properties/results?${params.toString()}`
+    try {
+      const markersUrl = `/properties/map_markers?${params.toString()}`
+      const resultsUrl = `/properties/results?${params.toString()}`
 
-    const [markersRes, resultsRes] = await Promise.all([
-      fetch(markersUrl, { headers: { Accept: "application/json" }, signal, credentials: "same-origin" }),
-      fetch(resultsUrl, { headers: { Accept: "application/json" }, signal, credentials: "same-origin" })
-    ])
+      const [markersRes, resultsRes] = await Promise.all([
+        fetch(markersUrl, { headers: { Accept: "application/json" }, signal, credentials: "same-origin" }),
+        fetch(resultsUrl, { headers: { Accept: "application/json" }, signal, credentials: "same-origin" })
+      ])
 
-    if (!markersRes.ok) throw new Error(`map_markers HTTP ${markersRes.status}`)
-    if (!resultsRes.ok) throw new Error(`results HTTP ${resultsRes.status}`)
+      if (!markersRes.ok) throw new Error(`map_markers HTTP ${markersRes.status}`)
+      if (!resultsRes.ok) throw new Error(`results HTTP ${resultsRes.status}`)
 
-    const listings = await markersRes.json()
-    const results = await resultsRes.json()
-    if (this._destroyed) return
+      const listings = await markersRes.json()
+      const results = await resultsRes.json()
+      if (this._destroyed) return
 
-    this.listingsValue = Array.isArray(listings) ? listings : []
-    this.renderMarkers()
-    this.replaceResultsList(results)
+      this.listingsValue = Array.isArray(listings) ? listings : []
+      this.renderMarkers()
+      this.replaceResultsList(results)
+    } finally {
+      if (loadId === this._pinLoadId && !this._destroyed) {
+        this.markPinsReady()
+        this.hideReloadSpinner()
+      }
+    }
   }
 
   replaceResultsList(results) {
@@ -1057,7 +1310,7 @@ export default class extends Controller {
     this.activateListing(id, { scroll: false, openPopup: true })
   }
 
-  activateListing(id, { scroll = false, openPopup = false } = {}) {
+  activateListing(id, { scroll = false, panMap = scroll, openPopup = false } = {}) {
     const numericId = String(id)
     this.activeId = numericId
 
@@ -1065,14 +1318,25 @@ export default class extends Controller {
       card.classList.toggle("is-active", card.dataset.listingId === numericId)
     })
 
-    // Collapsed stacks: bring this listing's pill to the top when it shares a point.
-    this.applyPinStackMode()
+    // Only rebuild pin layout when a collapsed stack must reveal this listing.
+    // Always-rewriting icons via setIcon closes Leaflet popups mid-open.
+    if (this.pinNeedsReveal(numericId)) {
+      this.applyPinStackMode()
+    } else {
+      Object.entries(this.markersById).forEach(([markerId, marker]) => {
+        marker.getElement()?.querySelector(".price-pill")?.classList.toggle("is-active", markerId === numericId)
+      })
+    }
 
     const marker = this.markersById[numericId]
     if (marker && this.map) {
       if (openPopup) marker.openPopup()
-      if (scroll) {
-        this.map.panTo(marker.getLatLng(), { animate: true })
+      if (panMap) {
+        // Keep moveend from treating this pan as a "search this area" reload.
+        this._skipViewportReloadOnce = true
+        this.withProgrammaticFrame(() => {
+          this.map.panTo(marker.getLatLng(), { animate: true })
+        }, { holdMs: 400 })
       }
     }
 

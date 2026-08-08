@@ -10,7 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_08_154029) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_08_180500) do
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "pg_catalog.plpgsql"
+
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -139,6 +142,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_08_154029) do
     t.index ["status", "tag", "price_cents"], name: "index_properties_on_status_tag_price"
   end
 
+  create_table "property_tags", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "property_id", null: false
+    t.bigint "tag_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["property_id", "tag_id"], name: "index_property_tags_on_property_id_and_tag_id", unique: true
+    t.index ["property_id"], name: "index_property_tags_on_property_id"
+    t.index ["tag_id"], name: "index_property_tags_on_tag_id"
+  end
+
   create_table "sessions", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "ip_address"
@@ -154,6 +167,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_08_154029) do
     t.string "email"
     t.datetime "updated_at", null: false
     t.index ["email"], name: "index_subscriptions_on_email", unique: true
+  end
+
+  create_table "tags", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "listings_count", default: 0, null: false
+    t.string "name", null: false
+    t.string "slug", null: false
+    t.datetime "updated_at", null: false
+    t.index ["slug"], name: "index_tags_on_slug", unique: true
   end
 
   create_table "users", force: :cascade do |t|
@@ -175,5 +197,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_08_154029) do
   add_foreign_key "inquiries", "properties"
   add_foreign_key "inquiries", "users"
   add_foreign_key "properties", "agents"
+  add_foreign_key "property_tags", "properties"
+  add_foreign_key "property_tags", "tags"
   add_foreign_key "sessions", "users"
 end

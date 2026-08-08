@@ -80,11 +80,27 @@ class PropertiesControllerTest < ActionDispatch::IntegrationTest
 
   test "photo_download sends attachment with clean slug-index filename" do
     property = Property.first
+    attach_valid_jpeg!(property)
+
     get photo_download_property_path(property, 0)
 
     assert_response :success
     assert_equal "attachment", response.headers["Content-Disposition"].to_s[/\A([^;]+)/, 1]
     assert_includes response.headers["Content-Disposition"], "#{property.slug}-1.jpg"
+    assert_operator response.body.bytesize, :>, 0
+    assert_match %r{\Aimage/jpeg}, response.media_type.to_s
+  end
+
+  test "photo_download burns watermark into the jpeg payload" do
+    property = Property.first
+    attach_valid_jpeg!(property)
+    original = property.hosted_gallery_images.first.blob.download
+
+    get photo_download_property_path(property, 0)
+    assert_response :success
+
+    # Watermarked bytes should differ from the source blob.
+    refute_equal original, response.body
     assert_operator response.body.bytesize, :>, 0
   end
 
@@ -185,5 +201,25 @@ class PropertiesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     body = JSON.parse(response.body)
     assert_operator body["totalCount"], :>, 0
+  end
+
+  private
+
+  def attach_valid_jpeg!(property)
+    require "vips"
+    jpeg = Vips::Image.black(320, 240, bands: 3).copy(interpretation: :srgb).jpegsave_buffer(Q: 85)
+    property.gallery_images.purge
+    blob = ActiveStorage::Blob.create_and_upload!(
+      io: StringIO.new(jpeg),
+      filename: "photo.jpg",
+      content_type: "image/jpeg",
+      metadata: {
+        "source_url" => "https://cdn.example.com/photo.jpg",
+        "source_urls" => [ "https://cdn.example.com/photo.jpg" ],
+        "enhanced" => true
+      }
+    )
+    property.gallery_images_attachments.create!(blob_id: blob.id)
+    property.reload
   end
 end

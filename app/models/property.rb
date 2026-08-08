@@ -5,6 +5,8 @@ class Property < ApplicationRecord
   has_many :favorites, dependent: :destroy
   has_many :favorited_by_users, through: :favorites, source: :user
   has_many :inquiries, dependent: :destroy
+  has_many :property_tags, dependent: :destroy
+  has_many :marketing_tags, through: :property_tags, source: :tag
   has_rich_text :description
   has_many_attached :gallery_images
 

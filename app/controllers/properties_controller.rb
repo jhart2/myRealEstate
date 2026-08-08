@@ -71,6 +71,7 @@ class PropertiesController < ApplicationController
 
   # Same-origin download so gallery "Download" keeps the user gesture (mobile-safe)
   # and forces Content-Disposition: attachment with a clean slug-index filename.
+  # Bytes are stamped with the TT Realty watermark before streaming.
   def photo_download
     property = Property.active.with_attached_gallery_images.find_by!(slug: params[:id])
     index = Integer(params[:index])
@@ -80,10 +81,11 @@ class PropertiesController < ApplicationController
 
     if (image = property.hosted_gallery_images[index])
       blob = image.blob
-      send_data blob.download,
-                filename: filename,
-                type: blob.content_type.presence || "image/jpeg",
-                disposition: "attachment"
+      send_watermarked_photo!(
+        blob.download,
+        filename: filename,
+        content_type: blob.content_type.presence || "image/jpeg"
+      )
       return
     end
 
@@ -93,23 +95,40 @@ class PropertiesController < ApplicationController
     if url.start_with?("/")
       absolute = "#{request.base_url}#{url}"
       payload = PropertyGalleryIngestor.download(absolute)
-      send_data payload[:io].read,
-                filename: filename,
-                type: payload[:content_type].presence || "image/jpeg",
-                disposition: "attachment"
+      send_watermarked_photo!(
+        payload[:io].read,
+        filename: filename,
+        content_type: payload[:content_type].presence || "image/jpeg"
+      )
       return
     end
 
     payload = PropertyGalleryIngestor.download(url)
-    send_data payload[:io].read,
-              filename: filename,
-              type: payload[:content_type].presence || "application/octet-stream",
-              disposition: "attachment"
+    send_watermarked_photo!(
+      payload[:io].read,
+      filename: filename,
+      content_type: payload[:content_type].presence || "image/jpeg"
+    )
   rescue ArgumentError, PropertyGalleryIngestor::DownloadError
     raise ActiveRecord::RecordNotFound
   end
 
   private
+
+  def send_watermarked_photo!(binary, filename:, content_type:)
+    stamped =
+      begin
+        GalleryPhotoWatermarker.call(binary, content_type: content_type)
+      rescue GalleryPhotoWatermarker::Error => e
+        Rails.logger.warn("[photo_download] watermark failed: #{e.message}")
+        binary
+      end
+
+    send_data stamped,
+              filename: filename,
+              type: "image/jpeg",
+              disposition: "attachment"
+  end
 
   # Shared filter context + ActiveRecord scope. Does not paginate, load markers, or histogram.
   def prepare_search_scope!
