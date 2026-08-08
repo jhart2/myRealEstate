@@ -156,4 +156,27 @@ class PropertiesControllerTest < ActionDispatch::IntegrationTest
       assert listing["lng"] >= -61.515
     end
   end
+
+  test "index does not embed map marker JSON payload" do
+    get properties_path
+    assert_response :success
+    assert_includes response.body, 'data-search-map-listings-value="[]"'
+    refute_match(/"lat"\s*:\s*10\./, response.body)
+  end
+
+  test "price_histogram returns bucket counts without price filter bias" do
+    get price_histogram_properties_path(price_min: 8_000_000, beds: 99), as: :json
+    assert_response :success
+    body = JSON.parse(response.body)
+    assert_equal Property::PRICE_HISTOGRAM_BUCKETS, body["bucketCount"]
+    assert_equal Property::PRICE_HISTOGRAM_MAX_DOLLARS, body["maxDollars"]
+    assert_equal Property::PRICE_HISTOGRAM_BUCKETS, body["buckets"].length
+
+    # beds=99 matches nothing → all zeros even though price_min was ignored
+    assert_equal Array.new(Property::PRICE_HISTOGRAM_BUCKETS, 0), body["buckets"]
+
+    get price_histogram_properties_path, as: :json
+    open_market = JSON.parse(response.body)["buckets"]
+    assert_operator open_market.sum, :>, 0
+  end
 end

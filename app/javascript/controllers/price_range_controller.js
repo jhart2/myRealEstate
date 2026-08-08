@@ -42,6 +42,11 @@ export default class extends Controller {
     this.minIndex = this.indexForList(this.minValue)
     this.maxIndex = this.maxValue < 0 ? this.steps.length - 1 : this.indexForList(this.maxValue)
     this.syncControls()
+    this.fetchHistogram()
+  }
+
+  disconnect() {
+    this._histogramAbort?.abort()
   }
 
   showList(event) {
@@ -171,6 +176,68 @@ export default class extends Controller {
       const inRange = bucketEnd > selectedMin && (openMax || bucketStart <= selectedMax)
       bar.classList.toggle("is-in-range", inRange)
     })
+  }
+
+  async fetchHistogram() {
+    if (!this.hasHistogramTarget) return
+
+    this._histogramAbort?.abort()
+    this._histogramAbort = new AbortController()
+    const { signal } = this._histogramAbort
+
+    try {
+      const response = await fetch(this.histogramUrl(), {
+        headers: { Accept: "application/json" },
+        credentials: "same-origin",
+        signal
+      })
+      if (!response.ok) throw new Error(`price_histogram HTTP ${response.status}`)
+      const data = await response.json()
+      if (signal.aborted) return
+
+      const buckets = Array.isArray(data.buckets) ? data.buckets : []
+      if (Number.isFinite(data.bucketCount)) this.bucketsValue = Number(data.bucketCount)
+      if (Number.isFinite(data.maxDollars)) this.maxDollarsValue = Number(data.maxDollars)
+      this.renderHistogramBars(buckets)
+      this.syncHistogram(this.listMinDollars(), this.isOpenMax() ? null : this.listMaxDollars())
+    } catch (error) {
+      if (error?.name === "AbortError") return
+      console.error("Price histogram failed", error)
+      this.histogramTarget.classList.remove("is-loading")
+    }
+  }
+
+  histogramUrl() {
+    const params = new URLSearchParams()
+    const form = this.element.closest("form")
+    if (form) {
+      const formData = new FormData(form)
+      for (const [key, value] of formData.entries()) {
+        if (value == null || String(value).trim() === "") continue
+        // Server ignores price filters; skip noisy extras that change with the slider.
+        if (key === "price_min" || key === "price_max" || key === "budget") continue
+        params.append(key, value)
+      }
+    }
+    const query = params.toString()
+    return query ? `/properties/price_histogram?${query}` : "/properties/price_histogram"
+  }
+
+  renderHistogramBars(counts) {
+    if (!this.hasHistogramTarget) return
+
+    const buckets = Math.max(counts.length, this.bucketsValue || 1)
+    const values = Array.from({ length: buckets }, (_, i) => Number(counts[i]) || 0)
+    const maxCount = Math.max(...values, 1)
+
+    this.histogramTarget.innerHTML = values.map((count, index) => {
+      const height = Math.round((count / maxCount) * 1000) / 10
+      const barHeight = Math.max(height, count > 0 ? 6 : 0)
+      const label = `${count} listing${count === 1 ? "" : "s"}`
+      return `<span class="price-range-bar" style="--bar-height: ${barHeight}%" data-bucket-index="${index}" title="${label}"></span>`
+    }).join("")
+
+    this.histogramTarget.classList.remove("is-loading")
   }
 
   listMinDollars() {

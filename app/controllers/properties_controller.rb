@@ -1,17 +1,20 @@
 class PropertiesController < ApplicationController
-  allow_unauthenticated_access only: %i[index show photo_download results map_markers]
+  allow_unauthenticated_access only: %i[index show photo_download results map_markers price_histogram]
 
   PER_PAGE = 48
   MAP_MARKERS_CAP = 3_000
 
   def index
-    prepare_index_search!
+    prepare_search_scope!
+    paginate_search!
+    assign_map_frame!
     @hide_footer = true
   end
 
   # HTML fragment / JSON used by continuous scroll + viewport list refresh.
   def results
-    prepare_index_search!
+    prepare_search_scope!
+    paginate_search!
 
     html = render_to_string(
       partial: "properties/search_card",
@@ -29,9 +32,9 @@ class PropertiesController < ApplicationController
     }
   end
 
-  # All mappable listings in the current filter (+ viewport bounds when present).
+  # Lightweight pin payload for the current filter (+ viewport bounds when present).
   def map_markers
-    prepare_index_search!
+    prepare_search_scope!
 
     listings =
       @search_scope
@@ -41,6 +44,17 @@ class PropertiesController < ApplicationController
         .map(&:as_map_json)
 
     render json: listings
+  end
+
+  # Listing-density bars for the price filter (ignores current price/budget range).
+  def price_histogram
+    prepare_search_scope!
+
+    render json: {
+      buckets: Property.price_histogram(index_search_params),
+      bucketCount: Property::PRICE_HISTOGRAM_BUCKETS,
+      maxDollars: Property::PRICE_HISTOGRAM_MAX_DOLLARS
+    }
   end
 
   def show
@@ -97,20 +111,15 @@ class PropertiesController < ApplicationController
 
   private
 
-  def prepare_index_search!
+  # Shared filter context + ActiveRecord scope. Does not paginate, load markers, or histogram.
+  def prepare_search_scope!
     @intent = normalize_intent(params[:intent])
     @sort = params[:sort].presence || (@intent == "new" ? "newest" : "featured")
     @days_max = params[:days_max].presence
     @days_max ||= Property.new_listing_days.to_s if @intent == "new"
 
-    query = index_search_params
     # CDN cover URLs only on search cards/map — do not preload gallery blobs.
-    @search_scope = Property.search(query)
-    @total_count = @search_scope.except(:order).count
-    @per_page = PER_PAGE
-    @total_pages = [ (@total_count.to_f / @per_page).ceil, 1 ].max
-    @page = [ [ params[:page].to_i, 1 ].max, @total_pages ].min
-    @properties = @search_scope.offset((@page - 1) * @per_page).limit(@per_page)
+    @search_scope = Property.search(index_search_params)
 
     @location = params[:location]
     @property_types = Array(params[:property_types]).map(&:presence).compact
@@ -131,15 +140,17 @@ class PropertiesController < ApplicationController
     @sqft_max = params[:sqft_max].presence
     @acres_min = params[:acres_min].presence
     @featured_only = params[:featured].to_s.in?(%w[1 true])
+  end
 
-    # Initial map pins: same filtered set, capped. Viewport reloads refine via JS.
-    @map_listings =
-      @search_scope
-        .where.not(latitude: nil)
-        .where.not(longitude: nil)
-        .limit(MAP_MARKERS_CAP)
-        .map(&:as_map_json)
+  def paginate_search!
+    @total_count = @search_scope.except(:order).count
+    @per_page = PER_PAGE
+    @total_pages = [ (@total_count.to_f / @per_page).ceil, 1 ].max
+    @page = [ [ params[:page].to_i, 1 ].max, @total_pages ].min
+    @properties = @search_scope.offset((@page - 1) * @per_page).limit(@per_page)
+  end
 
+  def assign_map_frame!
     @map_boundary = GeoBoundaryLookup.find(@location)
     @map_viewport = MapViewport.for(
       location: @location,
@@ -148,7 +159,6 @@ class PropertiesController < ApplicationController
       east: params[:east],
       west: params[:west]
     ) unless @map_boundary
-    @price_histogram = Property.price_histogram(query)
   end
 
   def normalize_intent(raw)

@@ -6,7 +6,7 @@
 <section
   class="flex h-full min-h-0 flex-col bg-ground"
   data-controller="search-map property-lightbox"
-  data-search-map-listings-value="<%= ERB::Util.html_escape(@map_listings.to_json) %>"
+  data-search-map-listings-value="[]"
   <% if @map_boundary.present? %>
     data-search-map-boundary-value="<%= ERB::Util.html_escape(@map_boundary.to_json) %>"
   <% elsif @map_viewport.present? %>
@@ -169,10 +169,6 @@
           </div>
         </div>
 
-        <%
-          price_hist = @price_histogram.presence || []
-          price_hist_max = [ price_hist.max.to_i, 1 ].max
-        %>
         <div
           class="search-filter-panel search-filter-panel--price hidden"
           data-search-filters-target="panel"
@@ -211,18 +207,16 @@
 
             <div class="price-range-chart">
               <div
-                class="price-range-histogram"
+                class="price-range-histogram is-loading"
                 data-price-range-target="histogram"
                 role="img"
                 aria-label="Listing count by price"
               >
-                <% price_hist.each_with_index do |count, index| %>
-                  <% height = ((count.to_f / price_hist_max) * 100).round(1) %>
+                <% Property::PRICE_HISTOGRAM_BUCKETS.times do |index| %>
                   <span
-                    class="price-range-bar<%= " is-in-range" if count.positive? %>"
-                    style="--bar-height: <%= [ height, count.positive? ? 6 : 0 ].max %>%"
+                    class="price-range-bar"
+                    style="--bar-height: 0%"
                     data-bucket-index="<%= index %>"
-                    title="<%= count %> <%= "listing".pluralize(count) %>"
                   ></span>
                 <% end %>
               </div>
@@ -578,7 +572,7 @@
         >Dark</button>
       </div>
 
-      <% if @map_listings.empty? && @properties.any? %>
+      <% if @properties.any? && @properties.none? { |p| p.latitude.present? && p.longitude.present? } %>
         <div class="absolute inset-x-4 bottom-4 z-[1000] rounded-xl bg-panel/95 px-4 py-3 text-center text-sm text-ink-2 shadow-lg ring-1 ring-border">
           These listings need map coordinates. Add latitude/longitude in admin to pin them.
         </div>

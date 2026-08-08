@@ -9,6 +9,7 @@ Rails.application.routes.draw do
     collection do
       get :results
       get :map_markers
+      get :price_histogram
     end
     member do
       get "photos/:index/download", action: :photo_download, as: :photo_download, constraints: { index: /\d+/ }
