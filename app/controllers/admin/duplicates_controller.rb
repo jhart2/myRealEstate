@@ -4,7 +4,7 @@ module Admin
 
     def index
       detection = PropertyDuplicateDetector.call(dry_run: true, limit_pairs: 2_000)
-      @pairs = detection.pairs
+      @pairs = queue_pairs(detection.pairs)
       @properties_by_id = Property
         .where(id: @pairs.flat_map { |p| [ p.left_id, p.right_id ] }.uniq)
         .includes(:agent, image_attachment: :blob)
@@ -20,19 +20,19 @@ module Admin
       case params[:commit].to_s
       when "keep_both"
         clear_flags!(@left, @right)
-        redirect_to admin_duplicates_path, notice: "Cleared duplicate flags on both listings."
+        redirect_after_resolve!("Cleared duplicate flags on both listings.")
       when "keep_left"
         keep_one!(keep: @left, drop: @right)
-        redirect_to admin_duplicates_path, notice: "Kept #{@left.slug}; disabled #{@right.slug}."
+        redirect_after_resolve!("Kept #{@left.slug}; disabled #{@right.slug}.")
       when "keep_right"
         keep_one!(keep: @right, drop: @left)
-        redirect_to admin_duplicates_path, notice: "Kept #{@right.slug}; disabled #{@left.slug}."
+        redirect_after_resolve!("Kept #{@right.slug}; disabled #{@left.slug}.")
       when "clear_left"
         @left.update!(possible_duplicate: false)
-        redirect_to admin_duplicate_path(@left, peer: @right.to_param), notice: "Cleared flag on left listing."
+        redirect_after_resolve!("Cleared flag on #{@left.slug}.")
       when "clear_right"
         @right.update!(possible_duplicate: false)
-        redirect_to admin_duplicate_path(@left, peer: @right.to_param), notice: "Cleared flag on right listing."
+        redirect_after_resolve!("Cleared flag on #{@right.slug}.")
       else
         redirect_to admin_duplicate_path(@left, peer: @right.to_param), alert: "Unknown action."
       end
@@ -59,7 +59,7 @@ module Admin
     end
 
     def peer_from_detection(property, detection)
-      pair = detection.pairs.find { |p| p.left_id == property.id || p.right_id == property.id }
+      pair = queue_pairs(detection.pairs).find { |p| p.left_id == property.id || p.right_id == property.id }
       return nil unless pair
 
       peer_id = pair.left_id == property.id ? pair.right_id : pair.left_id
@@ -81,6 +81,41 @@ module Admin
     def keep_one!(keep:, drop:)
       drop.update!(status: "disabled", possible_duplicate: false)
       keep.update!(possible_duplicate: false)
+    end
+
+    def redirect_after_resolve!(notice)
+      path = next_reconcile_path(after_left: @left, after_right: @right)
+      if path
+        redirect_to path, notice: "#{notice} Loading next pair."
+      else
+        redirect_to admin_duplicates_path, notice: "#{notice} Queue is empty."
+      end
+    end
+
+    def next_reconcile_path(after_left:, after_right:)
+      detection = PropertyDuplicateDetector.call(dry_run: true, limit_pairs: 5_000)
+      next_pair = queue_pairs(detection.pairs).find { |pair|
+        !same_pair?(pair, after_left.id, after_right.id)
+      }
+      return nil unless next_pair
+
+      left = Property.find_by(id: next_pair.left_id)
+      right_slug = next_pair.right_slug
+      return nil if left.blank? || right_slug.blank?
+
+      admin_duplicate_path(left, peer: right_slug)
+    end
+
+    def queue_pairs(pairs)
+      flagged_ids = Property.possible_duplicates.pluck(:id).to_set
+      return [] if flagged_ids.empty?
+
+      pairs.select { |pair| flagged_ids.include?(pair.left_id) || flagged_ids.include?(pair.right_id) }
+    end
+
+    def same_pair?(pair, left_id, right_id)
+      (pair.left_id == left_id && pair.right_id == right_id) ||
+        (pair.left_id == right_id && pair.right_id == left_id)
     end
   end
 end

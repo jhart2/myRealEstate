@@ -16,7 +16,7 @@
 </div>
 
 <%= form_with url: admin_duplicate_path(@left, peer: @right.to_param), method: :patch, class: "mt-6 rounded-xl border border-border bg-panel p-6" do %>
-  <p class="text-sm text-ink-3">Choose how to resolve this pair. Keeping one disables the other and clears flags. Keep both clears flags so both stay in search.</p>
+  <p class="text-sm text-ink-3">Choose how to resolve this pair. After you submit, the next flagged pair loads automatically. Keeping one disables the other and clears flags; keep both clears flags so both stay in search.</p>
   <div class="mt-4 flex flex-wrap gap-3">
     <button type="submit" name="commit" value="keep_left" class="btn-primary cursor-pointer">Keep A, disable B</button>
     <button type="submit" name="commit" value="keep_right" class="btn-primary cursor-pointer">Keep B, disable A</button>
