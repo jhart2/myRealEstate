@@ -71,7 +71,7 @@ class PropertiesController < ApplicationController
 
   # Same-origin download so gallery "Download" keeps the user gesture (mobile-safe)
   # and forces Content-Disposition: attachment with a clean slug-index filename.
-  # Bytes are stamped with the TT Realty watermark before streaming.
+  # Watermark stamping is temporarily disabled.
   def photo_download
     property = Property.active.with_attached_gallery_images.find_by!(slug: params[:id])
     index = Integer(params[:index])
@@ -81,7 +81,7 @@ class PropertiesController < ApplicationController
 
     if (image = property.hosted_gallery_images[index])
       blob = image.blob
-      send_watermarked_photo!(
+      send_photo_bytes!(
         blob.download,
         filename: filename,
         content_type: blob.content_type.presence || "image/jpeg"
@@ -95,7 +95,7 @@ class PropertiesController < ApplicationController
     if url.start_with?("/")
       absolute = "#{request.base_url}#{url}"
       payload = PropertyGalleryIngestor.download(absolute)
-      send_watermarked_photo!(
+      send_photo_bytes!(
         payload[:io].read,
         filename: filename,
         content_type: payload[:content_type].presence || "image/jpeg"
@@ -104,7 +104,7 @@ class PropertiesController < ApplicationController
     end
 
     payload = PropertyGalleryIngestor.download(url)
-    send_watermarked_photo!(
+    send_photo_bytes!(
       payload[:io].read,
       filename: filename,
       content_type: payload[:content_type].presence || "image/jpeg"
@@ -115,6 +115,14 @@ class PropertiesController < ApplicationController
 
   private
 
+  def send_photo_bytes!(binary, filename:, content_type:)
+    send_data binary,
+              filename: filename,
+              type: content_type,
+              disposition: "attachment"
+  end
+
+  # Kept for an easy re-enable later (overlay is also hidden in CSS for now).
   def send_watermarked_photo!(binary, filename:, content_type:)
     stamped =
       begin

@@ -2728,7 +2728,7 @@ html.gallery-viewer-open .listing-gallery-viewer {
 .listing-gallery-viewer-dialog {
   display: flex;
   flex-direction: column;
-  width: min(1100px, 100%);
+  width: min(100vw - 1.5rem, 100%);
   height: calc(100dvh - 1.5rem);
   max-height: calc(100dvh - 1.5rem);
   margin: auto;
@@ -2808,7 +2808,7 @@ html.gallery-viewer-open .listing-gallery-viewer {
   flex: 1 1 auto;
   min-height: 0;
   overflow: hidden;
-  background: var(--color-vampire-black);
+  background: #000;
 }
 
 .listing-gallery-viewer-track {
@@ -2837,17 +2837,20 @@ html.gallery-viewer-open .listing-gallery-viewer {
   min-width: 100%;
   height: 100%;
   min-height: 0;
-  display: grid;
-  place-items: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   scroll-snap-align: start;
   scroll-snap-stop: always;
   overflow: hidden;
   position: relative;
+  background: #000;
 }
 
 .listing-gallery-viewer-hero {
   display: block;
   box-sizing: border-box;
+  /* Fill the slide box; object-fit:contain letterboxes inside it. */
   width: 100%;
   height: 100%;
   max-width: 100%;
@@ -2860,17 +2863,7 @@ html.gallery-viewer-open .listing-gallery-viewer {
 }
 
 .listing-gallery-viewer-watermark {
-  position: absolute;
-  right: max(1rem, env(safe-area-inset-right, 0px));
-  bottom: max(1rem, env(safe-area-inset-bottom, 0px));
-  z-index: 2;
-  display: flex;
-  align-items: baseline;
-  gap: 0.45rem;
-  pointer-events: none;
-  user-select: none;
-  opacity: 0.45;
-  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.45);
+  display: none !important;
 }
 
 .listing-gallery-viewer-watermark-tt {

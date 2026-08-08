@@ -91,7 +91,7 @@ class PropertiesControllerTest < ActionDispatch::IntegrationTest
     assert_match %r{\Aimage/jpeg}, response.media_type.to_s
   end
 
-  test "photo_download burns watermark into the jpeg payload" do
+  test "photo_download streams original bytes without watermark for now" do
     property = Property.first
     attach_valid_jpeg!(property)
     original = property.hosted_gallery_images.first.blob.download
@@ -99,8 +99,7 @@ class PropertiesControllerTest < ActionDispatch::IntegrationTest
     get photo_download_property_path(property, 0)
     assert_response :success
 
-    # Watermarked bytes should differ from the source blob.
-    refute_equal original, response.body
+    assert_equal original, response.body
     assert_operator response.body.bytesize, :>, 0
   end
 
