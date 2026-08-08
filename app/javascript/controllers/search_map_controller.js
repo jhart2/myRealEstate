@@ -9,6 +9,8 @@ const TRINIDAD_CENTER = [10.6549, -61.5019]
 const BASEMAP_STORAGE_KEY = "estate-map-basemap"
 /** Vertical gap (px) between pills that share identical lat/lng. */
 const PIN_STACK_PX = 30
+/** At this zoom and above, overlapping pins fan into a vertical stack. */
+const PIN_STACK_MIN_ZOOM = 15
 const BASEMAPS = {
   streets: {
     label: "Streets",
@@ -286,6 +288,7 @@ export default class extends Controller {
         if (this._programmaticFrame) return
         this.userMovedMap = true
       })
+      this.map.on("zoomend", () => this.applyPinStackMode())
 
       this.map.on("moveend", () => {
         if (this.suppressAreaButton) {
@@ -606,39 +609,31 @@ export default class extends Controller {
     if (!this.markerLayer) return
     this.markerLayer.clearLayers()
     this.markersById = {}
-
-    // Exact-same coords: stack pills upward so they don't cover each other.
-    const stackIndexByPoint = {}
+    this.pinGroupsByPoint = this.buildPinGroups()
 
     this.listingsValue.forEach((listing) => {
       if (listing.lat == null || listing.lng == null) return
 
-      const pointKey = `${listing.lat},${listing.lng}`
-      const stackIndex = stackIndexByPoint[pointKey] || 0
-      stackIndexByPoint[pointKey] = stackIndex + 1
-      const stackPx = stackIndex * PIN_STACK_PX
-
-      // iconSize/iconAnchor 0: wrapper is a point; content overflows (no oversized colored box).
-      // Positive iconAnchor.y moves the pill up — used for shared-point stacking.
       const icon = L.divIcon({
         className: "estate-price-marker",
         html: `<button type="button" class="price-pill" data-id="${listing.id}">${listing.priceLabel}</button>`,
         iconSize: [0, 0],
-        iconAnchor: [0, stackPx]
+        iconAnchor: [0, 0]
       })
 
       const marker = L.marker([listing.lat, listing.lng], {
         icon,
         riseOnHover: true,
-        zIndexOffset: stackPx
+        zIndexOffset: 0
       })
       marker.listingId = listing.id
+      marker.pointKey = `${listing.lat},${listing.lng}`
 
       marker.bindPopup(this.popupHtml(listing), {
         className: "estate-map-popup",
         maxWidth: 286,
         minWidth: 286,
-        offset: [0, -10 - stackPx],
+        offset: [0, -10],
         autoPanPadding: [24, 24]
       })
 
@@ -647,6 +642,65 @@ export default class extends Controller {
 
       marker.addTo(this.markerLayer)
       this.markersById[listing.id] = marker
+    })
+
+    this.applyPinStackMode()
+  }
+
+  // Exact-same coords share a point. listingsValue order = search relevance (first wins when collapsed).
+  buildPinGroups() {
+    const groups = {}
+    this.listingsValue.forEach((listing) => {
+      if (listing.lat == null || listing.lng == null) return
+      const key = `${listing.lat},${listing.lng}`
+      ;(groups[key] ||= []).push(listing)
+    })
+    return groups
+  }
+
+  stackPinsAtCurrentZoom() {
+    if (!this.map) return false
+    return this.map.getZoom() >= PIN_STACK_MIN_ZOOM
+  }
+
+  // Close zoom: fan identical coords upward. Farther out: keep most-relevant pill only.
+  applyPinStackMode() {
+    if (!this.map || !this.pinGroupsByPoint) return
+
+    const stacking = this.stackPinsAtCurrentZoom()
+    const activeId = this.activeId != null ? String(this.activeId) : null
+
+    Object.values(this.pinGroupsByPoint).forEach((group) => {
+      let visibleId = group[0] ? String(group[0].id) : null
+      if (!stacking && activeId && group.some((listing) => String(listing.id) === activeId)) {
+        visibleId = activeId
+      }
+
+      group.forEach((listing, index) => {
+        const marker = this.markersById[listing.id]
+        if (!marker) return
+
+        const show = stacking || String(listing.id) === visibleId
+        const stackPx = stacking ? index * PIN_STACK_PX : 0
+
+        marker.setIcon(L.divIcon({
+          className: "estate-price-marker",
+          html: `<button type="button" class="price-pill" data-id="${listing.id}">${listing.priceLabel}</button>`,
+          iconSize: [0, 0],
+          iconAnchor: [0, stackPx]
+        }))
+        marker.setZIndexOffset(stackPx + (show ? 0 : -1000))
+        marker.setOpacity(show ? 1 : 0)
+        const el = marker.getElement()
+        if (el) el.style.pointerEvents = show ? "" : "none"
+        const popup = marker.getPopup()
+        if (popup) popup.options.offset = [0, -10 - stackPx]
+
+        // Restore active pill styling after icon rebuild.
+        if (activeId && String(listing.id) === activeId) {
+          el?.querySelector(".price-pill")?.classList.add("is-active")
+        }
+      })
     })
   }
 
@@ -1011,14 +1065,8 @@ export default class extends Controller {
       card.classList.toggle("is-active", card.dataset.listingId === numericId)
     })
 
-    Object.entries(this.markersById).forEach(([markerId, marker]) => {
-      const el = marker.getElement()
-      if (!el) return
-      const active = markerId === numericId
-      // Never style via wrapper.is-active — only the pill paints fill.
-      el.classList.remove("is-active")
-      el.querySelector(".price-pill")?.classList.toggle("is-active", active)
-    })
+    // Collapsed stacks: bring this listing's pill to the top when it shares a point.
+    this.applyPinStackMode()
 
     const marker = this.markersById[numericId]
     if (marker && this.map) {
